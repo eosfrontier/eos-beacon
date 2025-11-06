@@ -7,7 +7,7 @@ SYSTEM_DETAILS = {
 /* system settings: This can generally be left alone. */
 SYSTEM_SETTINGS = {
   port : 5001, /* declares which port BEACON will run on. By default: 5000. */
-  voiceEnabled: false,
+  voiceEnabled: true,
 }
 
 /* Settings for defaults that appear on screen. For example, the default security level */
