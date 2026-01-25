@@ -28,8 +28,8 @@ var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 2, "0
 var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bctbcdishes", 2, "0", "0");
 
 /* other PSA's */
-var bctempleservice = new broadcastObj("Tachar Service", "bctempleservice", 2, "600000", "0");
-var bcmeeting = new broadcastObj("Meeting in Main", "bcmeeting", 4, "0", "0");
+var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 2, "600000", "0");
+var bcmeeting = new broadcastObj("Meeting in Main", "other/bcmeeting", 4, "0", "0");
 
 /* medical PSA's */
 var bcmedical = new broadcastObj("Blood Donation Request", "medical/bcmedical", 2, "0", "0");
@@ -52,12 +52,12 @@ var bcpsyhazard = new broadcastObj("Psy-hazard detected", "bcpsyhazard", 8, "0",
 var bcbomb = new broadcastObj("Bomb Alert", "bcbomb", 8, "0", "hazard");
 
 /* Shield-Orb */
-var bcorbactivate = new broadcastObj("Orb reactivation", "bcorbactivate", 8, "45000", "0");
-var bcorbcooldown = new broadcastObj("Orb Cooldown phase", "bcorbcooldown", 8, "0", "psyhazard");
+var bcorbactivate = new broadcastObj("Orb reactivation", "orb/bcorbactivate", 8, "45000", "0");
+var bcorbcooldown = new broadcastObj("Orb Cooldown phase", "orb/bcorbcooldown", 8, "0", "psyhazard");
 
 /* confirm hostiles */
-var bchostileoutside = new broadcastObj("Enemy Contact", "bchostileoutside", 8, "0", "0");
-var bchostileinside = new broadcastObj("Enemy Contact", "bchostileinside", 8, "0", "attack");
+var bchostileoutside = new broadcastObj("Enemy Contact", "hostiles/bchostileoutside", 8, "0", "0");
+var bchostileinside = new broadcastObj("Enemy Contact", "hostiles/bchostileinside", 8, "0", "attack");
 
 /* portal */
 var bcportalinc = new broadcastObj("Scheduled Incoming Portal Activation", "portal/bcportalinc", 3, "30000", "0");
@@ -78,8 +78,8 @@ var bcmissionout = new broadcastObj("Strati.OS Mission Alert", "overlord/bcMissi
 
 
 /* Maati's Eos IT toolbox */
-var bcsystemscan = new broadcastObj("System Diagnostics", "bcsystemscan", 88, "30000", "0");
-var bcfreezeall = new broadcastObj("ADMIN.OVERRIDE", "bcfreezeall", 100, "0", "0");
+var bcsystemscan = new broadcastObj("System Diagnostics", "hack/bcsystemscan", 88, "30000", "0");
+var bcfreezeall = new broadcastObj("ADMIN.OVERRIDE", "hack/bcfreezeall", 100, "0", "gray");
 
 /* VIDEOS */
 var bcspoilervideo = new broadcastObj("VID.TRANSMISSION","videos/bcspoilervideo",9,"0","0");
