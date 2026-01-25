@@ -1,6 +1,9 @@
 let globalAppName = '';
 let globalAppDescription = '';
 let globalTagline = '';
+let globalICDateEnabled = false;
+let globalYearOffset = 0;
+
 
 $(document).ready(function () {
 
@@ -21,8 +24,9 @@ $(document).ready(function () {
   if (document.getElementById('main')) observer.observe(document.getElementById('main'), { childList: true, subtree: true });
 
   /* update all titles, descriptions and the IP adress upper right on load.*/
-  socket.on('startConfig', function (port, appName, appDescription, appTagline) {
-    globalAppName = appName;
+  socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled, yearOffset) {
+    globalICDateEnabled = ICDateEnabled;
+    globalYearOffset = yearOffset;
     globalAppDescription = appDescription;
     globalTagline = appTagline;
     $('#localIP').html(`MNET\\J2405130:${port}`);
@@ -44,6 +48,6 @@ $(document).ready(function () {
 
   /* First time? Load the mainscreen in after 2500ms..*/
   setTimeout(function () {
-    navigate('mainScreen');
+    navigate('mainScreen',globalICDateEnabled, globalYearOffset);
   }, 2500);
 });

@@ -19,12 +19,17 @@ var loopSoundCounter = 1
 var loopSoundTimer
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
-function navigate(target) {
+function navigate(target, icDateEnabled, yearOffset) {
   if (target != "") {
     $('#main').empty().load(target + '.html');
   }
-  /* At the loading of the MAIN SCREEN we get the perfect oppertunity to do an async time. We can't do this in the time function itself, as that keeps refreshing every 1s*/
-  getEosICTime()
+  /* At the loading of the MAIN SCREEN we get the perfect opportunity to do an async time. We can't do this in the time function itself, as that keeps refreshing every 1s*/
+  if (icDateEnabled) {
+    getEosICTime();
+  }
+  if (!icDateEnabled){
+    getOCDate(yearOffset);
+  }
 }
 
 /* flashblocks causes a "flash" effect inside the boxes spread over beacon, when for example, a broadcast is received.
@@ -501,12 +506,41 @@ function updateClock() {
   icdateCache.html(icdate);
 }
 
-async function getEosICTime() {
-  fetch(eosTimeAPI)
-    .then(response => response.json())
-    .then(data => { eosIcDateCache = data });
+async function getOCDate(yearOffset = 0) {
+// We create a "Fake" fetch by resolving a Promise immediately
+    return Promise.resolve().then(() => {
+        const now = new Date();
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const months = ['january', 'february', 'march', 'april', 'may', 'june', 
+                        'july', 'august', 'september', 'october', 'november', 'december'];
+
+        const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+        // This is the data object that emulates your API response
+        return {
+            "iYear": now.getFullYear() + yearOffset,
+            "iYearBefore": "",
+            "iYearAfter": "",
+            "iDay": now.getDate(),
+            "iMonth": now.getMonth() + 1,
+            "iDayOfWeek": dayOfWeek,
+            "iDayName": days[now.getDay()],
+            "iMonthName": months[now.getMonth()]
+        };
+    })
+    .then(data => { 
+        // Performs the assignment inside the function exactly like the original
+        eosIcDateCache = data; 
+    });
 }
 
+
+async function getEosICTime() {
+    fetch(eosTimeAPI)
+      .then(response => response.json())
+      .then(data => { eosIcDateCache = data });
+}
+// console.log("IC Date: ". eosIcDateCache);
 // Function to register video variables globally without necessarily building buttons
 async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.items') {
   try {

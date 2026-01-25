@@ -49,6 +49,8 @@ const defaultSecurityLevel = globalSettings.data.defaultSecurityLevel || 'Code g
 const defaultAppName = globalSettings.cfg.appname || 'BEACON';
 const defaultAppDescription = globalSettings.cfg.appdescription || 'broadcasting & information services. Powered by EOS IT.';
 const defaultAppTagline = globalSettings.cfg.tagline || 'Have a productive day.';
+const defaultICDateEnabled = globalSettings.sys.ICDateEnabled || false;
+const defaultYearOffset = globalSettings.sys.yearOffset || 0;
 
 
 const applicationState = {
@@ -61,6 +63,7 @@ const applicationState = {
   appName: defaultAppName,
   appDescription: defaultAppDescription,
   appTagline: defaultAppTagline,
+  ICDateEnabled: globalSettings.sys.ICDateEnabled,
 };
 
 // Init: routing
@@ -149,7 +152,7 @@ io.on('connection', (socket) => {
   console.log(`\t[IO] ${applicationState.countClients} active client(s).`);
 
   // initial configdata
-  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline), 1000);
+  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline, defaultICDateEnabled, defaultYearOffset), 1000);
 
   socket.on('updateSecurity', (input) => {
     const _str = sanitizeUserString(input);
@@ -307,5 +310,3 @@ io.on('connection', (socket) => {
   }
 
 });
-
-
