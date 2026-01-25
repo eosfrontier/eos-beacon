@@ -82,6 +82,7 @@ var bcsystemscan = new broadcastObj("System Diagnostics", "hack/bcsystemscan", 8
 var bcfreezeall = new broadcastObj("ADMIN.OVERRIDE", "hack/bcfreezeall", 100, "0", "gray");
 
 /* VIDEOS */
-var bcspoilervideo = new broadcastObj("SUNDAY TIME OUT BROADCAST","videos/bcspoilervideo",9,"0","0");
-var bcvoti = new broadcastObj("Voice of the Imperium","videos/bcvoti",9,"0","0");
-var bczorski = new broadcastObj("Zorski Velocity League","videos/bczorski",9,"0","0");
+/* Video Variables are now auto-generated. Simply place an html file in the videos folder that will autoplay your video. 
+IMPORTANT: Your file must contain an HTML <title> tag.
+This will be used to auto-generate the button name.
+*/

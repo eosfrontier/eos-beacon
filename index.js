@@ -41,30 +41,43 @@ app.get('/', (req, res) =>
   res.sendFile('index.html', { root: __dirname + '/public/' })
 );
 app.get('/get-video-broadcasts', (req, res) => {
-    // Construct the path
     const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
     
-    // DEBUG: This will print in your VS Code / Command Prompt terminal
-    console.log("--- Directory Scan Request ---");
-    console.log("Target Path:", directoryPath);
-
-    if (!fs.existsSync(directoryPath)) {
-        console.error("ERROR: Path does not exist!");
-        return res.status(404).json({ error: "Folder not found", path: directoryPath });
-    }
-
     fs.readdir(directoryPath, (err, files) => {
-        if (err) {
-            console.error("Read Error:", err);
-            return res.status(500).json({ error: err.message });
-        }
-        
-        const keys = files
+        if (err) return res.status(500).json([]);
+
+        // Map files to a list of Promises so we can read them all at once
+        const promises = files
             .filter(file => file.endsWith('.html'))
-            .map(file => file.replace('.html', ''));
-            
-        console.log("Found Files:", keys);
-        res.json(keys);
+            .map(file => {
+                return new Promise((resolve) => {
+                    const filePath = path.join(directoryPath, file);
+                    const key = file.replace('.html', '');
+
+                    fs.readFile(filePath, 'utf8', (err, content) => {
+                        let title = "Untitled Broadcast";
+                        if (!err) {
+                            // Match content between <title> and </title>
+                            const match = content.match(/<title>(.*?)<\/title>/i);
+                            if (match && match[1]) title = match[1];
+                        }
+                        
+                        // Return the data object for this broadcast
+                        resolve({
+                            key: key,
+                            title: title,
+                            file: `videos/${key}`, // Matches your old manual path
+                            priority: 9,
+                            duration: "0",
+                            colorscheme: "0"
+                        });
+                    });
+                });
+            });
+
+        Promise.all(promises).then(broadcastData => {
+            res.json(broadcastData);
+        });
     });
 });
 app.get('*', (req, res) =>

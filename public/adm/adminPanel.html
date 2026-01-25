@@ -273,40 +273,53 @@
       </button>
     </div>
 
-    <div class="items" id="video-button-container">
-    </div>
+    <div class="items">
+      <!-- <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcspoilervideo);">
+        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;SUNDAY TIME OUT BROADCAST
+      </button> -->
+      <!-- <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcvoti);">
+        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Voice of the Imperium
+      </button>
+      <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bczorski);">
+        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Zorski Velocity League
+      </button> -->
+      <script>
+        function loadBroadcastButtons() {
+          fetch('/get-video-broadcasts')
+            .then(res => res.json())
+            .then(broadcasts => {
+              const container = document.querySelector('.items');
+              container.innerHTML = '';
 
-    <script>
-      // Wait for everything (like broadcasts.js) to load first
-      window.addEventListener('load', function () {
-        fetch('/get-video-broadcasts')
-          .then(response => response.json())
-          .then(keys => {
-            const container = document.getElementById('video-button-container');
+              broadcasts.forEach(data => {
+                // --- THE MAGIC LINE ---
+                // This creates window.bcvoti, window.bczorski, etc. globally.
+                window[data.key] = new broadcastObj(
+                  data.title,
+                  data.file,
+                  data.priority,
+                  data.duration,
+                  data.colorscheme
+                );
 
-            keys.forEach(key => {
-              // IMPORTANT: This looks for 'var bcvoti' in your global scope
-              const obj = window[key];
-
-              if (obj) {
+                // Create the button using the newly created global variable
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-ui btn-ui-holo';
-                btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${obj.title}`;
+                btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
 
-                // Set up the click to call your existing function
-                btn.onclick = function () {
-                  sendBroadCast(obj);
-                };
+                // Reference the global variable we just created
+                btn.onclick = () => sendBroadCast(window[data.key]);
 
                 container.appendChild(btn);
-              } else {
-                console.warn(`Variable window['${key}'] not found! Make sure it's in broadcasts.js`);
-              }
+              });
+
+              console.log("Broadcast variables auto-generated:", broadcasts.map(b => b.key));
             });
-          })
-          .catch(err => console.error("Fetch error:", err));
-      });
-    </script>
+        }
+
+        window.addEventListener('load', loadBroadcastButtons);
+      </script>
+    </div>
 
 
 
