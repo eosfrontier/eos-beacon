@@ -111,7 +111,13 @@ io.on('connection', (socket) => {
   socket.on('requestDynamicData', () => syncConnectionCounter());
 
   socket.on('broadcastSend', (value) => {
-    applicationState['lastBC'] = value.file;
+    // If value.file contains a slash, only take the part after the last one
+    // Otherwise, just use value.file as is
+    const cleanBCName = value.file.includes('/') 
+        ? value.file.split('/').pop() 
+        : value.file;
+
+    applicationState['lastBC'] = cleanBCName;
 
     syncAppState();
     io.emit('broadcastReceive', value);
