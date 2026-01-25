@@ -14,6 +14,8 @@ const defaultSecurityLevel = globalSettings.data.defaultSecurityLevel || 'Code g
 
 const defaultAppName = globalSettings.cfg.appname || 'BEACON';
 const defaultAppDescription = globalSettings.cfg.appdescription || 'broadcasting & information services. Powered by EOS IT.';
+const defaultAppTagline = globalSettings.cfg.tagline || 'Have a productive day.';
+
 
 const applicationState = {
   countClients: 0,
@@ -23,6 +25,8 @@ const applicationState = {
   orbStatus: 'active',
   voiceEnabled: globalSettings.sys.voiceEnabled,
   appName: defaultAppName,
+  appDescription: defaultAppDescription,
+  appTagline: defaultAppTagline,
 };
 
 // Init: routing
@@ -71,7 +75,7 @@ io.on('connection', (socket) => {
   console.log(`\t[IO] ${applicationState.countClients} active client(s).`);
 
   // initial configdata
-  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription), 1000);
+  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline), 1000);
 
   socket.on('updateSecurity', (input) => {
     const _str = sanitizeUserString(input);
