@@ -5,10 +5,16 @@ const io = require('socket.io')(http);
 const fs = require('fs');
 const globalSettings = require('./config.js');
 
+app.set('view engine', 'ejs');
+
 // Defaults
 const port = process.env.PORT || globalSettings.sys.port;
 
-const defaultSecurityLevel = 'Code green - All clear';
+const defaultSecurityLevel = globalSettings.data.defaultSecurityLevel || 'Code green - All clear';
+
+const defaultAppName = globalSettings.cfg.appname || 'BEACON';
+const defaultAppDescription = globalSettings.cfg.appdescription || 'broadcasting & information services. Powered by EOS IT.';
+
 const applicationState = {
   countClients: 0,
   alertLevel: defaultSecurityLevel,
@@ -16,6 +22,7 @@ const applicationState = {
   portalStatus: 'ok',
   orbStatus: 'active',
   voiceEnabled: globalSettings.sys.voiceEnabled,
+  appName: defaultAppName,
 };
 
 // Init: routing
@@ -64,7 +71,7 @@ io.on('connection', (socket) => {
   console.log(`\t[IO] ${applicationState.countClients} active client(s).`);
 
   // initial configdata
-  setTimeout(() => socket.emit('startConfig', port), 1000);
+  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription), 1000);
 
   socket.on('updateSecurity', (input) => {
     const _str = sanitizeUserString(input);

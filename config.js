@@ -1,7 +1,7 @@
 /* configuration. */
 SYSTEM_DETAILS = {
   appname : 'BEACON',
-  appdescription : '/ EOS BASTION INFORMATION SERVICE',
+  appdescription : 'broadcasting & information services. Powered by EOS IT.',
 }
 
 /* system settings: This can generally be left alone. */
@@ -31,10 +31,10 @@ at this time, 1 = general use, 2 = medical, 3 = customs, 4 = admin
 
 */
 const VALID_ACCOUNTS = [
-  new accountObj('10191', '1'),
-  new accountObj('61021', '2'),
-  new accountObj('15101', '3'),
-  new accountObj('34471', '4'),
+  // new accountObj('10191', '1'),
+  // new accountObj('61021', '2'),
+  // new accountObj('15101', '3'),
+  new accountObj('47747', '4'),
 ];
 
 /* Send config/settings to main server (( index.js )) */
