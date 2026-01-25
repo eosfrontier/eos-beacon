@@ -24,6 +24,7 @@ $(document).ready(function () {
   socket.on('startConfig', function (port, appName, appDescription, appTagline) {
     globalAppName = appName;
     globalAppDescription = appDescription;
+    globalAppName = appName;
     globalTagline = appTagline;
     $('#localIP').html(`MNET\\J2405130:${port}`);
     if (appName) {
