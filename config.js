@@ -9,6 +9,8 @@ SYSTEM_DETAILS = {
 SYSTEM_SETTINGS = {
   port: 5001, /* declares which port BEACON will run on. By default: 5000. */
   voiceEnabled: true,
+  ICDateEnabled: true,
+  yearOffset: 0, //Used when ICDateEnabled is False, if you want to +/- the year
 }
 
 /* Settings for defaults that appear on screen. For example, the default security level */
