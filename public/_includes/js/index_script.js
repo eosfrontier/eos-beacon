@@ -35,15 +35,15 @@ $(document).ready(function () {
     }
   });
 
-      /* ForceReset. F5'd the page.*/
-      socket.on('F5', function () {
+  /* ForceReset. F5'd the page.*/
+  socket.on('F5', function () {
 
-        socket.disconnect();
-        location.reload();
-      });
+    socket.disconnect();
+    location.reload();
+  });
 
-      /* First time? Load the mainscreen in after 2500ms..*/
-      setTimeout(function () {
-        navigate('mainScreen');
-      }, 2500);
-    });
+  /* First time? Load the mainscreen in after 2500ms..*/
+  setTimeout(function () {
+    navigate('mainScreen');
+  }, 2500);
+});

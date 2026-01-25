@@ -272,53 +272,8 @@
         <i class="fa fa-file-video-o"></i>&nbsp;END TRANSMISSION SCREEN
       </button>
     </div>
-
-    <div class="items">
-      <!-- <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcspoilervideo);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;SUNDAY TIME OUT BROADCAST
-      </button> -->
-      <!-- <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcvoti);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Voice of the Imperium
-      </button>
-      <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bczorski);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Zorski Velocity League
-      </button> -->
-      <script>
-        function loadBroadcastButtons() {
-          fetch('/get-video-broadcasts')
-            .then(res => res.json())
-            .then(broadcasts => {
-              const container = document.querySelector('.items');
-              container.innerHTML = '';
-
-              broadcasts.forEach(data => {
-                // --- THE MAGIC LINE ---
-                // This creates window.bcvoti, window.bczorski, etc. globally.
-                window[data.key] = new broadcastObj(
-                  data.title,
-                  data.file,
-                  data.priority,
-                  data.duration,
-                  data.colorscheme
-                );
-
-                // Create the button using the newly created global variable
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-ui btn-ui-holo';
-                btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
-
-                // Reference the global variable we just created
-                btn.onclick = () => sendBroadCast(window[data.key]);
-
-                container.appendChild(btn);
-              });
-
-              console.log("Broadcast variables auto-generated:", broadcasts.map(b => b.key));
-            });
-        }
-
-        window.addEventListener('load', loadBroadcastButtons);
-      </script>
+    </br>
+    <div id="auto-video-list" class="items">
     </div>
 
 
@@ -492,6 +447,28 @@
 
 
 <script>
-// On the backend panel
-syncVideoBroadcasts(true);
+
+
+  $(document).ready(function () {
+    $('button').on('click', function (e) {
+
+      /* extra scripts: add a modifier to prevent disabled buttons from being used regardless. */
+      if ($(this).attr('disabled')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+
+      /* disable buttons temporarily to prevent spamming */
+      $('button').addClass('disabled').attr("disabled", true);
+
+      /* remove the disabled modifier after an XXXX amount of miliseconds. */
+      setTimeout(function () {
+        $('button').removeClass('disabled').attr("disabled", false);
+        $('#main').find('.adm-tab').removeClass('flash');
+      }, 3500);
+    });
+
+  });
+  // On the backend panel
+  syncVideoBroadcasts(true, '#auto-video-list');
 </script>

@@ -508,37 +508,36 @@ async function getEosICTime() {
 }
 
 // Function to register video variables globally without necessarily building buttons
-async function syncVideoBroadcasts(buildButtons = false) {
-    try {
-        const response = await fetch('/get-video-broadcasts');
-        const broadcasts = await response.json();
+async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.items') {
+  try {
+    const response = await fetch('/get-video-broadcasts');
+    const broadcasts = await response.json();
 
-        broadcasts.forEach(data => {
-            // Register the variable globally on whatever page we are on
-            window[data.key] = new broadcastObj(
-                data.title, 
-                data.file, 
-                data.priority, 
-                data.duration, 
-                data.colorscheme
-            );
+    broadcasts.forEach(data => {
+      // Register the variable globally
+      window[data.key] = new broadcastObj(
+        data.title,
+        data.file,
+        data.priority,
+        data.duration,
+        data.colorscheme
+      );
 
-            // If we are on the backend panel, build the buttons
-            if (buildButtons) {
-                const container = document.querySelector('.items');
-                if (container) {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn btn-ui btn-ui-holo';
-                    btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
-                    btn.onclick = () => sendBroadCast(window[data.key]);
-                    container.appendChild(btn);
-                }
-            }
-        });
+      if (buildButtons) {
+        // Now uses the specific container we passed in
+        const container = document.querySelector(targetContainer);
+        if (container) {
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-ui btn-ui-holo';
+          btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
+          btn.onclick = () => sendBroadCast(window[data.key]);
+          container.appendChild(btn);
+        }
+      }
+    });
 
-        // Tell the Socket listener it's safe to proceed
-        window.dispatchEvent(new Event('broadcastsLoaded'));
-    } catch (e) {
-        console.error("Failed to sync broadcasts", e);
-    }
+    window.dispatchEvent(new Event('broadcastsLoaded'));
+  } catch (e) {
+    console.error("Failed to sync broadcasts", e);
+  }
 }
