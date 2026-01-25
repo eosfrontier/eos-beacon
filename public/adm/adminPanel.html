@@ -492,26 +492,6 @@
 
 
 <script>
-
-
-  $(document).ready(function () {
-    $('button').on('click', function (e) {
-
-      /* extra scripts: add a modifier to prevent disabled buttons from being used regardless. */
-      if ($(this).attr('disabled')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-      }
-
-      /* disable buttons temporarily to prevent spamming */
-      $('button').addClass('disabled').attr("disabled", true);
-
-      /* remove the disabled modifier after an XXXX amount of miliseconds. */
-      setTimeout(function () {
-        $('button').removeClass('disabled').attr("disabled", false);
-        $('#main').find('.adm-tab').removeClass('flash');
-      }, 3500);
-    });
-
-  });
+// On the backend panel
+syncVideoBroadcasts(true);
 </script>

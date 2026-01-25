@@ -9,6 +9,38 @@ const path = require('path');
 
 app.set('view engine', 'ejs');
 
+// 1. Create a function that handles the initialization
+async function initializeBroadcastSystem() {
+    try {
+        // 2. Fetch the data FIRST. This "blocks" the rest of this function.
+        const response = await fetch('/get-video-broadcasts');
+        const broadcasts = await response.json();
+
+        // 3. Register the variables globally
+        broadcasts.forEach(data => {
+            window[data.key] = new broadcastObj(
+                data.title, 
+                data.file, 
+                data.priority, 
+                data.duration, 
+                data.colorscheme
+            );
+        });
+
+        console.log("Initialization Complete: Variables registered.");
+
+        // 4. NOW call the function that handles 'lastBC'
+        // This is where you likely call syncAppState() or similar.
+        startAppLogic(); 
+
+    } catch (err) {
+        console.error("System failed to initialize:", err);
+    }
+}
+
+// Start the sequence as soon as the script loads
+initializeBroadcastSystem();
+
 // Defaults
 const port = process.env.PORT || globalSettings.sys.port;
 
@@ -79,7 +111,7 @@ app.get('/get-video-broadcasts', (req, res) => {
             res.json(broadcastData);
         });
     });
-});
+}); 
 app.get('*', (req, res) =>
   res.sendFile('404.html', { root: __dirname + '/public/' })
 );
