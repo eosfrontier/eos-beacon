@@ -27,6 +27,7 @@ $(document).ready(function () {
   socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled, yearOffset) {
     globalICDateEnabled = ICDateEnabled;
     globalYearOffset = yearOffset;
+    globalAppName = appName;
     globalAppDescription = appDescription;
     globalTagline = appTagline;
     $('#localIP').html(`MNET\\J2405130:${port}`);

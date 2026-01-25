@@ -19,8 +19,8 @@ function broadcastObj(title, file, priority, duration, colorscheme) {
 }
 
 /* System broadcasts */
-var bcdefault = new broadcastObj("Standby", "bcdefault", 1, "0", "0");
-var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "0");
+var bcdefault = new broadcastObj("Standby", "bcdefault", 1, "0", "tal");
+var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
 var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 2, "0", "0");
@@ -46,10 +46,10 @@ var bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 1, "
 var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 1, "10800000", "gray");
 
 /* hazards */
-var bcviral = new broadcastObj("Unknown Viral Pathogens detected", "bcviral", 8, "0", "hazard");
-var bcbiohazard = new broadcastObj("Environmental Hazard detected", "bcbiohazard", 8, "0", "hazard");
-var bcpsyhazard = new broadcastObj("Psy-hazard detected", "bcpsyhazard", 8, "0", "psyhazard");
-var bcbomb = new broadcastObj("Bomb Alert", "bcbomb", 8, "0", "hazard");
+var bcviral = new broadcastObj("Unknown Viral Pathogens detected", "hazards/bcviral", 8, "0", "hazard");
+var bcbiohazard = new broadcastObj("Environmental Hazard detected", "hazards/bcbiohazard", 8, "0", "hazard");
+var bcpsyhazard = new broadcastObj("Psy-hazard detected", "hazards/bcpsyhazard", 8, "0", "psyhazard");
+var bcbomb = new broadcastObj("Bomb Alert", "hazards/bcbomb", 8, "0", "hazard");
 
 /* Shield-Orb */
 var bcorbactivate = new broadcastObj("Orb reactivation", "orb/bcorbactivate", 8, "45000", "0");

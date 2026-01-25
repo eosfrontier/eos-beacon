@@ -184,7 +184,7 @@
     setCookie('usercode',keycode,'1');
     setCookie('rank',loginRank,'1');
     $('#cPanel').load('/adm/cpanel.html');
-    navigate('/adm/adminPanel');
+    navigate('/adm/adminPanel',icDateEnabled);
   });
 
   $(document).ready(function() {
@@ -192,7 +192,8 @@
     const admUSER = getCookie('usercode');
 
     /* update all titles and descriptions on load.*/
-    socket.on('startConfig', function (port, appName, appDescription) {
+    socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled) {
+      icDateEnabled = ICDateEnabled;
       if (appName && appDescription) {
         const titleText = appName + ' - ' + appDescription;
         document.title = titleText;
@@ -227,9 +228,8 @@
     /* on pageload: if the user is already logged in, load the adminpanel. */
     if(admAUTH == 'TRUE') {
       $('#cPanel').load('/adm/cpanel.html');
-      navigate('/adm/adminPanel');
+      navigate('/adm/adminPanel',icDateEnabled);
     }
-    
   });
 
 

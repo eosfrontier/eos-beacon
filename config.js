@@ -1,14 +1,16 @@
 /* configuration. */
 SYSTEM_DETAILS = {
-  appname: 'BEACON',
-  appdescription: 'broadcasting & information services. Powered by EOS IT.',
-  tagline: 'Have a productive day.',
+  appname: 'AMORE',
+  appdescription: 'Affection Management & Organic Relationship Engine. Powered by The Department of Marriage.',
+  tagline: 'Matches made, destinies delivered.',
 }
 
 /* system settings: This can generally be left alone. */
 SYSTEM_SETTINGS = {
   port: 5001, /* declares which port BEACON will run on. By default: 5000. */
   voiceEnabled: true,
+  ICDateEnabled: false,
+  yearOffset: 3, //Used with OC Date to move us into the future or past
 }
 
 /* Settings for defaults that appear on screen. For example, the default security level */
