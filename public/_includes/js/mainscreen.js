@@ -61,7 +61,6 @@ $(document).ready(function () {
 
         if (dynamicData.voiceEnabled) {
           const _element = $('#_extra');
-          
           _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js\">');
           _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js\">');
           _element.append('<script src="./_includes/js/pa.js">');
@@ -70,6 +69,10 @@ $(document).ready(function () {
 
         broadCast(window[dynamicData['lastBC']]);
         initialized = 1;
+      }
+         // Update App Name from config
+      if (dynamicData.appName) {
+        document.title = dynamicData.appName;
       }
     });
 
@@ -144,8 +147,3 @@ $(document).ready(function () {
       setInterval('updateClock()', 1000);
     });
   });
-
-   // Update App Name from config
-      if (dynamicData.appName) {
-        document.title = dynamicData.appName;
-      } 
