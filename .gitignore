@@ -5,3 +5,5 @@
 /public/sounds/audio-dave
 /public/sounds/audio-misc
 LOGS/eventlog.txt
+*.mp4
+*.mov
