@@ -4,6 +4,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
 const globalSettings = require('./config.js');
+const path = require('path');
+
 
 app.set('view engine', 'ejs');
 
@@ -38,6 +40,33 @@ app.use(express.static('_includes'));
 app.get('/', (req, res) =>
   res.sendFile('index.html', { root: __dirname + '/public/' })
 );
+app.get('/get-video-broadcasts', (req, res) => {
+    // Construct the path
+    const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
+    
+    // DEBUG: This will print in your VS Code / Command Prompt terminal
+    console.log("--- Directory Scan Request ---");
+    console.log("Target Path:", directoryPath);
+
+    if (!fs.existsSync(directoryPath)) {
+        console.error("ERROR: Path does not exist!");
+        return res.status(404).json({ error: "Folder not found", path: directoryPath });
+    }
+
+    fs.readdir(directoryPath, (err, files) => {
+        if (err) {
+            console.error("Read Error:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        
+        const keys = files
+            .filter(file => file.endsWith('.html'))
+            .map(file => file.replace('.html', ''));
+            
+        console.log("Found Files:", keys);
+        res.json(keys);
+    });
+});
 app.get('*', (req, res) =>
   res.sendFile('404.html', { root: __dirname + '/public/' })
 );
@@ -233,3 +262,5 @@ io.on('connection', (socket) => {
   }
 
 });
+
+

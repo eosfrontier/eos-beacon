@@ -82,6 +82,6 @@ var bcsystemscan = new broadcastObj("System Diagnostics", "hack/bcsystemscan", 8
 var bcfreezeall = new broadcastObj("ADMIN.OVERRIDE", "hack/bcfreezeall", 100, "0", "gray");
 
 /* VIDEOS */
-var bcspoilervideo = new broadcastObj("VID.TRANSMISSION","videos/bcspoilervideo",9,"0","0");
-var bcvoti = new broadcastObj("VID.TRANSMISSION","videos/bcvoti",9,"0","0");
-var bczorski = new broadcastObj("VID.TRANSMISSION","videos/bczorski",9,"0","0");
+var bcspoilervideo = new broadcastObj("SUNDAY TIME OUT BROADCAST","videos/bcspoilervideo",9,"0","0");
+var bcvoti = new broadcastObj("Voice of the Imperium","videos/bcvoti",9,"0","0");
+var bczorski = new broadcastObj("Zorski Velocity League","videos/bczorski",9,"0","0");

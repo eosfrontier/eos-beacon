@@ -34,8 +34,8 @@
     <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcsunscreen);">
       <i class="fa fa-fire-extinguisher"></i>&nbsp;SUNSCREEN REMINDER
     </button>
-    </div>
-    <div class="col-xs-12">
+  </div>
+  <div class="col-xs-12">
     <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcthankyou);">
       <i class="fa fa-thumbs-up"></i>&nbsp;KINDNESS REMINDER
     </button>
@@ -273,17 +273,40 @@
       </button>
     </div>
 
-    <div class="items">
-      <!-- <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcspoilervideo);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;SUNDAY TIME OUT BROADCAST
-      </button> -->
-      <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcvoti);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Voice of the Imperium
-      </button>
-      <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bczorski);">
-        <i class="fa fa-film"></i>&nbsp;IC:&nbsp;Zorski Velocity League
-      </button>
+    <div class="items" id="video-button-container">
     </div>
+
+    <script>
+      // Wait for everything (like broadcasts.js) to load first
+      window.addEventListener('load', function () {
+        fetch('/get-video-broadcasts')
+          .then(response => response.json())
+          .then(keys => {
+            const container = document.getElementById('video-button-container');
+
+            keys.forEach(key => {
+              // IMPORTANT: This looks for 'var bcvoti' in your global scope
+              const obj = window[key];
+
+              if (obj) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-ui btn-ui-holo';
+                btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${obj.title}`;
+
+                // Set up the click to call your existing function
+                btn.onclick = function () {
+                  sendBroadCast(obj);
+                };
+
+                container.appendChild(btn);
+              } else {
+                console.warn(`Variable window['${key}'] not found! Make sure it's in broadcasts.js`);
+              }
+            });
+          })
+          .catch(err => console.error("Fetch error:", err));
+      });
+    </script>
 
 
 
@@ -332,7 +355,7 @@
     <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcportalout);">
       <i class="fa fa-cloud-upload"></i>&nbsp;PORTAL OUTGOING
     </button>
-<!--
+    <!--
     <p>Broadcasts with Voice:</p>
 
     <button class="btn btn-lg btn-ui btn-ui-holo" onclick="sendBroadCast(bcportalinc_voice);">
@@ -378,28 +401,28 @@
 <div id="admMEDICAL" class="adm-tab default-border hidden col-xs-12">
   <h2><i class="fa fa-terminal"></i>&nbsp;Medical panel</h2>
 
-  <hr/>
+  <hr />
 
   <div class="col-xs-12">
     <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
       <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
     </button>
-    <br/><br/>
+    <br /><br />
   </div>
 
-    <div class="col-xs-12">
-      <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcmedical);">
-        <i class="fa fa-medkit"></i>&nbsp;REQUEST BLOOD DONATIONS
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcblood);">
-        <i class="fa fa-medkit"></i>&nbsp;DEMAND BLOOD DONATIONS
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
-        <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedicalsupport);">
-        <i class="fa fa-medkit"></i>&nbsp;NOT ENOUGH DOCTORS
-      </button>
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcmedical);">
+      <i class="fa fa-medkit"></i>&nbsp;REQUEST BLOOD DONATIONS
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcblood);">
+      <i class="fa fa-medkit"></i>&nbsp;DEMAND BLOOD DONATIONS
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
+      <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedicalsupport);">
+      <i class="fa fa-medkit"></i>&nbsp;NOT ENOUGH DOCTORS
+    </button>
   </div>
 
 </div>
@@ -425,7 +448,8 @@
       <i class="fa fa-cloud-download"></i>&nbsp;(re)-activate Orb
     </button>
 
-    <button class="btn btn-lg btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcorbcooldown); updateOrbStatus('inactive');">
+    <button class="btn btn-lg btn-ui btn-ui-holo-red"
+      onclick="sendBroadCast(bcorbcooldown); updateOrbStatus('inactive');">
       <i class="fa fa-cloud-download"></i>&nbsp;de-activate Orb
     </button>
 
@@ -455,7 +479,7 @@
 
 
 <script>
-  
+
 
   $(document).ready(function () {
     $('button').on('click', function (e) {
