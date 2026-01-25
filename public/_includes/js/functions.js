@@ -71,7 +71,7 @@ function broadCast(location) {
   if (location['file'] == null) location['file'] = "404";
   if (location['priority'] == null) location['priority'] = "1";
   if (location['duration'] == null) location['duration'] = "0";
-  if (location['colorscheme'] == null) location['colorscheme'] = "0";
+  if (location['colorscheme'] == null) location['colorscheme'] = "tal";
 
 
   /* checks if anything is set in the broadcast call. */
@@ -554,7 +554,7 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
         data.file,
         data.priority,
         data.duration,
-        data.colorscheme
+        data.colorscheme = "tal"
       );
 
       if (buildButtons) {

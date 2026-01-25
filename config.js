@@ -10,7 +10,7 @@ SYSTEM_SETTINGS = {
   port: 5001, /* declares which port BEACON will run on. By default: 5000. */
   voiceEnabled: true,
   ICDateEnabled: false,
-  yearOffset: 3, //Used with OC Date to move us into the future or past
+  yearOffset: 44, //Used with OC Date to move us into the future or past
 }
 
 /* Settings for defaults that appear on screen. For example, the default security level */
