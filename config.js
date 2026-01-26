@@ -7,7 +7,7 @@ SYSTEM_DETAILS = {
 
 /* system settings: This can generally be left alone. */
 SYSTEM_SETTINGS = {
-  port: 5001, /* declares which port BEACON will run on. By default: 5000. */
+  port: 5009, /* declares which port BEACON will run on. By default: 5000. */
   voiceEnabled: true,
   ICDateEnabled: false,
   yearOffset: 44, //Used with OC Date to move us into the future or past
