@@ -1,5 +1,11 @@
 @import '/_includes/bs3-css/bootstrap.min.css';
-@import '/_includes/bs3-css/font-awesome.min.css';
+@import '/_includes/bs3-css/fontawesome.min.css';
+@import '/_includes/bs3-css/fontawesome.min.css';
+@import '/_includes/bs3-css/fontawesome.css';
+@import '/_includes/bs3-css/brands.css';
+@import '/_includes/bs3-css/solid.css';
+@import '/_includes/bs3-css/sharp-thin.css';
+@import '/_includes/bs3-css/sharp-duotone-thin.css';
 @font-face {
   font-family: "Titillium-Regular";
   src: url(/_includes/fonts/Titillium-Regular.otf);
