@@ -983,3 +983,8 @@ p.text-lg,
 }
 
 /*# sourceMappingURL=style.css.map */
+
+/* TaL Customizations */
+div#portalstatus, div#orbstatus, div#portalstatusHeader, div#orbstatusHeader {
+    display: none !important;
+}
