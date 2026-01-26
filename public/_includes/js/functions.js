@@ -210,6 +210,11 @@ function invokeEldritchTruth() {
   socket.emit('broadcastAudio', '/sounds/audio-misc/1-welcome-video-lounge.mp3');
 }
 
+/* broadcast from adminpanel to index.js. Sends a "play this file!" request to every connected client. */
+function broadcastAudio(audiofile) {
+  socket.emit('broadcastAudio', audiofile);
+}
+
 /* functie om de duration toch wel werkend te krijgen - oftewel een broadcast CLEAREN na ingestelde tijd.*/
 function clearBroadcast(duration) {
   console.log('clear in :' + duration);
@@ -324,24 +329,61 @@ function loopSound(audiofile, repeatcount) {
 /* audio file functie apart */
 function generateBCaudio(audiofile) {
   console.log(audiofile);
-
+ 
   if ($(window).width() > 960) {
-
+ 
     /* cache the audio element if we haven't already. */
     if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
-
-    /* empty element, and refill it with the new audio. */
-    BCaudioCache.html('<audio id="generatedBCAUDIO" controls="controls" class="hidden">' // Assuming audiofile is already a full path like /sounds/...
-      + '<source src="' + audiofile + '">'
-      + '</audio>');
-
-    /* don't cache this selector, as it keeps being reborn. */
-    $('#generatedBCAUDIO').trigger('play');
-
+ 
+    const existingAudio = BCaudioCache.find('audio');
+ 
+    const playNewAudio = () => {
+      // Create new audio element, initially silent
+      const newAudio = $('<audio id="generatedBCAUDIO" controls="controls" class="hidden">'
+        + '<source src="' + audiofile + '">'
+        + '</audio>').get(0);
+ 
+      newAudio.volume = 0;
+      BCaudioCache.html(newAudio); // Replace previous audio element
+ 
+      $(newAudio).on('canplay', function() {
+        this.play();
+        // Fade in the volume
+        $(this).animate({ volume: 1 }, 999);
+      });
+    };
+ 
+    if (existingAudio.length > 0 && !existingAudio.get(0).paused) {
+      // An audio is playing, fade it out first.
+      existingAudio.animate({ volume: 0 }, 1500, function() {
+        $(this).remove();
+        playNewAudio();
+      });
+    } else {
+      // No audio is playing, just play the new one.
+      playNewAudio();
+    }
   }
 }
 
+function stopAllAudio() {
+  socket.emit('stopAllAudio');
+}
 
+
+socket.on('stopAllAudio', function() {
+  // Stop broadcast audio
+  if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
+  const existingAudio = BCaudioCache.find('audio');
+  if (existingAudio.length > 0 && !existingAudio.get(0).paused) {
+      // An audio is playing, fade it out first.
+      existingAudio.animate({ volume: 0 }, 1500, function() {
+        $(this).remove();
+      });
+    } else {
+      console.warn('No audio was playing');
+    }
+});
 
 /* portal status. */
 function updatePortalStatus(portalstatus) {

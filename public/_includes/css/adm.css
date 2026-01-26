@@ -23,6 +23,10 @@ html {
   border-bottom: 2px solid rgba(51, 153, 204, 0.2);
 }
 
+.btn-audio-file {
+    display: list-item;
+}
+
 .keypad-row .btn.btn-keypad {
   padding-top: 28px;
   padding-bottom: 28px;

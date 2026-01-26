@@ -39,16 +39,16 @@ $(document).ready(function() {
     nodes.forEach(node => {
       if (node.type === 'folder') {
         const $folder = $('<div>').addClass('audio-folder');
-        const $header = $('<div>').addClass('audio-folder-header').html(`<i class="fa fa-folder"></i>&nbsp;${node.name}`);
+        const $header = $('<div>').addClass('audio-folder-header').html(`<i class="fa fa-folder"></i>&nbsp;${node.name.replace('.mp3', '')}`);
         const $content = $('<div>').addClass('audio-folder-content').hide();
         $content.append(buildFileTree(node.children));
         $folder.append($header, $content);
         $list.append($folder);
       } else if (node.type === 'file') {
         const $fileButton = $('<button>')
-          .addClass('btn btn-default')
-          .html(`<i class="fa fa-file-audio-o"></i>&nbsp;${node.name}`)
-          .attr('onclick', `broadcastAudio("${node.path.replace('/sounds/', '')}");`);
+          .addClass('btn btn-default btn-audio-file')
+          .html(`<i class="fa fa-file-audio-o"></i>&nbsp;${node.name.replace('.mp3', '')}`)
+          .attr('onclick', `broadcastAudio("${node.path}");`);
         $list.append($fileButton);
       }
     });

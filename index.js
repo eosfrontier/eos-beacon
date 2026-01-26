@@ -239,6 +239,12 @@ io.on('connection', (socket) => {
     io.emit('playAudioFile', audiofile);
   });
 
+  /* broadcast from adminpanel to index.js. Sends a "stop all audio!" request to every connected client. */
+  socket.on('stopAllAudio', () => {
+    console.log('[audio] => stop all audio broadcasted');
+    io.emit('stopAllAudio');
+  });
+
   const readAudioDirectory = (dir) => {
     const dirents = fs.readdirSync(dir, { withFileTypes: true });
     const files = dirents.map((dirent) => {

@@ -253,6 +253,8 @@
     <h2>MEDIA[ VIDEO &amp; AUDIO ]</h2>
     <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-VID').fadeIn();">VIDEOS</div>
     <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-AUDIO').fadeIn();">AUDIO</div>
+    <div class="btn btn-danger" onclick="stopAllAudio();"><i class="fa fa-stop"></i>&nbsp;STOP AUDIO</div>
+    <div class="btn btn-danger" onclick="sendBroadCast(bcreset);"><i class="fa fa-stop"></i>&nbsp;STOP VIDEO</div>
   </div>
 
   <div id="OC-VID" class="hidden-block col-xs-12" style="display:none;">
