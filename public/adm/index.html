@@ -228,7 +228,7 @@
     /* on pageload: if the user is already logged in, load the adminpanel. */
     if(admAUTH == 'TRUE') {
       $('#cPanel').load('/adm/cpanel.html');
-      navigate('/adm/adminPanel',icDateEnabled);
+      navigate('/adm/adminPanel',false);
     }
   });
 

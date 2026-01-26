@@ -249,6 +249,7 @@ io.on('connection', (socket) => {
       var miscAudio = [];
 
       if (fs.existsSync('./public/sounds/audio-misc')) {
+        console.log("audio-misc exists...");
         fs.readdir('./public/sounds/audio-misc', (err, files) => {
           files.forEach((file) => {
             miscAudio.push(file);

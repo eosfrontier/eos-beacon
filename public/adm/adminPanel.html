@@ -254,7 +254,7 @@
     <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-VID').fadeIn();">VIDEOS</div>
     <!-- <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-ALICE').fadeIn();">AUDIO ALICE</div>
     <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-DAVE').fadeIn();">AUDIO DAVE</div> -->
-    <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-MISC').fadeIn();">AUDIO ANDERS</div>
+    <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-MISC').fadeIn();">AUDIO</div>
   </div>
 
   <div id="OC-VID" class="hidden-block col-xs-12" style="display:none;">
@@ -291,7 +291,7 @@
   </div>
 
   <div id="OC-MISC" class="hidden-block col-xs-12" style="display:none;">
-    <h4 class="items">Audio:misc</h4>
+    <h4 class="items">Audio</h4>
   </div>
 
 </div>
@@ -467,7 +467,14 @@
         $('#main').find('.adm-tab').removeClass('flash');
       }, 3500);
     });
+    socket.on('sendMediaMisc', function (resultArray) {
+      $(resultArray).each(function (key, value) {
 
+        var clickThis = " onclick=\"broadcastAudio(&apos;/audio-misc/" + value + "&apos;);\"";
+
+        $('#OC-MISC').append('<div class=\"btn btn-default\"' + clickThis + ' ><i class=\"fa fa-file-audio-o\"></i>&nbsp;' + value + '</div>');
+      });
+    }); 
   });
   // On the backend panel
   syncVideoBroadcasts(true, '#auto-video-list');
