@@ -208,6 +208,7 @@ function sendBroadCast(location) {
 
 function invokeEldritchTruth() {
   socket.emit('broadcastAudio', '/sounds/audio-misc/1-welcome-video-lounge.mp3');
+  broadcastAudio('/sounds/audio-misc/1-welcome-video-lounge.mp3');
 }
 
 /* broadcast from adminpanel to index.js. Sends a "play this file!" request to every connected client. */
@@ -349,7 +350,7 @@ function generateBCaudio(audiofile) {
       $(newAudio).on('canplay', function() {
         this.play();
         // Fade in the volume
-        $(this).animate({ volume: 1 }, 999);
+        $(this).animate({ volume: 1 }, 30);
       });
     };
  
@@ -616,4 +617,48 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
   } catch (e) {
     console.error("Failed to sync broadcasts", e);
   }
+}
+
+/**
+ * Plays a list of audio files sequentially.
+ * @param {string[]} audioFiles - An array of paths to the audio files.
+ */
+function playAudioPlaylist(audioFiles) {
+    let currentIndex = 0;
+
+    function playNext() {
+        if (currentIndex >= audioFiles.length) {
+            return; // All files have been played
+        }
+
+        const relativePath = audioFiles[currentIndex];
+        const fullPath = relativePath.startsWith('/') ? relativePath : '/sounds/' + relativePath;
+
+        // Create a temporary audio object to get the duration
+        const audio = new Audio();
+        audio.src = fullPath;
+
+        audio.addEventListener('loadedmetadata', () => {
+            // Broadcast the audio file to all clients
+            generateAudioPlayer(relativePath, 0);
+
+            // Wait for the duration of the current file before playing the next
+            // We add a small buffer (500ms) to ensure it finishes everywhere
+            const durationInMs = (audio.duration * 1000) + 500;
+
+            setTimeout(() => {
+                currentIndex++;
+                playNext();
+            }, durationInMs);
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.error(`Could not load audio metadata for ${fullPath}:`, e);
+            // Skip to the next file if there's an error
+            currentIndex++;
+            playNext();
+        });
+    }
+
+    playNext();
 }

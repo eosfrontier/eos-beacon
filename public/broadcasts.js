@@ -23,10 +23,15 @@ var bcdefault = new broadcastObj("Standby", "bcdefault", 1, "0", "tal");
 var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
-var bcbreakfast = new broadcastObj("Lunch announcement", "kitchen/bcbreakfast", 2, "0", "tal");
+var bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 2, "0", "tal");
+var bcbreakfast2 = new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 2, "0", "tal");
 var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 2, "0", "tal");
 var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 2, "0", "tal");
 var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 2, "0", "tal");
+
+/* Activities */
+var bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 99, "0", "tal");
+var implantcalibration1 = new broadcastObj("FIRST Match Implant Calibration", "activities/implantcalibration1", 99, "0", "tal");
 
 /* other PSA's */
 var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 2, "600000", "tal");
