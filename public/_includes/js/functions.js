@@ -207,7 +207,7 @@ function sendBroadCast(location) {
 }
 
 function invokeEldritchTruth() {
-  socket.emit('broadcastAudio', '/honk.ogg');
+  socket.emit('broadcastAudio', '/sounds/audio-misc/1-welcome-video-lounge.mp3');
 }
 
 /* functie om de duration toch wel werkend te krijgen - oftewel een broadcast CLEAREN na ingestelde tijd.*/

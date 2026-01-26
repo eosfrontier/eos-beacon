@@ -47,6 +47,7 @@ $(document).ready(function() {
   //   }
   // });
 
+  socket.emit('getMedia');
 });
 
 syncVideoBroadcasts(true, '#auto-video-list');

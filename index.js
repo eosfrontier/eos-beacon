@@ -249,10 +249,15 @@ io.on('connection', (socket) => {
     var miscAudio = [];
     if (fs.existsSync('./public/sounds/audio-misc')) {
       fs.readdir('./public/sounds/audio-misc', (err, files) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
         files.forEach(file => {
           miscAudio.push(file);
         });
         socket.emit('sendMediaMisc', miscAudio);
+        console.warn("MiscAudio: ", miscAudio);
       });
     }
 
