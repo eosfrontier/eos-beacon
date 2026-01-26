@@ -23,6 +23,7 @@ var bcdefault = new broadcastObj("Standby", "bcdefault", 1, "0", "tal");
 var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
+var bcbreakfast = new broadcastObj("Lunch announcement", "kitchen/bcbreakfast", 2, "0", "tal");
 var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 2, "0", "tal");
 var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 2, "0", "tal");
 var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 2, "0", "tal");

@@ -605,7 +605,7 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
         if (container) {
           const btn = document.createElement('button');
           btn.className = 'btn btn-ui btn-ui-holo';
-          btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
+          btn.innerHTML = `<i class="fa fa-file-video"></i>&nbsp;IC:&nbsp;${data.title}`;
           btn.onclick = () => sendBroadCast(window[data.key]);
           container.appendChild(btn);
         }

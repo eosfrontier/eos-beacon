@@ -23,8 +23,13 @@ html {
   border-bottom: 2px solid rgba(51, 153, 204, 0.2);
 }
 
+.audio-folder-header {
+    font-size: 2.2rem;
+}
+
 .btn-audio-file {
     display: list-item;
+    font-size: 2rem;
 }
 
 .keypad-row .btn.btn-keypad {

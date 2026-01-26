@@ -47,7 +47,7 @@ $(document).ready(function() {
       } else if (node.type === 'file') {
         const $fileButton = $('<button>')
           .addClass('btn btn-default btn-audio-file')
-          .html(`<i class="fa fa-file-audio-o"></i>&nbsp;${node.name.replace('.mp3', '')}`)
+          .html(`<i class="fa fa-file-audio"></i>&nbsp;${node.name.replace('.mp3', '')}`)
           .attr('onclick', `broadcastAudio("${node.path}");`);
         $list.append($fileButton);
       }

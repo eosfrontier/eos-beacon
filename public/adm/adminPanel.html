@@ -23,48 +23,25 @@
     <br /><br />
   </div>
 
-  <div class="col-xs-12">
-    <p>Class: Reminders, lowest priority</p>
-
-    <!-- <div class="col-xs-12">
-      <p>Class: Announcements</p> -->
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bchydrate);">
-      <i class="fa fa-coffee"></i>&nbsp;HYDRATION REMINDER
-    </button>
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcsunscreen);">
-      <i class="fa fa-fire-extinguisher"></i>&nbsp;SUNSCREEN REMINDER
-    </button>
-  </div>
-  <div class="col-xs-12">
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcthankyou);">
-      <i class="fa fa-thumbs-up"></i>&nbsp;KINDNESS REMINDER
-    </button>
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bctalon);">
-      <i class="fa fa-twitter"></i>&nbsp;TALON REMINDER
-    </button>
-  </div>
-  <div class="col-xs-12">
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcmorning);">
-      <i class="fa fa-sun-o"></i>&nbsp;MORNING REMINDER (10am)
-    </button>
-    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcgotobed);">
-      <i class="fa fa-bed"></i>&nbsp;SLEEP REMINDER (2am)
-    </button>
-  </div>
   <div class="whitespace">&nbsp;</div>
-  <div class="col-xs-12">
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcmeeting);">
+    <i class="fa fa-users"></i>&nbsp;GATHER ALL PARTICIPANTS
+  </button>
+  <!-- <div class="col-xs-12">
     <p>Class: Announcements, low priority</p>
     <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bctempleservice);">
       <i class="fa fa-bell"></i>&nbsp;TACHAR SERVICE
     </button>
   </div>
+</br> -->
   <div class="whitespace">&nbsp;</div>
-  <div class="col-xs-12">
+  <!-- <div class="col-xs-12">
     <p>Class: Medium priority.</p>
     <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
       <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
     </button>
   </div>
+</br>
 
   <div class="whitespace">&nbsp;</div>
   <div class="col-xs-12">
@@ -91,13 +68,43 @@
     </button>
     <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bchostileinside); ">
       <i class="fa fa-warning"></i>&nbsp;HOSTILES INSIDE
-    </button>
+    </button> -->
 
-  </div>
-  <div class="whitespace">&nbsp;</div>
+</div>
+<div class="whitespace">&nbsp;</div>
 
 </div>
 
+<div id="admREMINDERS" class="adm-tab default-border hidden col-xs-12">
+  <h2><i class="fa fa-terminal"></i>&nbsp;Reminders panel</h2>
+  <div class="col-xs-12">
+    <p>Class: Reminders, lowest priority</p>
+    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bchydrate);">
+      <i class="fa fa-coffee"></i>&nbsp;HYDRATION REMINDER
+    </button>  </br>
+  </div>
+
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcsunscreen);">
+      <i class="fa fa-fire-extinguisher"></i>&nbsp;SUNSCREEN REMINDER
+    </button>
+  </div>
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcthankyou);">
+      <i class="fa fa-thumbs-up"></i>&nbsp;KINDNESS REMINDER
+    </button>
+  </div>
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcmorning);">
+      <i class="fa fa-sun"></i>&nbsp;MORNING REMINDER (10am)
+    </button>
+  </div>
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcgotobed);">
+      <i class="fa fa-bed"></i>&nbsp;SLEEP REMINDER (2am)
+    </button>  </br>
+  </div>
+</div>
 <div id="admSECURITY" class="adm-tab default-border hidden col-xs-12">
 
   <div class="col-xs-12">
@@ -113,16 +120,12 @@
     -->
     <div class="col-xs-12">
       <select id="secLevelPrefab" class="form-control" name="predefinedSecurityLevel">
-        <option value="Code Green - All clear">Code Green - All clear</option>
-        <option value="Code Blue - Confirmed Threat. Weapons may be visible.">Code Blue - Confirmed Threat. Weapons may
-          be visible.</option>
-        <option value="Code Red - Immediate Threat. Weapons ready.">Code Red - Immediate Threat. Weapons ready.</option>
-        <option value="Code Silver - VIP on colony. Security elevated.">Code Silver - VIP on colony. Security elevated.
-        </option>
-        <option value="Class 4 Psychic Hazard">Class 4 Psychic Hazard</option>
-        <option value="Class 5 Hazard Outbreak">Class 5 Hazard Outbreak</option>
-        <option value="Class 6 Emergency - Extreme Imminent Threat to Bastion Eos">Class 6 Emergency - Extreme Imminent
-          Threat to Bastion Eos</option>
+        <option value="Status: Synchronized - Optimal Pairing Conditions">Status: Synchronized - All clear</option>
+        <option value="Condition: Deviation - Incompatible Interaction Detected">Condition: Deviation - Social friction detected.</option>
+        <option value="Condition: Critical Conflict - Quarantine Protocols Active">Condition: Critical Conflict - Immediate intervention required.</option>
+        <option value="Condition: Deep Sync - Help Bot Surveillance Uplink Active">Condition: Deep Sync - Help Bot Surveillance Uplink Active.</option>
+        <option value="Class 4 Emotional Instability - Cortical Spike Detected">Class 4 Emotional Instability - Mental health break.</option>
+        <option value="Class 5 Biological Breach - CIP Integrity Compromised">Class 5 Biological Breach - Medical emergency.</option>
       </select>
     </div>
 
@@ -159,7 +162,7 @@
 
     <button class="btn btn-lg btn-outline-success" onclick="updateSecurity('secLevelReset');">
       <i class="fa fa-refresh"></i>&nbsp;RESET SEC. LEVEL
-    </button>
+    </button>  </br>
   </div>
 
 </div>
@@ -180,74 +183,10 @@
 
 </div>
 
-<!-- TAB: OVERLORD. ADMINS ONLY. -->
-<div id="admOVERLORD" class="adm-tab default-border hidden col-xs-12">
-  <h2><i class="fa fa-terminal"></i>&nbsp;Welcome, Overlord.</h2>
+<!-- TAB: MEDIA - Audio/Visual -->
+<div id="admMEDIA" class="adm-tab default-border hidden col-xs-12">
 
-  <br />
-
-  <!-- reset the alerts/broadcasts. Placed here for extra laziness. -->
-  <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
-    <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
-  </button>
-
-  <hr />
-  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcmeeting);">
-    <i class="fa fa-users"></i>&nbsp;GATHER ALL COLONISTS
-  </button>
-  <div class="whitespace">&nbsp;</div>
-
-  <h4 class="holoContrast"><i class="fa fa-cutlery"></i>&nbsp;Food Related Alerts</h4>
-
-  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bclunch);">
-    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: LUNCH
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcdinner);">
-    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: DINNER
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcdishes);">
-    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: DISHES
-  </button>
-
-  <div class="whitespace">&nbsp;</div>
-  <!-- A few extra alerts, that you don't want non-admins to push through. -->
-  <h4 class="holoContrast"><i class="fa fa-warning"></i>&nbsp;Non-public alerts</h4>
-
-  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bclowpower);">
-    <i class="fa fa-bolt"></i>&nbsp;COLONY:LOW POWER WARNING
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmission);">
-    <i class="fa fa-rss"></i>&nbsp;INCOMING TRANSMISSION
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcviral);">
-    <i class="fa fa-warning"></i>&nbsp;BIO VIRUS/UNKNOWN PATHOGEN
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcreactorcrit);">
-    <i class="fa fa-bolt"></i>&nbsp;REACTOR CRITICAL
-  </button>
-
-  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bchackattack);">
-    <i class="fa fa-user-secret"></i>&nbsp;SEC: HACKER ATTACK
-  </button>
-
-  <br /><br />
-
-  <!-- Force reset button: resets all dynamicdata to default, and refreshes all connected non-admin clients. -->
-  <h4 class="holoContrast"><i class="fa fa-warning"></i>&nbsp;Reset all</h4>
-
-  <div class="col-xs-12">
-    <button class="btn btn-danger btn-lg" onclick="FlashBlocks('.adm-tab'); forceReset();">
-      <i class="fa fa-refresh"></i>&nbsp;force reset
-    </button>
-  </div>
-
-  <p>&nbsp;</p>
-
+  <h2><i class="fa fa-terminal"></i>&nbsp;Media</h2>
   <!-- Video broadcasts and custom audio file controls. The audio files will be sent from the server (index.js) based on what files are currently in the proper folders. -->
   <div class="col-xs-12">
     <h2>MEDIA[ VIDEO &amp; AUDIO ]</h2>
@@ -263,26 +202,76 @@
     <div class="items">
       <p>send this before turning on the video to get player's attention.</p>
       <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmission);">
-        <i class="fa fa-file-video-o"></i>&nbsp;INCOMING TRANSMISSION
+        <i class="fa fa-satellite-dish"></i>&nbsp;INCOMING TRANSMISSION
       </button>
       <button class="btn btn-outline-success" onclick="sendBroadCast(bcreset);">
         <i class="fa fa-check"></i>&nbsp;CLEAR SCREEN
       </button>
       <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmissionend);">
-        <i class="fa fa-file-video-o"></i>&nbsp;END TRANSMISSION SCREEN
+        <i class="fa fa-octagon"></i>&nbsp;END TRANSMISSION SCREEN
       </button>
     </div>
     </br>
     <div id="auto-video-list" class="items">
     </div>
-
-
-
   </div>
 
   <div id="OC-AUDIO" class="hidden-block col-xs-12" style="display:none;">
     <!-- Audio files will be dynamically loaded here -->
   </div>
+</div>
+
+<!-- TAB: OVERLORD. ADMINS ONLY. -->
+<div id="admOVERLORD" class="adm-tab default-border hidden col-xs-12">
+  <h2><i class="fa fa-terminal"></i>&nbsp;Welcome, Overlord.</h2>
+
+  <br />
+
+  <!-- reset the alerts/broadcasts. Placed here for extra laziness. -->
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
+    <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
+  </button>
+
+  <hr />
+
+
+  <!-- A few extra alerts, that you don't want non-admins to push through. -->
+  <!-- <h4 class="holoContrast"><i class="fa fa-warning"></i>&nbsp;Non-public alerts</h4>
+
+  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bclowpower);">
+    <i class="fa fa-bolt"></i>&nbsp;COLONY:LOW POWER WARNING
+  </button>
+
+  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmission);">
+    <i class="fa fa-rss"></i>&nbsp;INCOMING TRANSMISSION
+  </button>
+
+  <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcviral);">
+    <i class="fa fa-warning"></i>&nbsp;BIO VIRUS/UNKNOWN PATHOGEN
+  </button>
+
+  <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcreactorcrit);">
+    <i class="fa fa-bolt"></i>&nbsp;REACTOR CRITICAL
+  </button> -->
+
+  <!-- <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bchackattack);">
+    <i class="fa fa-user-secret"></i>&nbsp;SEC: HACKER ATTACK
+  </button> -->
+
+  <br /><br />
+
+  <!-- Force reset button: resets all dynamicdata to default, and refreshes all connected non-admin clients. -->
+  <h4 class="holoContrast"><i class="fa fa-warning"></i>&nbsp;Reset all</h4>
+
+  <div class="col-xs-12">
+    <button class="btn btn-danger btn-lg" onclick="FlashBlocks('.adm-tab'); forceReset();">
+      <i class="fa fa-refresh"></i>&nbsp;force reset
+    </button>  </br>
+  </div>
+
+  <p>&nbsp;</p>
+
+
 
 </div>
 
@@ -380,8 +369,33 @@
     </button>
     <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedicalsupport);">
       <i class="fa fa-medkit"></i>&nbsp;NOT ENOUGH DOCTORS
-    </button>
+    </button>  </br>
   </div>
+
+</div>
+
+<div id="admKITCHEN" class="adm-tab default-border hidden col-xs-12">
+
+  <h2><i class="fa fa-cutlery"></i>&nbsp;Kitchen Terminal</h2>
+
+  <hr />
+
+  <h4 class="holoContrast"><i class="fa fa-cutlery"></i>&nbsp;Food Related Alerts</h4>
+
+  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast);">
+    <i class="fa fa-mug-saucer"></i>&nbsp;KITCHEN: BREAKFAST
+  </button>
+  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bclunch);">
+    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: LUNCH
+  </button>
+
+  <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcdinner);">
+    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: DINNER
+  </button>
+
+  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcdishes);">
+    <i class="fa fa-cutlery"></i>&nbsp;KITCHEN: DISHES
+  </button>
 
 </div>
 

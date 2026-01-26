@@ -15,7 +15,7 @@ SYSTEM_SETTINGS = {
 
 /* Settings for defaults that appear on screen. For example, the default security level */
 APPLICATION_DEFAULTS = {
-  defaultSecurityLevel: "Code green - All clear",
+  defaultSecurityLevel: "Status: Synchronized - Optimal Pairing Conditions",
 }
 
 /* creating the account object, to re use later */
