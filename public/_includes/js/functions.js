@@ -331,8 +331,8 @@ function generateBCaudio(audiofile) {
     if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
 
     /* empty element, and refill it with the new audio. */
-    BCaudioCache.html('<audio id="generatedBCAUDIO" controls="controls" class="hidden">'
-      + '<source src="/sounds' + audiofile + '">'
+    BCaudioCache.html('<audio id="generatedBCAUDIO" controls="controls" class="hidden">' // Assuming audiofile is already a full path like /sounds/...
+      + '<source src="' + audiofile + '">'
       + '</audio>');
 
     /* don't cache this selector, as it keeps being reborn. */

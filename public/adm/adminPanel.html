@@ -252,9 +252,7 @@
   <div class="col-xs-12">
     <h2>MEDIA[ VIDEO &amp; AUDIO ]</h2>
     <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-VID').fadeIn();">VIDEOS</div>
-    <!-- <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-ALICE').fadeIn();">AUDIO ALICE</div>
-    <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-DAVE').fadeIn();">AUDIO DAVE</div> -->
-    <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-MISC').fadeIn();">AUDIO</div>
+    <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-AUDIO').fadeIn();">AUDIO</div>
   </div>
 
   <div id="OC-VID" class="hidden-block col-xs-12" style="display:none;">
@@ -280,18 +278,8 @@
 
   </div>
 
-  <!-- 3 tabs: audio. These will contain the audio files sent by the server. -->
-
-  <!-- <div id="OC-DAVE" class="hidden-block col-xs-12" style="display:none;">
-    <h4 class="items">Audio:dave</h4>
-  </div>
-
-  <div id="OC-ALICE" class="hidden-block col-xs-12" style="display:none;">
-    <h4 class="items">Audio:alice</h4>
-  </div> -->
-
-  <div id="OC-MISC" class="hidden-block col-xs-12" style="display:none;">
-    <h4 class="items">Audio:misc</h4>
+  <div id="OC-AUDIO" class="hidden-block col-xs-12" style="display:none;">
+    <!-- Audio files will be dynamically loaded here -->
   </div>
 
 </div>
@@ -366,34 +354,34 @@
 </div>
 
 <!-- TAB: MEDICAL CONTROL, ACCESSIBLE BY RANK 2 AND 4 ONLY. -->
-  <div id="admMEDICAL" class="adm-tab default-border hidden col-xs-12">
-    <h2><i class="fa fa-terminal"></i>&nbsp;Medical panel</h2>
+<div id="admMEDICAL" class="adm-tab default-border hidden col-xs-12">
+  <h2><i class="fa fa-terminal"></i>&nbsp;Medical panel</h2>
 
-    <hr />
+  <hr />
 
-    <div class="col-xs-12">
-      <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
-        <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
-      </button>
-      <br /><br />
-    </div>
-
-    <div class="col-xs-12">
-      <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcmedical);">
-        <i class="fa fa-medkit"></i>&nbsp;REQUEST BLOOD DONATIONS
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcblood);">
-        <i class="fa fa-medkit"></i>&nbsp;DEMAND BLOOD DONATIONS
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
-        <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
-      </button>
-      <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedicalsupport);">
-        <i class="fa fa-medkit"></i>&nbsp;NOT ENOUGH DOCTORS
-      </button>
-    </div>
-
+  <div class="col-xs-12">
+    <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
+      <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
+    </button>
+    <br /><br />
   </div>
+
+  <div class="col-xs-12">
+    <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcmedical);">
+      <i class="fa fa-medkit"></i>&nbsp;REQUEST BLOOD DONATIONS
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcblood);">
+      <i class="fa fa-medkit"></i>&nbsp;DEMAND BLOOD DONATIONS
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
+      <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
+    </button>
+    <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedicalsupport);">
+      <i class="fa fa-medkit"></i>&nbsp;NOT ENOUGH DOCTORS
+    </button>
+  </div>
+
+</div>
 
 <!-- TAB: ORB CONTROL, ACCESSIBLE BY RANK 3 AND 4 ONLY. -->
 <div id="admORB" class="adm-tab default-border hidden col-xs-12">

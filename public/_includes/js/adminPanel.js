@@ -17,35 +17,44 @@ $(document).ready(function() {
     },3500);
   });
 
+  /* receive media files from the server and convert the received data into a browsable tree. */
+  socket.on('sendAudioTree', function(audioTree) {
+    const container = $('#OC-AUDIO'); // Assuming a new container with this ID in your adminPanel.html
+    container.empty();
+    container.append(buildFileTree(audioTree));
 
-  /* receive media files from the server (audio-misc) and convert the received data into buttons. */
-  socket.on('sendMediaMisc', function(resultArray){
-    var l = resultArray.length;
-    for(var i=0;i<l; i++) {
-      /* &apos; is turned into single quotes around the file path by the browser, without, the buttons simply do not work. */
-      var clickThis = " onclick=\"broadcastAudio(&apos;/audio-misc/" + resultArray[i] + "&apos;);\"";
-      $('#OC-MISC').append('<div class=\"btn btn-default\"' + clickThis +' ><i class=\"fa fa-file-audio-o\"></i>&nbsp;' + resultArray[i] +'</div>');
-    }
+    // Add click handlers for folders
+    container.find('.audio-folder-header').on('click', function() {
+      $(this).next('.audio-folder-content').slideToggle('fast');
+      $(this).find('.fa').toggleClass('fa-folder fa-folder-open');
+    });
   });
 
-  // /* first copy of audio-misc for the AI voices. */
-  // socket.on('sendMediaDave', function(arrayDave){
-  //   var l = arrayDave.length;
-  //   for(var i=0;i<l; i++) {
-  //     var clickThis = " onclick=\"broadcastAudio(&apos;/audio-dave/" + arrayDave[i] + "&apos;);\"";
-  //     $('#OC-DAVE').append('<div class=\"btn btn-default\"' + clickThis +' ><i class=\"fa fa-file-audio-o\"></i>&nbsp;' + arrayDave[i] +'</div>');
-  //   }
+  function buildFileTree(nodes) {
+    const $list = $('<div>').addClass('audio-file-list');
+    if (!nodes || nodes.length === 0) {
+      return $list.append('<p class="text-muted">No audio files found.</p>');
+    }
 
-  // });
+    nodes.forEach(node => {
+      if (node.type === 'folder') {
+        const $folder = $('<div>').addClass('audio-folder');
+        const $header = $('<div>').addClass('audio-folder-header').html(`<i class="fa fa-folder"></i>&nbsp;${node.name}`);
+        const $content = $('<div>').addClass('audio-folder-content').hide();
+        $content.append(buildFileTree(node.children));
+        $folder.append($header, $content);
+        $list.append($folder);
+      } else if (node.type === 'file') {
+        const $fileButton = $('<button>')
+          .addClass('btn btn-default')
+          .html(`<i class="fa fa-file-audio-o"></i>&nbsp;${node.name}`)
+          .attr('onclick', `broadcastAudio("${node.path.replace('/sounds/', '')}");`);
+        $list.append($fileButton);
+      }
+    });
 
-  // /* second copy of audio-misc for the AI voices. */
-  // socket.on('sendMediaAlice', function(arrayAlice){
-  //   var l = arrayAlice.length;
-  //   for(var i=0;i<l; i++) {
-  //     var clickThis = " onclick=\"broadcastAudio(&apos;/audio-alice/" + arrayAlice[i] + "&apos;);\"";
-  //     $('#OC-ALICE').append('<div class=\"btn btn-default\"' + clickThis +' ><i class=\"fa fa-file-audio-o\"></i>&nbsp;' + arrayAlice[i] +'</div>');
-  //   }
-  // });
+    return $list;
+  }
 
   socket.emit('getMedia');
 });

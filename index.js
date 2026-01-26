@@ -239,50 +239,39 @@ io.on('connection', (socket) => {
     io.emit('playAudioFile', audiofile);
   });
 
-  socket.on('getMedia', function () {
-
-    /*
-      getMedia has three seperate folders by default: miscAudio, aliceAudio and daveAudio.
-      First, beacon will check if the subfolders actually exist, then read every file and push them into an array.
-      Secondly, we push this array to the admin screen to generate the "play audio" buttons
-    */
-    var miscAudio = [];
-    if (fs.existsSync('./public/sounds/audio-misc')) {
-      fs.readdir('./public/sounds/audio-misc', (err, files) => {
-        if (err) {
-          console.error(err);
-          return;
+  const readAudioDirectory = (dir) => {
+    const dirents = fs.readdirSync(dir, { withFileTypes: true });
+    const files = dirents.map((dirent) => {
+      const res = path.resolve(dir, dirent.name);
+      const relativePath = '/sounds' + res.split(path.join(__dirname, 'public', 'sounds'))[1].replace(/\\/g, '/');
+      if (dirent.isDirectory()) {
+        return { name: dirent.name, type: 'folder', path: relativePath, children: readAudioDirectory(res) };
+      } else {
+        // Only include audio files
+        if (['.mp3', '.ogg', '.wav', '.opus'].includes(path.extname(dirent.name).toLowerCase())) {
+          return { name: dirent.name, type: 'file', path: relativePath };
         }
-        files.forEach(file => {
-          miscAudio.push(file);
-        });
-        socket.emit('sendMediaMisc', miscAudio);
-        console.warn("MiscAudio: ", miscAudio);
-      });
+        return null;
+      }
+    });
+    // Filter out nulls (non-audio files) and sort with folders first
+    return files.filter(Boolean).sort((a, b) => {
+      if (a.type === 'folder' && b.type !== 'folder') return -1;
+      if (a.type !== 'folder' && b.type === 'folder') return 1;
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  socket.on('getMedia', function () {
+    const audioDir = path.join(__dirname, 'public', 'sounds', 'audio');
+    if (fs.existsSync(audioDir)) {
+      try {
+        const audioTree = readAudioDirectory(audioDir);
+        socket.emit('sendAudioTree', audioTree);
+      } catch (err) {
+        console.error("Error reading audio directory:", err);
+      }
     }
-
-    /* copy of misc audio */
-    // var aliceAudio = [];
-    // if(fs.existsSync('./public/sounds/audio-alice')) {
-    //   fs.readdir('./public/sounds/audio-alice', (err, files) => {
-    //     files.forEach(file => {
-    //       aliceAudio.push(file);
-    //     });
-    //     socket.emit('sendMediaAlice', aliceAudio);
-    //   });
-    // }
-
-    // /* copy of misc audio */
-    // var daveAudio = [];
-    // if(fs.existsSync('./public/sounds/audio-dave')) {
-    //   fs.readdir('./public/sounds/audio-dave', (err, files) => {
-    //     files.forEach(file => {
-    //       daveAudio.push(file);
-    //     });
-    //     socket.emit('sendMediaDave', daveAudio);
-    //   });
-    // }
-
   });
 
   // optional/legacy PA functionality
