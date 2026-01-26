@@ -11,31 +11,31 @@ app.set('view engine', 'ejs');
 
 // 1. Create a function that handles the initialization
 async function initializeBroadcastSystem() {
-    try {
-        // 2. Fetch the data FIRST. This "blocks" the rest of this function.
-        const response = await fetch('/get-video-broadcasts');
-        const broadcasts = await response.json();
+  try {
+    // 2. Fetch the data FIRST. This "blocks" the rest of this function.
+    const response = await fetch('/get-video-broadcasts');
+    const broadcasts = await response.json();
 
-        // 3. Register the variables globally
-        broadcasts.forEach(data => {
-            window[data.key] = new broadcastObj(
-                data.title, 
-                data.file, 
-                data.priority, 
-                data.duration, 
-                data.colorscheme
-            );
-        });
+    // 3. Register the variables globally
+    broadcasts.forEach(data => {
+      window[data.key] = new broadcastObj(
+        data.title,
+        data.file,
+        data.priority,
+        data.duration,
+        data.colorscheme
+      );
+    });
 
-        console.log("Initialization Complete: Variables registered.");
+    console.log("Initialization Complete: Variables registered.");
 
-        // 4. NOW call the function that handles 'lastBC'
-        // This is where you likely call syncAppState() or similar.
-        startAppLogic(); 
+    // 4. NOW call the function that handles 'lastBC'
+    // This is where you likely call syncAppState() or similar.
+    startAppLogic();
 
-    } catch (err) {
-        console.error("System failed to initialize:", err);
-    }
+  } catch (err) {
+    console.error("System failed to initialize:", err);
+  }
 }
 
 // Start the sequence as soon as the script loads
@@ -76,45 +76,45 @@ app.get('/', (req, res) =>
   res.sendFile('index.html', { root: __dirname + '/public/' })
 );
 app.get('/get-video-broadcasts', (req, res) => {
-    const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
-    
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) return res.status(500).json([]);
+  const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
 
-        // Map files to a list of Promises so we can read them all at once
-        const promises = files
-            .filter(file => file.endsWith('.html'))
-            .map(file => {
-                return new Promise((resolve) => {
-                    const filePath = path.join(directoryPath, file);
-                    const key = file.replace('.html', '');
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) return res.status(500).json([]);
 
-                    fs.readFile(filePath, 'utf8', (err, content) => {
-                        let title = "Untitled Broadcast";
-                        if (!err) {
-                            // Match content between <title> and </title>
-                            const match = content.match(/<title>(.*?)<\/title>/i);
-                            if (match && match[1]) title = match[1];
-                        }
-                        
-                        // Return the data object for this broadcast
-                        resolve({
-                            key: key,
-                            title: title,
-                            file: `videos/${key}`, // Matches your old manual path
-                            priority: 9,
-                            duration: "0",
-                            colorscheme: "0"
-                        });
-                    });
-                });
+    // Map files to a list of Promises so we can read them all at once
+    const promises = files
+      .filter(file => file.endsWith('.html'))
+      .map(file => {
+        return new Promise((resolve) => {
+          const filePath = path.join(directoryPath, file);
+          const key = file.replace('.html', '');
+
+          fs.readFile(filePath, 'utf8', (err, content) => {
+            let title = "Untitled Broadcast";
+            if (!err) {
+              // Match content between <title> and </title>
+              const match = content.match(/<title>(.*?)<\/title>/i);
+              if (match && match[1]) title = match[1];
+            }
+
+            // Return the data object for this broadcast
+            resolve({
+              key: key,
+              title: title,
+              file: `videos/${key}`, // Matches your old manual path
+              priority: 9,
+              duration: "0",
+              colorscheme: "0"
             });
-
-        Promise.all(promises).then(broadcastData => {
-            res.json(broadcastData);
+          });
         });
+      });
+
+    Promise.all(promises).then(broadcastData => {
+      res.json(broadcastData);
     });
-}); 
+  });
+});
 app.get('*', (req, res) =>
   res.sendFile('404.html', { root: __dirname + '/public/' })
 );
@@ -190,9 +190,9 @@ io.on('connection', (socket) => {
   socket.on('broadcastSend', (value) => {
     // If value.file contains a slash, only take the part after the last one
     // Otherwise, just use value.file as is
-    const cleanBCName = value.file.includes('/') 
-        ? value.file.split('/').pop() 
-        : value.file;
+    const cleanBCName = value.file.includes('/')
+      ? value.file.split('/').pop()
+      : value.file;
 
     applicationState['lastBC'] = cleanBCName;
 
@@ -239,25 +239,49 @@ io.on('connection', (socket) => {
     io.emit('playAudioFile', audiofile);
   });
 
+  socket.on('getMedia', function () {
 
+    /*
+      getMedia has three seperate folders by default: miscAudio, aliceAudio and daveAudio.
+      First, beacon will check if the subfolders actually exist, then read every file and push them into an array.
+      Secondly, we push this array to the admin screen to generate the "play audio" buttons
+    */
+    var miscAudio = [];
+    if (fs.existsSync('./public/sounds/audio-misc')) {
+      fs.readdir('./public/sounds/audio-misc', (err, files) => {
+        files.forEach(file => {
+          miscAudio.push(file);
+        });
+        socket.emit('sendMediaMisc', miscAudio);
+      });
+    }
+
+    /* copy of misc audio */
+    // var aliceAudio = [];
+    // if(fs.existsSync('./public/sounds/audio-alice')) {
+    //   fs.readdir('./public/sounds/audio-alice', (err, files) => {
+    //     files.forEach(file => {
+    //       aliceAudio.push(file);
+    //     });
+    //     socket.emit('sendMediaAlice', aliceAudio);
+    //   });
+    // }
+
+    // /* copy of misc audio */
+    // var daveAudio = [];
+    // if(fs.existsSync('./public/sounds/audio-dave')) {
+    //   fs.readdir('./public/sounds/audio-dave', (err, files) => {
+    //     files.forEach(file => {
+    //       daveAudio.push(file);
+    //     });
+    //     socket.emit('sendMediaDave', daveAudio);
+    //   });
+    // }
+
+  });
 
   // optional/legacy PA functionality
   if (globalSettings.sys.voiceEnabled) {
-
-    /* getMedia: function to automatically read audio files into pushable buttons, caused by the adminpanel when logging in with sufficient rights. */
-    socket.on('getMedia', () => {
-      var miscAudio = [];
-
-      if (fs.existsSync('./public/sounds/audio-misc')) {
-        console.log("audio-misc exists...");
-        fs.readdir('./public/sounds/audio-misc', (err, files) => {
-          files.forEach((file) => {
-            miscAudio.push(file);
-          });
-          socket.emit('sendMediaMisc', miscAudio);
-        });
-      }
-    });
 
     var pa_name = null;
     var pa_folder = './public/sounds/audio-pa/';
