@@ -8,3 +8,5 @@ LOGS/eventlog.txt
 *.mp4
 *.mov
 *.mp3
+*.ssml
+*.csv
