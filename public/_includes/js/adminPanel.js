@@ -112,8 +112,12 @@ $(document).ready(function() {
     const list = $('<ul>').addClass('list-group');
     schedule.sort((a, b) => a.time.localeCompare(b.time)).forEach(job => {
       const broadcast = JSON.parse(job.broadcast);
-      const item = $('<li>').addClass('list-group-item schedule-text d-flex justify-content-between align-items-center');
-      const removeBtn = $('<button>').addClass('btn btn-danger btn-xs pull-right').html('<i class="fa fa-trash"></i>');
+      const item = $('<li>').addClass('list-group-item schedule-text').css({
+        'display': 'flex',
+        'justify-content': 'space-between',
+        'align-items': 'center'
+      });
+      const removeBtn = $('<button>').addClass('btn-danger btn-xs').html('<i class="fa fa-trash"></i>');
       
       removeBtn.on('click', function() {
         // Instead of just deleting, move it to the form for editing
@@ -122,7 +126,10 @@ $(document).ready(function() {
         socket.emit('removeSchedule', job.id); // Then remove it from the list
       });
 
-      item.html(`<strong>${job.time}</strong> - ${broadcast.title}`);
+      const textSpan = $('<span>').html(`<strong>${job.time}</strong> - ${broadcast.title}`);
+
+      // Append text first, then button. Flexbox will handle the alignment.
+      item.append(textSpan);
       item.append(removeBtn);
       list.append(item);
     });
