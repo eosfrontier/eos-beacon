@@ -9,11 +9,11 @@
 
 const scheduledBroadcasts = [
     // Example: Breakfast announcement at 8:00 AM
-    { time: '08:00:00', broadcast: bcbreakfast1, sent: false },
+    { time: '10:00:00', broadcast: bcbreakfast1, sent: false },
 
     // Example: Second breakfast announcement at 8:30 AM
-    { time: '08:30:00', broadcast: bcbreakfast2, sent: false },
+    { time: '12:00:00', broadcast: bcgotobed, sent: false },
 
-    // Example: Lunch announcement at 12:30 PM
-    { time: '12:30:00', broadcast: bclunch, sent: false },
+    // // Example: Lunch announcement at 12:30 PM
+    // { time: '12:30:00', broadcast: bclunch, sent: false },
 ];
