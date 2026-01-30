@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
+const { Server } = require("socket.io");
 const io = require('socket.io')(http);
 const fs = require('fs');
 const globalSettings = require('./config.js');
@@ -56,6 +57,8 @@ function getVideoBroadcasts() {
 // Defaults
 const port = process.env.PORT || globalSettings.sys.port;
 
+const scheduleFilePath = path.join(__dirname, 'schedule.json');
+
 const defaultSecurityLevel = globalSettings.data.defaultSecurityLevel || 'Code green - All clear';
 
 const defaultAppName = globalSettings.cfg.appname || 'BEACON';
@@ -67,6 +70,7 @@ const defaultYearOffset = globalSettings.sys.yearOffset || 0;
 
 const applicationState = {
   countClients: 0,
+  schedule: [],
   alertLevel: defaultSecurityLevel,
   lastBC: 'bcdefault',
   portalStatus: 'ok',
@@ -77,6 +81,55 @@ const applicationState = {
   appTagline: defaultAppTagline,
   ICDateEnabled: globalSettings.sys.ICDateEnabled,
 };
+
+// --- Schedule Management ---
+
+function loadSchedule() {
+  try {
+    if (fs.existsSync(scheduleFilePath)) {
+      const data = fs.readFileSync(scheduleFilePath, 'utf8');
+      applicationState.schedule = JSON.parse(data);
+      console.log('[schedule] Schedule loaded from schedule.json');
+    } else {
+      fs.writeFileSync(scheduleFilePath, '[]', 'utf8');
+      applicationState.schedule = [];
+      console.log('[schedule] Created empty schedule.json');
+    }
+  } catch (err) {
+    console.error('[schedule] Error loading schedule.json:', err);
+    applicationState.schedule = [];
+  }
+}
+
+function saveSchedule() {
+  try {
+    fs.writeFileSync(scheduleFilePath, JSON.stringify(applicationState.schedule, null, 2), 'utf8');
+  } catch (err) {
+    console.error('[schedule] Error saving schedule.json:', err);
+  }
+}
+
+let lastCheckedDate = new Date().getDate();
+
+function checkSchedule() {
+  const now = new Date();
+  const currentDate = now.getDate();
+
+  // Reset 'sent' flag at the start of a new day
+  if (currentDate !== lastCheckedDate) {
+    applicationState.schedule.forEach(job => job.sent = false);
+    lastCheckedDate = currentDate;
+  }
+
+  const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+  applicationState.schedule.forEach(job => {
+    if (job.time === currentTime && !job.sent) {
+      io.emit('broadcastReceive', JSON.parse(job.broadcast)); // We store broadcast as a string
+      job.sent = true;
+      console.log(`[schedule] Fired scheduled broadcast: ${JSON.parse(job.broadcast).title}`);
+    }
+  });
+}
 
 // Init: routing
 function initializeRouting() {
@@ -117,6 +170,8 @@ http.listen(port, () => {
     globalSettings.cfg.appname +
     ' INFORMATION & BROADCASTING SERVICES'
   );
+  loadSchedule();
+  setInterval(checkSchedule, 1000); // Check schedule every second
 });
 
 const sanitizeUserString = (str) => str.replace(/[`~$^&*_|=;'",<>\{\}\[\]\\\/]/gi, '');
@@ -178,6 +233,25 @@ io.on('connection', (socket) => {
     syncAppState();
     io.emit('orbDivFlash');
     console.log('[orb] status => ' + _str);
+  });
+
+  // --- Schedule Socket Listeners ---
+  socket.on('getSchedule', () => {
+    socket.emit('sendSchedule', applicationState.schedule);
+  });
+
+  socket.on('addSchedule', (newJob) => {
+    newJob.id = Date.now(); // Simple unique ID
+    // newJob already contains broadcastKey from the client
+    applicationState.schedule.push(newJob);
+    saveSchedule();
+    io.emit('sendSchedule', applicationState.schedule); // Send updated schedule to all clients
+  });
+
+  socket.on('removeSchedule', (jobId) => {
+    applicationState.schedule = applicationState.schedule.filter(job => job.id !== jobId);
+    saveSchedule();
+    io.emit('sendSchedule', applicationState.schedule); // Send updated schedule to all clients
   });
 
   // FORCE RESET ::

@@ -29,6 +29,10 @@
     <div id="btn-admACTIVITIES" class="btn adm-nav btn-outline-success" onclick="navigateADM('admACTIVITIES');"><i style="font-size:133%" class="fa fa-calendar-days"></i><br/>ACTIVITIES</div>
   </span>
 
+  <span class="schedule">
+    <div id="btn-admSCHEDULE" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admSCHEDULE');"><i style="font-size:133%" class="fa fa-clock"></i><br/>SCHEDULE</div>
+  </span>
+
   <!-- <span class="orb">
     <div id="btn-admORB" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admORB')"><i style="font-size:133%" class="fa fa-opera"></i><br/>CANOPY</div>
   </span> -->
@@ -63,6 +67,7 @@ $(document).ready(function(){
           $('.medical').empty(); /* empty&hide the medical tab. */
           $('.orb').empty(); /* empty&hide the orb tab. */
           $('.officer').empty(); /* empty&hide the portal tab. */
+          $('.schedule').empty();
           break;
         case '2':
           $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */

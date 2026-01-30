@@ -30,6 +30,10 @@ html {
     max-width: 40%;
 }
 
+.schedule-text {
+    color: black;
+}
+
 .btn-audio-file {
     /* display: list-item; */
     font-size: 1.4rem;

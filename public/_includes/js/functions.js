@@ -273,7 +273,7 @@ function clearBroadcast(duration) {
 
 }
 
-function generateAudioPlayer(audiofile, repeatcount) {
+function generateAudioPlayer(audiofile, repeatcount, volume) {
 
   if (customAudioCache == "") {
     customAudioCache = $('#custom-audio');
@@ -287,17 +287,26 @@ function generateAudioPlayer(audiofile, repeatcount) {
       repeatcount = 1;
     }
 
+    if (volume === undefined || volume === null) {
+      volume = 100;
+    }
+
     if (document.getElementById("custom-audio") !== null) {
 
       console.log('CUSTOM-audio -> play: ' + audiofile + ' * ' + repeatcount + ' time(s). Played ' + loopSoundCounter + ' time(s).');
 
       if ($(window).width() > 960) {
-        customAudioCache.empty().html('<audio id="generatedaudioplayer" controls="controls" class="hidden">'
+        // Create the audio element with jQuery
+        var audioPlayer = $('<audio id="generatedaudioplayer" controls="controls" class="hidden">'
           + '<source src="/sounds/' + audiofile + '" type="audio/mpeg">'
-          + '</audio>');
+          + '</audio>').get(0); // .get(0) to access the raw DOM element
 
-        $('#generatedaudioplayer').trigger('play');
+        // Clamp volume between 0 and 100 and convert to 0.0-1.0 range
+        var cleanVolume = Math.max(0, Math.min(100, volume));
+        audioPlayer.volume = cleanVolume / 100;
 
+        customAudioCache.empty().append(audioPlayer);
+        audioPlayer.play();
         /* repeat? */
         loopSound(audiofile, repeatcount)
 
@@ -554,32 +563,6 @@ function updateClock() {
   ddCache.html(dd);
   dowCache.html(dow);
   icdateCache.html(icdate);
-
-  // Check for scheduled broadcasts
-  checkScheduledBroadcasts(currentHours, currentMinutes, currentSeconds);
-}
-
-let lastCheckedDate = new Date().getDate();
-
-function checkScheduledBroadcasts(hours, minutes, seconds) {
-  const now = new Date();
-  const currentDate = now.getDate();
-
-  // Reset the 'sent' flag for all broadcasts at the start of a new day (around midnight)
-  if (currentDate !== lastCheckedDate) {
-    console.log('New day detected, resetting scheduled broadcasts.');
-    scheduledBroadcasts.forEach(job => job.sent = false);
-    lastCheckedDate = currentDate;
-  }
-
-  const currentTime = `${hours}:${minutes}:${seconds}`;
-  scheduledBroadcasts.forEach(job => {
-    if (job.time === currentTime && !job.sent) {
-      console.log(`Scheduled broadcast triggered for ${job.time}: ${job.broadcast.title}`);
-      sendBroadCast(job.broadcast);
-      job.sent = true; // Mark as sent to prevent re-triggering
-    }
-  });
 }
 
 async function getOCDate(yearOffset = 0) {
@@ -657,7 +640,7 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
  * @param {string[]} audioFiles - An array of paths to the audio files.
  * @param {number} loopCount - How many times to loop the playlist. -1 for infinite.
  */
-function playAudioPlaylist(audioFiles, loopCount = 1) {
+function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
     let currentIndex = 0;
     let loops = 0;
 
@@ -678,7 +661,7 @@ function playAudioPlaylist(audioFiles, loopCount = 1) {
 
         const onCanPlay = () => {
             // Broadcast the audio file to all clients
-            generateAudioPlayer(relativePath, 0);
+            generateAudioPlayer(relativePath, 0, volume);
 
             // Wait for the duration of the current file before playing the next
             // We add a small buffer (500ms) to ensure it finishes everywhere

@@ -1,22 +1,4 @@
 $(document).ready(function() {
-  $('button').on('click', function(e){
-
-    /* extra scripts: add a modifier to prevent disabled buttons from being used regardless. */
-    if($(this).attr('disabled')){
-      e.stopImmediatePropagation();
-      e.preventDefault();
-    }
-
-    /* disable buttons temporarily to prevent spamming */
-    $('button').addClass('disabled').attr("disabled", true);
-
-    /* remove the disabled modifier after an XXXX amount of miliseconds. */
-    setTimeout(function(){
-      $('button').removeClass('disabled').attr("disabled", false);
-      $('#main').find('.adm-tab').removeClass('flash');
-    },3500);
-  });
-
   /* receive media files from the server and convert the received data into a browsable tree. */
   socket.on('sendAudioTree', function(audioTree) {
     const container = $('#OC-AUDIO-LIST'); // Assuming a new container with this ID in your adminPanel.html
@@ -100,7 +82,96 @@ $(document).ready(function() {
     return $list;
   }
 
+  // --- SCHEDULE MANAGEMENT ---
+
+  function populateBroadcastsDropdown() {
+    const select = $('#schedule-broadcast-select');
+    select.empty();
+
+    // Get all broadcast variables from the window object
+    const broadcastKeys = Object.keys(window).filter(key => key.startsWith('bc') && typeof window[key] === 'object' && window[key].title);
+
+    broadcastKeys.sort((a, b) => window[a].title.localeCompare(window[b].title));
+
+    broadcastKeys.forEach(key => {
+      const broadcast = window[key];
+      const option = $('<option>').val(key).text(broadcast.title);
+      select.append(option);
+    });
+  }
+
+  function renderSchedule(schedule) {
+    const container = $('#schedule-list-container');
+    container.empty();
+
+    if (!schedule || schedule.length === 0) {
+      container.html('<p class="text-muted">No broadcasts scheduled.</p>');
+      return;
+    }
+
+    const list = $('<ul>').addClass('list-group');
+    schedule.sort((a, b) => a.time.localeCompare(b.time)).forEach(job => {
+      const broadcast = JSON.parse(job.broadcast);
+      const item = $('<li>').addClass('list-group-item schedule-text d-flex justify-content-between align-items-center');
+      const removeBtn = $('<button>').addClass('btn btn-danger btn-xs pull-right').html('<i class="fa fa-trash"></i>');
+      
+      removeBtn.on('click', function() {
+        // Instead of just deleting, move it to the form for editing
+        $('#schedule-time-input').val(job.time);
+        $('#schedule-broadcast-select').val(job.broadcastKey);
+        socket.emit('removeSchedule', job.id); // Then remove it from the list
+      });
+
+      item.html(`<strong>${job.time}</strong> - ${broadcast.title}`);
+      item.append(removeBtn);
+      list.append(item);
+    });
+    container.append(list);
+  }
+
+  // Use a delegated event handler attached to a static parent (document).
+  // This ensures the handler works even for content loaded via AJAX.
+  $(document).on('submit', '#add-schedule-form', function(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    const $form = $(this);
+    const $button = $form.find('button[type="submit"]');
+    const broadcastKey = $('#schedule-broadcast-select').val();
+    const time = $('#schedule-time-input').val();
+
+    // Temporarily disable the button to prevent spamming
+    $button.addClass('disabled').attr("disabled", true);
+
+    // Re-enable the button after a delay
+    setTimeout(function() {
+      $button.removeClass('disabled').attr("disabled", false);
+    }, 2000);
+
+    if (broadcastKey && time && window[broadcastKey]) {
+      const newJob = {
+        time: time,
+        broadcastKey: broadcastKey, // Add the key for easier editing later
+        broadcast: JSON.stringify(window[broadcastKey]), // Store the whole object as a string
+        sent: false
+      };
+
+      socket.emit('addSchedule', newJob);
+
+      // Clear the time input for better user experience
+      $('#schedule-time-input').val('');
+    } else {
+      // If something is wrong, log it and don't leave the button disabled forever
+      console.error("Could not add schedule. Broadcast or time was missing.");
+    }
+  });
+
+  socket.on('sendSchedule', renderSchedule);
+
   socket.emit('getMedia');
+
+  // When the admin panel loads, populate the dropdown and get the schedule
+  populateBroadcastsDropdown();
+  socket.emit('getSchedule');
 });
 
 syncVideoBroadcasts(true, '#auto-video-list');

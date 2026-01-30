@@ -23,11 +23,11 @@ var bcdefault = new broadcastObj("Standby", "bcdefault", 1, "0", "tal");
 var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
-var bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 2, "0", "tal");
-var bcbreakfast2 = new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 2, "0", "tal");
-var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 2, "0", "tal");
-var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 2, "0", "tal");
-var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 2, "0", "tal");
+var bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 1, "0", "tal");
+var bcbreakfast2 = new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 1, "0", "tal");
+var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 1, "0", "tal");
+var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 1, "0", "tal");
+var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal");
 
 /* Activities */
 var bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 99, "0", "tal");
@@ -49,7 +49,7 @@ var bcsunscreen = new broadcastObj("Sunscreen Reminder", "reminders/bcsunscreen"
 var bcthankyou = new broadcastObj("Kindness Reminder", "reminders/bcthankyou", 1, "600000", "tal");
 var bctalon = new broadcastObj("Talon Reminder", "reminders/bctalon", 1, "600000", "tal");
 var bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 1, "3600000", "tal");
-var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 1, "10800000", "gray");
+var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 2, "0", "gray");
 
 /* hazards */
 var bcviral = new broadcastObj("Unknown Viral Pathogens detected", "hazards/bcviral", 8, "0", "hazard");
