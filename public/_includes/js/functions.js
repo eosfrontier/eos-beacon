@@ -224,6 +224,12 @@ function clearBroadcast(duration) {
   clearTimeout(loopSoundTimer);
   loopSoundCounter = 1;
 
+  /* Clear any running playlist timeouts */
+  if (playlistTimeouts.length > 0) {
+    playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    playlistTimeouts = [];
+  }
+
   if (duration != "" && duration != null) {
 
     /* timer? Gebruik die mooie timer en DAN resetten we de broadcast.*/
@@ -547,6 +553,32 @@ function updateClock() {
   ddCache.html(dd);
   dowCache.html(dow);
   icdateCache.html(icdate);
+
+  // Check for scheduled broadcasts
+  checkScheduledBroadcasts(currentHours, currentMinutes, currentSeconds);
+}
+
+let lastCheckedDate = new Date().getDate();
+
+function checkScheduledBroadcasts(hours, minutes, seconds) {
+  const now = new Date();
+  const currentDate = now.getDate();
+
+  // Reset the 'sent' flag for all broadcasts at the start of a new day (around midnight)
+  if (currentDate !== lastCheckedDate) {
+    console.log('New day detected, resetting scheduled broadcasts.');
+    scheduledBroadcasts.forEach(job => job.sent = false);
+    lastCheckedDate = currentDate;
+  }
+
+  const currentTime = `${hours}:${minutes}:${seconds}`;
+  scheduledBroadcasts.forEach(job => {
+    if (job.time === currentTime && !job.sent) {
+      console.log(`Scheduled broadcast triggered for ${job.time}: ${job.broadcast.title}`);
+      sendBroadCast(job.broadcast);
+      job.sent = true; // Mark as sent to prevent re-triggering
+    }
+  });
 }
 
 async function getOCDate(yearOffset = 0) {
