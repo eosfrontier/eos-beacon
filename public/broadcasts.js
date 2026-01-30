@@ -75,7 +75,7 @@ var bcportalincdanger_voice = new broadcastObj("Unscheduled Incoming Portal Acti
 var bcportalout_voice = new broadcastObj("Portal Outgoing", "portal/bcportalout_voice", 3, "17500", "tal");
 
 /* Overlord-only */
-var bctransmission = new broadcastObj("Incoming Transmission", "overlord/bctransmission", 5, "0", "tal");
+var bctransmission = new broadcastObj("Incoming Transmission", "overlord/bctransmission", 5, "10000", "tal");
 var bctransmissionend = new broadcastObj("Incoming Transmission", "overlord/bctransmissionend", 10, "17500", "tal");
 var bclowpower = new broadcastObj("POWER SUPPLY WARNING", "overlord/bclowpower", 8, "0", "gray");
 var bcreactorcrit = new broadcastObj("Reactor Critical", "overlord/bcreactorcrit", 9, "0", "attack");

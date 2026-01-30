@@ -1,68 +1,68 @@
 <style>
 
-#notificationContainer .container-fluid {
-  width: 100%;
-  min-height: 66vh;
-
-  transition: 0.7s;
-  opacity: 0.1;
-
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
-  grid-template-rows: 66px 1fr 1fr;
-  grid-gap: 16px 16px;
-  grid-template-areas:
-    "Gblank Gblank Gvert"
-    "Galert Galert Gvert"
-    "Gmsg Gmsg Gvert";
-}
-
-#notificationContainer .container-fluid .item {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-  padding: 15px;
-}
-
-.Gblank {
-  grid-area: Gblank;
-}
-
-.Gvert {
-  grid-area: Gvert;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  vertical-align: middle;
-}
-
-.Gmsg {
-  grid-area: Gmsg;
-}
-
-.Galert {
-  grid-area: Galert;
-  background: #ed3737;
-  display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
-}
-
-@media(max-width: 990px) {
   #notificationContainer .container-fluid {
-    grid-template-columns: 100%;
-    grid-template-rows: 1fr 1fr 60px 15px;
-    grid-gap: 8px 8px;
+    width: 100%;
+    min-height: 66vh;
+
+    transition: 0.7s;
+    opacity: 0.1;
+
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-rows: 66px 1fr 1fr;
+    grid-gap: 16px 16px;
     grid-template-areas:
-      "Galert"
-      "Gmsg"
-      "Gblank"
-      "Gvert";
+      "Gblank Gblank Gvert"
+      "Galert Galert Gvert"
+      "Gmsg Gmsg Gvert";
+  }
+
+  #notificationContainer .container-fluid .item {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    padding: 15px;
+  }
+
+  .Gblank {
+    grid-area: Gblank;
   }
 
   .Gvert {
-    display: none;
+    grid-area: Gvert;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    vertical-align: middle;
   }
-}
+
+  .Gmsg {
+    grid-area: Gmsg;
+  }
+
+  .Galert {
+    grid-area: Galert;
+    background: #ed3737;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+
+  @media(max-width: 990px) {
+    #notificationContainer .container-fluid {
+      grid-template-columns: 100%;
+      grid-template-rows: 1fr 1fr 60px 15px;
+      grid-gap: 8px 8px;
+      grid-template-areas:
+        "Galert"
+        "Gmsg"
+        "Gblank"
+        "Gvert";
+    }
+
+    .Gvert {
+      display: none;
+    }
+  }
 </style>
 
 
@@ -71,7 +71,7 @@
   <div class="item Gvert">
 
     <div class="rightflavor load1">
-      <div class="col-xs-12">//Traffic Control receives transmission</div>
+      <div class="col-xs-12">//Incoming transmission from Department of Marriage</div>
       <div class="col-xs-9">::Event:Comms:Widenet::</div>
       <div class="col-xs-3">CDCR.931/82G3</div>
     </div>
@@ -131,7 +131,7 @@
 
 
 <script>
-  generateAudioPlayer('comms.ogg','3');
+  generateAudioPlayer('portalinc.wav','3');
 
   setTimeout(function(){
     $('#notificationContainer .container-fluid').css('opacity','1');

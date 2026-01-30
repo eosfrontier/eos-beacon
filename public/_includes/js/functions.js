@@ -17,6 +17,7 @@ var customAudioCache = "";
 var notifiContCache = "";
 var loopSoundCounter = 1
 var loopSoundTimer
+let playlistTimeouts = [];
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
 function navigate(target, icDateEnabled, yearOffset) {
@@ -627,7 +628,7 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
       window[data.key] = new broadcastObj(
         data.title,
         data.file,
-        data.priority,
+        6,
         data.duration,
         data.colorscheme = "tal"
       );
@@ -654,42 +655,59 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
 /**
  * Plays a list of audio files sequentially.
  * @param {string[]} audioFiles - An array of paths to the audio files.
+ * @param {number} loopCount - How many times to loop the playlist. -1 for infinite.
  */
-function playAudioPlaylist(audioFiles) {
+function playAudioPlaylist(audioFiles, loopCount = 1) {
     let currentIndex = 0;
+    let loops = 0;
 
     function playNext() {
         if (currentIndex >= audioFiles.length) {
-            return; // All files have been played
+            loops++;
+            if (loopCount !== -1 && loops >= loopCount) {
+                return; // All loops have been completed
+            }
+            currentIndex = 0; // Start from the beginning
         }
 
         const relativePath = audioFiles[currentIndex];
         const fullPath = relativePath.startsWith('/') ? relativePath : '/sounds/' + relativePath;
 
         // Create a temporary audio object to get the duration
-        const audio = new Audio();
-        audio.src = fullPath;
+        const audio = new Audio(fullPath);
 
-        audio.addEventListener('loadedmetadata', () => {
+        const onCanPlay = () => {
             // Broadcast the audio file to all clients
             generateAudioPlayer(relativePath, 0);
 
             // Wait for the duration of the current file before playing the next
             // We add a small buffer (500ms) to ensure it finishes everywhere
             const durationInMs = (audio.duration * 1000) + 500;
-
-            setTimeout(() => {
+            
+            const timeoutId = setTimeout(() => {
                 currentIndex++;
                 playNext();
             }, durationInMs);
-        });
+            playlistTimeouts.push(timeoutId);
+            // Clean up listeners to avoid memory leaks
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+        };
 
-        audio.addEventListener('error', (e) => {
+        const onError = (e) => {
             console.error(`Could not load audio metadata for ${fullPath}:`, e);
             // Skip to the next file if there's an error
             currentIndex++;
             playNext();
-        });
+            // Clean up listeners
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+        };
+
+        // Using 'canplaythrough' is often more reliable than 'loadedmetadata'
+        // as it indicates the browser can play the media without stopping for buffering.
+        audio.addEventListener('canplaythrough', onCanPlay);
+        audio.addEventListener('error', onError);
     }
 
     playNext();

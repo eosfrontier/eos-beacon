@@ -9,37 +9,49 @@ const path = require('path');
 
 app.set('view engine', 'ejs');
 
-// 1. Create a function that handles the initialization
-async function initializeBroadcastSystem() {
-  try {
-    // 2. Fetch the data FIRST. This "blocks" the rest of this function.
-    const response = await fetch('/get-video-broadcasts');
-    const broadcasts = await response.json();
+/**
+ * Reads the video broadcast files and extracts their metadata.
+ * @returns {Promise<Array>} A promise that resolves with an array of broadcast data objects.
+ */
+function getVideoBroadcasts() {
+  return new Promise((resolve, reject) => {
+    const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
 
-    // 3. Register the variables globally
-    broadcasts.forEach(data => {
-      window[data.key] = new broadcastObj(
-        data.title,
-        data.file,
-        data.priority,
-        data.duration,
-        data.colorscheme
-      );
+    fs.readdir(directoryPath, (err, files) => {
+      if (err) {
+        console.error("Could not read video broadcasts directory:", err);
+        return resolve([]); // Resolve with an empty array to handle gracefully
+      }
+
+      const promises = files
+        .filter(file => file.endsWith('.html'))
+        .map(file => {
+          return new Promise((resolveFile) => {
+            const filePath = path.join(directoryPath, file);
+            const key = file.replace('.html', '');
+
+            fs.readFile(filePath, 'utf8', (readErr, content) => {
+              let title = "Untitled Broadcast";
+              if (!readErr) {
+                const match = content.match(/<title>(.*?)<\/title>/i);
+                if (match && match[1]) title = match[1];
+              }
+              resolveFile({
+                key: key,
+                title: title,
+                file: `videos/${key}`,
+                priority: 9,
+                duration: "0",
+                colorscheme: "0"
+              });
+            });
+          });
+        });
+
+      Promise.all(promises).then(resolve);
     });
-
-    console.log("Initialization Complete: Variables registered.");
-
-    // 4. NOW call the function that handles 'lastBC'
-    // This is where you likely call syncAppState() or similar.
-    startAppLogic();
-
-  } catch (err) {
-    console.error("System failed to initialize:", err);
-  }
+  });
 }
-
-// Start the sequence as soon as the script loads
-initializeBroadcastSystem();
 
 // Defaults
 const port = process.env.PORT || globalSettings.sys.port;
@@ -67,57 +79,25 @@ const applicationState = {
 };
 
 // Init: routing
-if (globalSettings.sys.voiceEnabled) {
-  express.static.mime.define({ 'audio/ogg;codec=opus': ['opus'] });
-}
-app.use(express.static('public'));
-app.use(express.static('_includes'));
-app.get('/', (req, res) =>
-  res.sendFile('index.html', { root: __dirname + '/public/' })
-);
-app.get('/get-video-broadcasts', (req, res) => {
-  const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
+function initializeRouting() {
+  if (globalSettings.sys.voiceEnabled) {
+    express.static.mime.define({ 'audio/ogg;codec=opus': ['opus'] });
+  }
+  app.use(express.static('public'));
+  app.use(express.static('_includes'));
+  app.get('/', (req, res) =>
+    res.sendFile('index.html', { root: __dirname + '/public/' })
+  );
 
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) return res.status(500).json([]);
-
-    // Map files to a list of Promises so we can read them all at once
-    const promises = files
-      .filter(file => file.endsWith('.html'))
-      .map(file => {
-        return new Promise((resolve) => {
-          const filePath = path.join(directoryPath, file);
-          const key = file.replace('.html', '');
-
-          fs.readFile(filePath, 'utf8', (err, content) => {
-            let title = "Untitled Broadcast";
-            if (!err) {
-              // Match content between <title> and </title>
-              const match = content.match(/<title>(.*?)<\/title>/i);
-              if (match && match[1]) title = match[1];
-            }
-
-            // Return the data object for this broadcast
-            resolve({
-              key: key,
-              title: title,
-              file: `videos/${key}`, // Matches your old manual path
-              priority: 9,
-              duration: "0",
-              colorscheme: "0"
-            });
-          });
-        });
-      });
-
-    Promise.all(promises).then(broadcastData => {
-      res.json(broadcastData);
-    });
+  // Route to get video broadcasts, now using the shared function
+  app.get('/get-video-broadcasts', async (req, res) => {
+    const broadcasts = await getVideoBroadcasts();
+    res.json(broadcasts);
   });
-});
-app.get('*', (req, res) =>
-  res.sendFile('404.html', { root: __dirname + '/public/' })
-);
+  app.get('*', (req, res) =>
+    res.sendFile('404.html', { root: __dirname + '/public/' })
+  );
+}
 
 // Init: FlavorText
 http.listen(port, () => {
@@ -139,13 +119,36 @@ http.listen(port, () => {
   );
 });
 
-const sanitizeUserString = (str) =>
-  str.replace(/[`~$^&*_|=;'",<>\{\}\[\]\\\/]/gi, '');
+const sanitizeUserString = (str) => str.replace(/[`~$^&*_|=;'",<>\{\}\[\]\\\/]/gi, '');
 const syncAppState = () => io.emit('updateDynamicData', applicationState);
 const syncConnectionCounter = () => {
   applicationState.countClients = io.engine.clientsCount;
   syncAppState();
 };
+
+// 1. Create a function that handles the initialization
+async function initializeBroadcastSystem() {
+  try {
+    initializeRouting();
+
+    // 2. Get the video broadcast data directly
+    const broadcasts = await getVideoBroadcasts();
+
+    // 3. Register the variables globally on the server
+    // Note: `window` is a browser concept. On the server, you'd attach to `global`
+    // or manage state differently. For now, this part seems intended for client-side
+    // logic that was being run on the server. The key is getting `broadcasts` correctly.
+    console.log("Video broadcasts data fetched:", broadcasts.map(b => b.key));
+    console.log("Initialization Complete.");
+
+    // 4. Start the main application logic
+    // This would be where you might start listening for connections, etc.
+    // Since that's already happening below, we'll just log.
+
+  } catch (err) {
+    console.error("System failed to initialize:", err);
+  }
+}
 
 io.on('connection', (socket) => {
   syncConnectionCounter();
@@ -335,3 +338,6 @@ io.on('connection', (socket) => {
   }
 
 });
+
+// Start the sequence
+initializeBroadcastSystem();
