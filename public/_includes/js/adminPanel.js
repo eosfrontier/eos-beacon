@@ -81,61 +81,6 @@ $(document).ready(function() {
 
     return $list;
   }
-
-  // --- SCHEDULE MANAGEMENT ---
-
-  function populateBroadcastsDropdown() {
-    const select = $('#schedule-broadcast-select');
-    select.empty();
-
-    // Get all broadcast variables from the window object
-    const broadcastKeys = Object.keys(window).filter(key => key.startsWith('bc') && typeof window[key] === 'object' && window[key].title);
-
-    broadcastKeys.sort((a, b) => window[a].title.localeCompare(window[b].title));
-
-    broadcastKeys.forEach(key => {
-      const broadcast = window[key];
-      const option = $('<option>').val(key).text(broadcast.title);
-      select.append(option);
-    });
-  }
-
-  function renderSchedule(schedule) {
-    const container = $('#schedule-list-container');
-    container.empty();
-
-    if (!schedule || schedule.length === 0) {
-      container.html('<p class="text-muted">No broadcasts scheduled.</p>');
-      return;
-    }
-
-    const list = $('<ul>').addClass('list-group');
-    schedule.sort((a, b) => a.time.localeCompare(b.time)).forEach(job => {
-      const broadcast = JSON.parse(job.broadcast);
-      const item = $('<li>').addClass('list-group-item schedule-text').css({
-        'display': 'flex',
-        'justify-content': 'space-between',
-        'align-items': 'center'
-      });
-      const removeBtn = $('<button>').addClass('btn-danger btn-xs').html('<i class="fa fa-trash"></i>');
-      
-      removeBtn.on('click', function() {
-        // Instead of just deleting, move it to the form for editing
-        $('#schedule-time-input').val(job.time);
-        $('#schedule-broadcast-select').val(job.broadcastKey);
-        socket.emit('removeSchedule', job.id); // Then remove it from the list
-      });
-
-      const textSpan = $('<span>').html(`<strong>${job.time}</strong> - ${broadcast.title}`);
-
-      // Append text first, then button. Flexbox will handle the alignment.
-      item.append(textSpan);
-      item.append(removeBtn);
-      list.append(item);
-    });
-    container.append(list);
-  }
-
   // Use a delegated event handler attached to a static parent (document).
   // This ensures the handler works even for content loaded via AJAX.
   $(document).on('submit', '#add-schedule-form', function(e) {
@@ -174,11 +119,61 @@ $(document).ready(function() {
 
   socket.on('sendSchedule', renderSchedule);
 
-  socket.emit('getMedia');
-
-  // When the admin panel loads, populate the dropdown and get the schedule
-  populateBroadcastsDropdown();
-  socket.emit('getSchedule');
 });
 
-syncVideoBroadcasts(true, '#auto-video-list');
+// --- SCHEDULE MANAGEMENT ---
+// These functions are moved to the global scope so they can be called from admin.js
+
+function populateBroadcastsDropdown() {
+  const select = $('#schedule-broadcast-select');
+  if (!select.length) return; // Don't run if the element doesn't exist
+  select.empty();
+
+  // Get all broadcast variables from the window object
+  const broadcastKeys = Object.keys(window).filter(key => key.startsWith('bc') && typeof window[key] === 'object' && window[key].title);
+
+  broadcastKeys.sort((a, b) => window[a].title.localeCompare(window[b].title));
+
+  broadcastKeys.forEach(key => {
+    const broadcast = window[key];
+    const option = $('<option>').val(key).text(broadcast.title);
+    select.append(option);
+  });
+}
+
+function renderSchedule(schedule) {
+  const container = $('#schedule-list-container');
+  if (!container.length) return; // Don't run if the element doesn't exist
+  container.empty();
+
+  if (!schedule || schedule.length === 0) {
+    container.html('<p class="text-muted">No broadcasts scheduled.</p>');
+    return;
+  }
+
+  const list = $('<ul>').addClass('list-group');
+  schedule.sort((a, b) => a.time.localeCompare(b.time)).forEach(job => {
+    const broadcast = JSON.parse(job.broadcast);
+    const item = $('<li>').addClass('list-group-item schedule-text').css({
+      'display': 'flex',
+      'justify-content': 'space-between',
+      'align-items': 'center'
+    });
+    const removeBtn = $('<button>').addClass('btn-danger btn-xs').html('<i class="fa fa-trash"></i>');
+
+    removeBtn.on('click', function() {
+      // Instead of just deleting, move it to the form for editing
+      $('#schedule-time-input').val(job.time);
+      $('#schedule-broadcast-select').val(job.broadcastKey);
+      socket.emit('removeSchedule', job.id); // Then remove it from the list
+    });
+
+    const textSpan = $('<span>').html(`<strong>${job.time}</strong> - ${broadcast.title}`);
+
+    // Append text first, then button. Flexbox will handle the alignment.
+    item.append(textSpan);
+    item.append(removeBtn);
+    list.append(item);
+  });
+  container.append(list);
+}

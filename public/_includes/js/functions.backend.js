@@ -1,11 +1,5 @@
-// Switch between Tabs (admin panel)
-function navigateADM(target) {
-  $('.adm-nav').removeClass('active');
-  $('.adm-tab').addClass('hidden');
-  $('#' + target).removeClass('hidden');
-  $('#btn-' + target).addClass('active');
-}
-
+// The original navigateADM function has been replaced by a new version
+// in /public/adm/js/admin.js to support loading modular panels.
 function forceReset() {
   socket.emit('forceReset');
 }
@@ -33,6 +27,11 @@ function updateSecurity(selector) {
     flashAdminTabs();
   }
 
+}
+
+function resetSecurityLevel() {
+  socket.emit('resetSecurityLevel');
+  flashAdminTabs();
 }
 
 function updatePortalStatus(selector) {

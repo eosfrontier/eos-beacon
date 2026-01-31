@@ -136,8 +136,7 @@ function initializeRouting() {
   if (globalSettings.sys.voiceEnabled) {
     express.static.mime.define({ 'audio/ogg;codec=opus': ['opus'] });
   }
-  app.use(express.static('public'));
-  app.use(express.static('_includes'));
+  app.use(express.static(path.join(__dirname, 'public')));
   app.get('/', (req, res) =>
     res.sendFile('index.html', { root: __dirname + '/public/' })
   );
@@ -147,9 +146,9 @@ function initializeRouting() {
     const broadcasts = await getVideoBroadcasts();
     res.json(broadcasts);
   });
-  app.get('*', (req, res) =>
-    res.sendFile('404.html', { root: __dirname + '/public/' })
-  );
+  app.get('*', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+  });
 }
 
 // Init: FlavorText
@@ -252,6 +251,13 @@ io.on('connection', (socket) => {
     applicationState.schedule = applicationState.schedule.filter(job => job.id !== jobId);
     saveSchedule();
     io.emit('sendSchedule', applicationState.schedule); // Send updated schedule to all clients
+  });
+
+  // RESET SECURITY LEVEL ::
+  socket.on('resetSecurityLevel', () => {
+    applicationState['alertLevel'] = defaultSecurityLevel;
+    syncAppState();
+    console.log('[admin] command => RESET_SECURITY_LEVEL to: ' + defaultSecurityLevel);
   });
 
   // FORCE RESET ::

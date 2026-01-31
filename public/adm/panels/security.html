@@ -1,0 +1,59 @@
+<div class="col-xs-12">
+  <h2><i class="fa fa-terminal"></i>&nbsp;Colony security level</h2>
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <p>Select a pre-defined security levels.</p>
+
+  <!--
+      default security levels.
+      Add, edit or remove these to your own preferences. You can set the DEFAULT security level in config.js on the server side.
+    -->
+  <div class="col-xs-12">
+    <select id="secLevelPrefab" class="form-control" name="predefinedSecurityLevel">
+      <option value="Status: Synchronized - Optimal Pairing Conditions">Status: Synchronized - All clear</option>
+      <option value="Condition: Deviation - Incompatible Interaction Detected">Condition: Deviation - Social friction
+        detected.</option>
+      <option value="Condition: Critical Conflict - Quarantine Protocols Active">Condition: Critical Conflict -
+        Immediate intervention required.</option>
+      <option value="Condition: Deep Sync - Help Bot Surveillance Uplink Active">Condition: Deep Sync - Help Bot
+        Surveillance Uplink Active.</option>
+      <option value="Class 4 Emotional Instability - Cortical Spike Detected">Class 4 Emotional Instability - Mental
+        health break.</option>
+      <option value="Class 5 Biological Breach - CIP Integrity Compromised">Class 5 Biological Breach - Medical
+        emergency.</option>
+    </select>
+  </div>
+
+  <div class="col-xs-12">
+    <!-- submits the security level -->
+    <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="updateSecurity('secLevelPrefab');">
+      <i class="fa fa-warning"></i>&nbsp;SET SECURITY LEVEL
+    </button>
+  </div>
+
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <!-- Or, write your own security status on the spot. -->
+  <p>...Or, set a custom security level.</p>
+  <div class="col-xs-12">
+    <input id="secLevelCustom" type="text" class="form-control" placeholder="Custom Alert" maxlength="160" />
+  </div>
+  <div class="col-xs-12">
+    <!-- submit the custom status -->
+    <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="updateSecurity('secLevelCustom');">
+      <i class="fa fa-warning"></i>&nbsp;SET CUSTOM LEVEL
+    </button>
+  </div>
+</div>
+
+<div class="col-xs-12">
+  <hr />
+</div>
+
+<div class="col-xs-12">
+  <button class="btn btn-lg btn-outline-success" onclick="resetSecurityLevel();">
+    <i class="fa fa-refresh"></i>&nbsp;RESET SEC. LEVEL
+  </button> </br>
+</div>

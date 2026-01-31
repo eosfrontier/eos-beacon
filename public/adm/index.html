@@ -183,8 +183,10 @@
     setCookie('auth','TRUE','1');
     setCookie('usercode',keycode,'1');
     setCookie('rank',loginRank,'1');
-    $('#cPanel').load('/adm/cpanel.html');
-    navigate('/adm/adminPanel',icDateEnabled);
+    $('#admkeypad').hide();
+    $.getScript('/_includes/js/adminPanel.js', function() {
+      $('#cPanel').load('/adm/cpanel.html');
+    });
   });
 
   $(document).ready(function() {
@@ -227,8 +229,10 @@
 
     /* on pageload: if the user is already logged in, load the adminpanel. */
     if(admAUTH == 'TRUE') {
-      $('#cPanel').load('/adm/cpanel.html');
-      navigate('/adm/adminPanel',false);
+      $('#admkeypad').hide();
+      $.getScript('/_includes/js/adminPanel.js', function() {
+        $('#cPanel').load('/adm/cpanel.html');
+      });
     }
   });
 

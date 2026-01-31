@@ -1,0 +1,23 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Broadcast Scheduler</h2>
+<p>Schedule broadcasts to run automatically at a specific time (24-hour format).</p>
+<hr />
+
+<div class="col-xs-12 col-md-5">
+  <h4>Add New Scheduled Broadcast</h4>
+  <form id="add-schedule-form">
+    <div class="form-group">
+      <label for="schedule-broadcast-select">Broadcast:</label>
+      <select id="schedule-broadcast-select" class="form-control"></select>
+    </div>
+    <div class="form-group">
+      <label for="schedule-time-input">Time (HH:MM:SS):</label>
+      <input type="time" id="schedule-time-input" class="form-control" step="1" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Schedule</button>
+  </form>
+</div>
+
+<div class="col-xs-12 col-md-7">
+  <h4>Current Schedule</h4>
+  <div id="schedule-list-container"></div>
+</div>

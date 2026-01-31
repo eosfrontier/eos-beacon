@@ -1,0 +1,40 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Media</h2>
+<!-- Video broadcasts and custom audio file controls. The audio files will be sent from the server (index.js) based on what files are currently in the proper folders. -->
+<div class="col-xs-12">
+  <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-VID').fadeIn();">VIDEOS</div>
+  <div class="btn btn-primary" onclick="$('.hidden-block').hide();$('#OC-AUDIO').fadeIn();">AUDIO</div>
+</div>
+
+<div id="OC-VID" class="hidden-block col-xs-12" style="display:none;">
+  <h4>Videos</h4>
+
+  <div class="items">
+    <p>You may need to clear the screen to override the current transmission.</p>
+    <button class="btn btn-outline-success btn-half-width" onclick="sendBroadCast(bcreset);">
+      <i class="fa fa-check"></i>&nbsp;CLEAR SCREEN</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button class="btn btn-danger btn-half-width" onclick="sendBroadCast(bcreset);"><i class="fa fa-stop"></i>&nbsp;STOP
+      VIDEO</button>
+    <p>Send this before turning on the video to get player's attention.</p>
+    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmission);">
+      <i class="fa fa-satellite-dish"></i>&nbsp;INCOMING TRANSMISSION
+    </button>
+  </div>
+  <div id="auto-video-list" class="items">
+  </div>
+  <div class="items">
+    <p>Send this at the end of the video</p>
+    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmissionend);">
+      <i class="fa fa-octagon"></i>&nbsp;END TRANSMISSION SCREEN
+    </button>
+  </div>
+</div>
+<div id="OC-AUDIO" class="hidden-block col-xs-12" style="display:none;">
+  <h4>Audio</h4>
+  <div class="items">
+    <div class="btn btn-danger" onclick="stopAllAudio();"><i class="fa fa-stop"></i>&nbsp;STOP AUDIO</div>
+  </div>
+  <div id="OC-AUDIO-LIST" class="items">
+    <!-- Audio files will be dynamically loaded here -->
+  </div>
+</div>

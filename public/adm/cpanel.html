@@ -1,86 +1,16 @@
 <!--
 ==== =================================================================
 
-==    /ADM/INDEX.HTML    ==
-==    ADMIN PANEEL: DE MENU BUTTONS, ZICHTBAAR NA LOGIN
+==    /ADM/CPANEL.HTML    ==
+==    ADMIN PANEL: Navigation buttons, dynamically generated after login.
 
 ==== =================================================================
 ==    Door Thijs Boerma, th.boerma@gmail.com | 2017                 ==
+==    Refactored by Gemini Code Assist | 2024                       ==
 ==== =================================================================
 -->
 
-
-<!-- 2024 Thijs here; these fake button divs are not <buttons> because adminPanel.html triggers a disable/.disable on all buttons.. it seems. -->
-<!-- +1 reason for the rework. -->
-<div class="admMENU">
-  <div id="btn-admBROADCAST" class="btn active adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admBROADCAST');"><i style="font-size:133%" class="fa fa-wifi"></i><br/>BROADCAST</div>
-  <div id="btn-admREMINDER" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admREMINDERS');"><i style="font-size:133%" class="fa fa-bell"></i><br/>REMINDERS</div>
-  <div id="btn-admSECURITY" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admSECURITY');"><i style="font-size:133%" class="fa fa-exclamation-circle"></i><br/>SECURITY LVL</div>
-
-  <!-- <span class="medical">
-    <div id="btn-admMEDICAL" class="btn adm-nav btn-ui btn-ui-holo-red" onclick="navigateADM('admMEDICAL');"><i style="font-size:133%" class="fa fa-medkit"></i><br/>MEDICAL</div>
-  </span> -->
-
-  <span class="kitchen">
-    <div id="btn-admPORTAL" class="btn adm-nav btn-outline-success" onclick="navigateADM('admKITCHEN');"><i style="font-size:133%" class="fa fa-cutlery"></i><br/>KITCHEN</div>
-  </span>
-
-  <span class="activities">
-    <div id="btn-admACTIVITIES" class="btn adm-nav btn-outline-success" onclick="navigateADM('admACTIVITIES');"><i style="font-size:133%" class="fa fa-calendar-days"></i><br/>ACTIVITIES</div>
-  </span>
-
-  <span class="schedule">
-    <div id="btn-admSCHEDULE" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admSCHEDULE');"><i style="font-size:133%" class="fa fa-clock"></i><br/>SCHEDULE</div>
-  </span>
-
-  <!-- <span class="orb">
-    <div id="btn-admORB" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admORB')"><i style="font-size:133%" class="fa fa-opera"></i><br/>CANOPY</div>
-  </span> -->
-  <span class="media">
-    <div id="btn-admMEDIA" class="btn adm-nav btn-ui btn-ui-holo-alt" onclick="navigateADM('admMEDIA');"><i style="font-size:133%" class="fa fa-photo-film"></i><br/>MEDIA</div>
-  </span>
-
-  <span class="overlord">
-    <div id="btn-admOVERLORD" class="btn adm-nav btn-ui btn-ui-holo-alt" onclick="navigateADM('admOVERLORD');"><i style="font-size:133%" class="fa fa-microchip"></i><br/>OVERLORD</div>
-  </span>
-
-   <!--<span class="officer">
-     <div id="btn-admMISSION" class="btn adm-nav btn-ui btn-ui-holo-alt" onclick="navigateADM('admATTACKVECTOR');"><i style="font-size:133%" class="fa fa-code-fork"></i><br/>HACKING</div>
-   </span>-->
-   <div id="btn-admCMD" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admCMD');"><i style="font-size:133%" class="fa fa-terminal"></i><br/>OTHER</div>
+<div id="cPanel-container" class="admMENU">
+  <!-- Navigation buttons will be dynamically inserted here by admin.js -->
 </div>
-
-<script>
-$(document).ready(function(){
-    const admRANK = getCookie('rank');
-
-    /* if a person is under or above the accepted values, destroy their login. */
-    if((admRANK < 1) || (admRANK > 4)) {
-
-      logout();
-
-    } else {
-      /* decide what the user gets to see */
-      switch(admRANK) {
-        case '1': default:
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.medical').empty(); /* empty&hide the medical tab. */
-          $('.orb').empty(); /* empty&hide the orb tab. */
-          $('.officer').empty(); /* empty&hide the portal tab. */
-          $('.schedule').empty();
-          break;
-        case '2':
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.officer').empty(); /* empty&hide the attackvector tab. */
-          break;
-        case '3':
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.medical').empty(); /* empty&hide the medical tab. */
-          $('.officer').empty(); /* empty&hide the attackvector tab. */
-          break;
-        case '4':
-          break;
-      }
-    }
-});
-</script>
+<script src="/adm/js/admin.js"></script>
