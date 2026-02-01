@@ -15,10 +15,24 @@ var icdateCache = "";
 var BCaudioCache = "";
 var customAudioCache = "";
 var notifiContCache = "";
-var loopSoundCounter = 1
-var loopSoundTimer
-let playlistTimeouts = [];
-let isPlaylistActive = false;
+var loopSoundCounter = 1;
+var loopSoundTimer;
+
+// To store the state of an interrupted background music playlist
+let backgroundPlaylistState = null;
+
+// State object for the current playlist
+let playlistState = {
+    files: [],
+    loopCount: 0,
+    volume: 50,
+    isActive: false,
+    isPaused: false,
+    currentIndex: 0,
+    loops: 0,
+    timeoutId: null,
+    resumeTime: 0,
+};
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
 function navigate(target, icDateEnabled, yearOffset) {
@@ -226,12 +240,6 @@ function clearBroadcast(duration) {
   clearTimeout(loopSoundTimer);
   loopSoundCounter = 1;
 
-  /* Clear any running playlist timeouts */
-  if (playlistTimeouts.length > 0) {
-    playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-    playlistTimeouts = [];
-  }
-
   if (duration != "" && duration != null) {
 
     /* timer? Gebruik die mooie timer en DAN resetten we de broadcast.*/
@@ -274,13 +282,31 @@ function clearBroadcast(duration) {
 
 }
 
-function generateAudioPlayer(audiofile, repeatcount, volume) {
+function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0) {
 
   if (customAudioCache == "") {
     customAudioCache = $('#custom-audio');
   }
 
   if (audiofile) {
+
+    let isInterrupting = false;
+    // Check if we need to interrupt a background music playlist.
+    // We identify background music by loopCount === -1.
+    if (playlistState.isActive && playlistState.loopCount === -1 && !playlistState.isPaused) {
+        const currentPlaylistFile = playlistState.files[playlistState.currentIndex];
+        if (audiofile !== currentPlaylistFile) {
+            // It's a one-off sound (or first in a loop), so interrupt.
+            if (repeatcount <= 1) {
+                isInterrupting = true;
+                pausePlaylist();
+            } else {
+                // It's a new looping sound, so it replaces the current playlist.
+                console.log('[audio] New looping sound replacing background playlist.');
+                stopAllAudio(); // Simplest way to stop everything and let the new sound play.
+            }
+        }
+    }
 
     console.log(audiofile);
 
@@ -306,8 +332,21 @@ function generateAudioPlayer(audiofile, repeatcount, volume) {
         var cleanVolume = Math.max(0, Math.min(100, volume));
         audioPlayer.volume = cleanVolume / 100;
 
+        if (startTime > 0) {
+            $(audioPlayer).one('loadedmetadata', function() {
+                this.currentTime = startTime;
+            });
+        }
+
         customAudioCache.empty().append(audioPlayer);
         audioPlayer.play();
+
+        if (isInterrupting) {
+            $(audioPlayer).on('ended', function() {
+                resumePlaylist();
+            });
+        }
+
         /* repeat? */
         loopSound(audiofile, repeatcount)
 
@@ -356,6 +395,12 @@ function generateBCaudio(audiofile) {
     const existingAudio = BCaudioCache.find('audio');
  
     const playNewAudio = () => {
+      // NEW: Pause background music if it's playing
+      let wasBgMusicPlaying = playlistState.isActive && playlistState.loopCount === -1 && !playlistState.isPaused;
+      if (wasBgMusicPlaying) {
+          pausePlaylist();
+      }
+
       // Create new audio element, initially silent
       const newAudio = $('<audio id="generatedBCAUDIO" controls="controls" class="hidden">'
         + '<source src="' + audiofile + '">'
@@ -368,6 +413,13 @@ function generateBCaudio(audiofile) {
         this.play();
         // Fade in the volume
         $(this).animate({ volume: 1 }, 30);
+      });
+
+      // NEW: Resume background music when this one ends
+      $(newAudio).on('ended', function() {
+          if (wasBgMusicPlaying) {
+              resumePlaylist();
+          }
       });
     };
  
@@ -390,7 +442,16 @@ function stopAllAudio() {
 
 
 socket.on('stopAllAudio', function() {
-    isPlaylistActive = false; // Stop any active playlist loops
+    // Clear any saved background playlist state
+    backgroundPlaylistState = null;
+
+    // Stop any active playlist loops
+    if (playlistState.isActive) {
+        playlistState.isActive = false;
+        playlistState.isPaused = false;
+        if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+        playlistState.timeoutId = null;
+    }
 
     // Stop broadcast audio
     if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
@@ -410,11 +471,8 @@ socket.on('stopAllAudio', function() {
         });
     }
 
-    // Clear any running playlist timeouts
-    if (playlistTimeouts.length > 0) {
-        playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-        playlistTimeouts = [];
-    }
+    updateBgMusicPanelState();
+
 });
 
 /* portal status. */
@@ -502,12 +560,153 @@ function startBgMusicPlaylist(playlistName) {
     socket.emit('startBgMusicPlaylist', playlistName);
 }
 
+/**
+ * Sends a request to toggle pause/resume for the background music.
+ */
+function toggleBgMusicPause() {
+    socket.emit('toggleBgMusicPause');
+}
+
+/**
+ * Sends a request to skip to the next background music track.
+ */
+function nextBgMusicTrack() {
+    socket.emit('nextBgMusicTrack');
+}
+
+/**
+ * Sends a request to go to the previous background music track.
+ */
+function prevBgMusicTrack() {
+    socket.emit('prevBgMusicTrack');
+}
+
+/**
+ * Sends a request to set the background music volume.
+ * @param {number} volume - The volume level from 0 to 100.
+ */
+function setBgMusicVolume(volume) {
+    // Update the label in real-time for responsiveness on the admin panel
+    const volumeLabel = document.getElementById('bgmusic-volume-label');
+    if (volumeLabel) {
+        volumeLabel.textContent = volume;
+    }
+    socket.emit('setBgMusicVolume', volume);
+}
+
 socket.on('playShuffledPlaylist', function(filePaths) {
-    // Play the shuffled playlist, looped indefinitely, at 50% volume.
+    // Play the shuffled playlist, looped indefinitely. The server will send a volume update right after.
     // The `playAudioPlaylist` function will handle stopping any previous playlist.
-    playAudioPlaylist(filePaths, -1, 50);
+    playAudioPlaylist(filePaths, -1, playlistState.volume);
 });
 
+socket.on('syncBgMusic', (serverState) => {
+    // Received by a client on connection if a playlist is active on the server.
+    console.log('[bgmusic] Syncing initial state from server:', serverState.playlistName);
+
+    // Only sync if we are not currently playing a background music playlist.
+    if (!playlistState.isActive || playlistState.loopCount !== -1) {
+        // Set the local state to match the server.
+        playlistState.files = serverState.files;
+        playlistState.loopCount = -1; // It's a background music playlist
+        playlistState.volume = serverState.volume;
+        playlistState.isActive = true;
+        playlistState.isPaused = serverState.isPaused;
+        playlistState.currentIndex = 0; // Start from the beginning of the shuffled list.
+        playlistState.loops = 0;
+        playlistState.timeoutId = null;
+
+        // Update the UI if the admin panel is open.
+        updateBgMusicPanelState();
+
+        // Start playback if we're not supposed to be paused.
+        if (!playlistState.isPaused) {
+            playNextTrack();
+        }
+    }
+});
+
+socket.on('setBgMusicVolume', (volume) => {
+    console.log(`[bgmusic] Volume update received: ${volume}`);
+    // Always update the state volume for the background music context.
+    // This ensures if we start a new playlist, it has the right volume.
+    playlistState.volume = volume;
+
+    // If the current active playlist is background music, adjust its volume now.
+    if (playlistState.isActive && playlistState.loopCount === -1) {
+        const audioEl = $('#custom-audio').find('audio').get(0);
+        if (audioEl) {
+            audioEl.volume = volume / 100;
+        }
+    }
+
+    // Always update the panel if it's visible.
+    updateBgMusicPanelState();
+});
+
+socket.on('setBgMusicPaused', (isPaused) => {
+    // Only act on background music playlists
+    if (!playlistState.isActive || playlistState.loopCount !== -1) {
+        console.log('[bgmusic] "pause/resume" command ignored: not a background music playlist.');
+        return;
+    }
+
+    // If state is already correct, do nothing.
+    if (playlistState.isPaused === isPaused) return;
+    console.log(`[bgmusic] "pause/resume" command received. Setting paused to: ${isPaused}`);
+
+    const audioEl = $('#custom-audio').find('audio').get(0);
+    playlistState.isPaused = isPaused;
+
+    if (isPaused) { // It's playing, so pause
+        if (audioEl) audioEl.pause();
+        if (playlistState.timeoutId) {
+            clearTimeout(playlistState.timeoutId);
+            playlistState.timeoutId = null;
+        }
+    } else { // It's paused, so resume
+        if (audioEl) {
+            audioEl.play();
+            const remainingTime = (audioEl.duration - audioEl.currentTime) * 1000;
+            if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+            playlistState.timeoutId = setTimeout(() => {
+                if (!playlistState.isActive || playlistState.isPaused) return;
+                playlistState.currentIndex++;
+                playNextTrack();
+            }, remainingTime + 500);
+        } else {
+            // No audio element, means we were paused between tracks. Just start the next one.
+            playNextTrack();
+        }
+    }
+    updateBgMusicPanelState();
+});
+
+socket.on('nextBgMusicTrack', () => {
+    if (!playlistState.isActive || playlistState.loopCount !== -1) {
+        console.log('[bgmusic] "next" command ignored: not a background music playlist.');
+        return;
+    }
+    console.log('[bgmusic] "next" command received, skipping track.');
+    if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+    playlistState.currentIndex++;
+    // playNextTrack handles wrapping around
+    playNextTrack();
+});
+
+socket.on('prevBgMusicTrack', () => {
+    if (!playlistState.isActive || playlistState.loopCount !== -1) {
+        console.log('[bgmusic] "prev" command ignored: not a background music playlist.');
+        return;
+    }
+    console.log('[bgmusic] "prev" command received, skipping to previous track.');
+    if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+    playlistState.currentIndex--;
+    if (playlistState.currentIndex < 0) {
+        playlistState.currentIndex = playlistState.files.length - 1;
+    }
+    playNextTrack();
+});
 
 /* When changing the portal status, play a tune. Or don't, in the case of most mobile devices. */
 function playPortalAudio() {
@@ -672,76 +871,210 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
  * @param {number} [volume=100] - The volume for the playlist, from 0 to 100.
  */
 function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
-    // Stop any existing playlist before starting a new one.
-    if (isPlaylistActive) {
-        playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
-        playlistTimeouts = [];
+    // If a background playlist is active and we're starting a temporary one...
+    if (playlistState.isActive && playlistState.loopCount === -1 && loopCount !== -1) {
+        console.log('[playlist] Interrupting background music for a temporary playlist.');
+        // This is a playlist interruption. We should pause the current bg music.
+        // The pausePlaylist function already saves the state we need (isPaused, resumeTime).
+        pausePlaylist();
+        // Now, save the entire paused state.
+        backgroundPlaylistState = { ...playlistState };
+    } else if (loopCount === -1) {
+        // A new background playlist is starting, so clear any saved interruption state.
+        backgroundPlaylistState = null;
     }
-    isPlaylistActive = true;
 
-    let currentIndex = 0;
-    let loops = 0;
+    // Stop any existing playlist timer before starting a new one.
+    // The audio element is already handled by pausePlaylist if it was an interruption.
+    if (playlistState.isActive) {
+        clearTimeout(playlistState.timeoutId);
+    }
 
-    function playNext() {
-        if (!isPlaylistActive) {
-            return; // Stop execution if the playlist has been cancelled
+    // Initialize new playlist state
+    playlistState.files = audioFiles;
+    playlistState.loopCount = loopCount;
+    playlistState.volume = volume;
+    playlistState.isActive = true;
+    playlistState.isPaused = false;
+    playlistState.currentIndex = 0;
+    playlistState.loops = 0;
+    playlistState.timeoutId = null;
+    playlistState.resumeTime = 0;
+
+    playNextTrack();
+    // Update panel state after a short delay to ensure DOM is ready
+    setTimeout(updateBgMusicPanelState, 100);
+}
+
+/**
+ * Pauses the currently active playlist.
+ */
+function pausePlaylist() {
+    if (playlistState.isActive && !playlistState.isPaused) {
+        console.log('[playlist] Pausing playlist for interruption.');
+        if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+        const customAudio = customAudioCache.find('audio');
+        if (customAudio.length > 0) {
+            playlistState.resumeTime = customAudio.get(0).currentTime;
+        } else {
+            playlistState.resumeTime = 0; // Paused between tracks
         }
 
-        if (currentIndex >= audioFiles.length) {
-            loops++;
-            if (loopCount !== -1 && loops >= loopCount) {
-                isPlaylistActive = false; // Playlist finished
-                return; // All loops have been completed
+        playlistState.isPaused = true;
+        if (playlistState.timeoutId) {
+            clearTimeout(playlistState.timeoutId);
+            playlistState.timeoutId = null;
+        }
+        // Stop the currently playing track from the playlist
+        if (customAudio.length > 0) {
+            customAudio.remove();
+        }
+    }
+}
+
+/**
+ * Resumes a paused playlist from the next track.
+ */
+function resumePlaylist() {
+    if (playlistState.isActive && playlistState.isPaused) {
+        console.log('[playlist] Resuming playlist.');
+        playlistState.isPaused = false;
+        // Replay the current track from where it left off.
+        playNextTrack();
+    }
+}
+
+/**
+ * The core logic for playing the next track in the playlistState.
+ */
+function playNextTrack() {
+    if (!playlistState.isActive || playlistState.isPaused) {
+        return; // Stop execution if playlist is stopped or paused
+    }
+
+    if (playlistState.currentIndex >= playlistState.files.length) {
+        playlistState.loops++;
+        if (playlistState.loopCount !== -1 && playlistState.loops >= playlistState.loopCount) {
+            playlistState.isActive = false; // Playlist finished
+
+            // Check if we need to resume a background playlist.
+            if (backgroundPlaylistState) {
+                console.log('[playlist] Temporary playlist finished. Resuming background music.');
+                // Restore the state. This state is already marked as paused and has resumeTime.
+                playlistState = backgroundPlaylistState;
+                backgroundPlaylistState = null; // Clear saved state
+
+                // resumePlaylist will set isPaused=false and call playNextTrack again.
+                resumePlaylist();
+                return;
             }
-            currentIndex = 0; // Start from the beginning
+
+            updateBgMusicPanelState(); // Update panel to show playlist has ended
+            return; // All loops have been completed for a non-interrupting playlist
         }
-
-        const relativePath = audioFiles[currentIndex];
-        const fullPath = relativePath.startsWith('/') ? relativePath : '/sounds/' + relativePath;
-
-        // Create a temporary audio object to get the duration
-        const audio = new Audio(fullPath);
-
-        const onCanPlay = () => {
-            if (!isPlaylistActive) return; // Check again before playing
-
-            // Broadcast the audio file to all clients
-            generateAudioPlayer(relativePath, 0, volume);
-
-            // Wait for the duration of the current file before playing the next
-            // We add a small buffer (500ms) to ensure it finishes everywhere
-            const durationInMs = (audio.duration * 1000) + 500;
-            
-            const timeoutId = setTimeout(() => {
-                // Final check to ensure the playlist wasn't stopped while waiting.
-                // This is a safeguard against race conditions where the timer fires
-                // just before clearTimeout is called.
-                if (!isPlaylistActive) return;
-                currentIndex++;
-                playNext();
-            }, durationInMs);
-            playlistTimeouts.push(timeoutId);
-            // Clean up listeners to avoid memory leaks
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
-        };
-
-        const onError = (e) => {
-            if (!isPlaylistActive) return; // Check again
-            console.error(`Could not load audio metadata for ${fullPath}:`, e);
-            // Skip to the next file if there's an error
-            currentIndex++;
-            playNext();
-            // Clean up listeners
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
-        };
-
-        // Using 'canplaythrough' is often more reliable than 'loadedmetadata'
-        // as it indicates the browser can play the media without stopping for buffering.
-        audio.addEventListener('canplaythrough', onCanPlay);
-        audio.addEventListener('error', onError);
+        playlistState.currentIndex = 0; // Start from the beginning
     }
 
-    playNext();
+    const relativePath = playlistState.files[playlistState.currentIndex];
+    const fullPath = relativePath.startsWith('/') ? relativePath : '/sounds/' + relativePath;
+
+    const audio = new Audio(fullPath);
+
+    const onCanPlay = () => {
+        if (!playlistState.isActive || playlistState.isPaused) {
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            return;
+        }
+
+        updateBgMusicPanelState();
+
+        const startTime = playlistState.resumeTime;
+        generateAudioPlayer(relativePath, 1, playlistState.volume, startTime);
+        playlistState.resumeTime = 0; // Consume it
+
+        // Adjust duration if we are resuming from a specific time
+        const durationInMs = ((audio.duration - startTime) * 1000) + 500;
+
+        playlistState.timeoutId = setTimeout(() => {
+            if (!playlistState.isActive || playlistState.isPaused) return;
+            playlistState.currentIndex++;
+            playNextTrack();
+        }, durationInMs);
+
+        audio.removeEventListener('canplaythrough', onCanPlay);
+        audio.removeEventListener('error', onError);
+    };
+
+    const onError = (e) => {
+        if (!playlistState.isActive || playlistState.isPaused) return;
+        console.error(`Could not load audio metadata for ${fullPath}:`, e);
+        playlistState.currentIndex++;
+        playNextTrack();
+        audio.removeEventListener('canplaythrough', onCanPlay);
+        audio.removeEventListener('error', onError);
+    };
+
+    audio.addEventListener('canplaythrough', onCanPlay);
+    audio.addEventListener('error', onError);
+}
+
+/**
+ * Updates the admin panel to show the current background music status.
+ * This function is safe to call on any page, as it checks for the panel's existence.
+ */
+function updateBgMusicPanelState() {
+    const statusContainer = document.getElementById('bgmusic-status');
+    if (!statusContainer) return;
+
+    const playlistNameEl = document.getElementById('bgmusic-current-playlist');
+    const trackNameEl = document.getElementById('bgmusic-current-track');
+    const pauseButton = document.getElementById('bgmusic-pause-btn');
+    const prevButton = document.getElementById('bgmusic-prev-btn');
+    const nextButton = document.getElementById('bgmusic-next-btn');
+    const volumeSlider = document.getElementById('bgmusic-volume-slider');
+    const volumeLabel = document.getElementById('bgmusic-volume-label');
+
+    // Check if a background music playlist is active
+    if (playlistState.isActive && playlistState.loopCount === -1) {
+        const currentTrackPath = playlistState.files[playlistState.currentIndex];
+        const pathParts = currentTrackPath.split('/'); // e.g., ["bgmusic", "ambient", "track1.mp3"]
+        const playlistName = pathParts.length > 1 ? pathParts[1] : 'Unknown';
+        const trackName = pathParts.length > 0 ? pathParts[pathParts.length - 1] : 'Unknown';
+
+        playlistNameEl.textContent = playlistName;
+        trackNameEl.textContent = decodeURIComponent(trackName); // Decode for display
+
+        if (pauseButton) {
+            if (playlistState.isPaused) {
+                pauseButton.innerHTML = '<i class="fa fa-play"></i>&nbsp;Resume';
+                pauseButton.classList.remove('btn-warning');
+                pauseButton.classList.add('btn-success');
+            } else {
+                pauseButton.innerHTML = '<i class="fa fa-pause"></i>&nbsp;Pause';
+                pauseButton.classList.remove('btn-success');
+                pauseButton.classList.add('btn-warning');
+            }
+        }
+
+        if (volumeSlider) {
+            volumeSlider.value = playlistState.volume;
+            volumeSlider.disabled = false;
+        }
+        if (volumeLabel) {
+            volumeLabel.textContent = playlistState.volume;
+        }
+
+        statusContainer.style.display = 'block';
+        prevButton.disabled = false;
+        nextButton.disabled = false;
+        pauseButton.disabled = false;
+    } else {
+        statusContainer.style.display = 'none';
+        // Also disable buttons if no playlist is active
+        if (prevButton) prevButton.disabled = true;
+        if (nextButton) nextButton.disabled = true;
+        if (pauseButton) pauseButton.disabled = true;
+        if (volumeSlider) volumeSlider.disabled = true;
+    }
 }

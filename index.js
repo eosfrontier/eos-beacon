@@ -83,6 +83,12 @@ const applicationState = {
   appDescription: defaultAppDescription,
   appTagline: defaultAppTagline,
   ICDateEnabled: globalSettings.sys.ICDateEnabled,
+  bgMusic: {
+    playlistName: null,
+    files: [],
+    isPaused: false,
+    volume: 50,
+  },
 };
 
 // --- Schedule Management ---
@@ -221,6 +227,11 @@ io.on('connection', (socket) => {
   // initial configdata
   setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline, defaultICDateEnabled, defaultYearOffset, defaultColorScheme), 1000);
 
+  // Send current bg music state to the connecting client
+  if (applicationState.bgMusic.playlistName) {
+    socket.emit('syncBgMusic', applicationState.bgMusic);
+  }
+
   socket.on('updateSecurity', (input) => {
     const _str = sanitizeUserString(input);
     applicationState['alertLevel'] = _str;
@@ -335,6 +346,10 @@ io.on('connection', (socket) => {
   /* broadcast from adminpanel to index.js. Sends a "stop all audio!" request to every connected client. */
   socket.on('stopAllAudio', () => {
     console.log('[audio] => stop all audio broadcasted');
+    applicationState.bgMusic.playlistName = null;
+    applicationState.bgMusic.files = [];
+    applicationState.bgMusic.isPaused = false;
+    syncAppState();
     io.emit('stopAllAudio');
   });
 
@@ -420,11 +435,45 @@ io.on('connection', (socket) => {
       }
 
       const filePaths = files.map(file => `bgmusic/${playlistName}/${file}`);
+      applicationState.bgMusic.playlistName = playlistName;
+      applicationState.bgMusic.files = filePaths;
+      applicationState.bgMusic.isPaused = false;
+
       console.log(`[bgmusic] Starting shuffled playlist: ${playlistName}`);
       io.emit('playShuffledPlaylist', filePaths);
+      // Also broadcast the current volume setting for this playlist
+      io.emit('setBgMusicVolume', applicationState.bgMusic.volume);
+      syncAppState();
     } catch (err) {
       console.error(`[bgmusic] Error starting playlist ${playlistName}:`, err);
     }
+  });
+
+  socket.on('setBgMusicVolume', (volume) => {
+    const newVolume = Math.max(0, Math.min(100, parseInt(volume, 10)));
+    applicationState.bgMusic.volume = newVolume;
+    console.log(`[bgmusic] Volume set to: ${newVolume}`);
+    io.emit('setBgMusicVolume', newVolume);
+    syncAppState();
+  });
+
+  socket.on('toggleBgMusicPause', () => {
+    if (applicationState.bgMusic.playlistName) {
+      applicationState.bgMusic.isPaused = !applicationState.bgMusic.isPaused;
+      console.log(`[bgmusic] Pause state is now: ${applicationState.bgMusic.isPaused}`);
+      io.emit('setBgMusicPaused', applicationState.bgMusic.isPaused);
+      syncAppState();
+    }
+  });
+
+  socket.on('nextBgMusicTrack', () => {
+    console.log('[bgmusic] Skipping to next track.');
+    io.emit('nextBgMusicTrack');
+  });
+
+  socket.on('prevBgMusicTrack', () => {
+    console.log('[bgmusic] Going to previous track.');
+    io.emit('prevBgMusicTrack');
   });
 
   // optional/legacy PA functionality

@@ -5,6 +5,31 @@
         </div>
     </div>
     <div class="adm-panel-content">
+        <div id="bgmusic-status" style="display: none;">
+            <h4>Now Playing</h4>
+            <p style="margin-bottom: 5px;"><strong>Playlist:</strong> <span id="bgmusic-current-playlist">None</span></p>
+            <p><strong>Track:</strong> <span id="bgmusic-current-track">N/A</span></p>
+            <div class="items">
+                <button id="bgmusic-prev-btn" class="btn btn-ui btn-ui-holo" onclick="prevBgMusicTrack()" disabled>
+                    <i class="fa fa-step-backward"></i>&nbsp;Prev
+                </button>
+                <button id="bgmusic-pause-btn" class="btn btn-ui btn-warning" onclick="toggleBgMusicPause()" disabled>
+                    <i class="fa fa-pause"></i>&nbsp;Pause
+                </button>
+                <button id="bgmusic-next-btn" class="btn btn-ui btn-ui-holo" onclick="nextBgMusicTrack()" disabled>
+                    <i class="fa fa-step-forward"></i>&nbsp;Next
+                </button>
+            </div>
+            <div class="vjs-volume-control vjs-control" style="margin-top: 15px; margin-bottom: 10px;">
+                <label for="bgmusic-volume-slider" style="display: block; text-align: left; margin-bottom: 5px;">
+                    Volume: <span id="bgmusic-volume-label">50</span>%
+                </label>
+                <input type="range" id="bgmusic-volume-slider" class="vjs-volume-bar vjs-slider-bar" min="0" max="100" step="1" oninput="setBgMusicVolume(this.value)" onchange="setBgMusicVolume(this.value)" disabled>
+            </div>
+            <hr>
+        </div>
+
+        <h4>Select Playlist</h4>
         <p>Select a playlist to start a shuffled background music loop for all clients. Playlists are folders located in <code>/public/sounds/bgmusic/</code>.</p>
         <div id="bgmusic-playlist-buttons" class="items">
             <!-- Playlist buttons will be inserted here -->
@@ -35,6 +60,9 @@
                 playlistContainer.appendChild(btn);
             });
         }
+
+        // Initial state update on panel load
+        updateBgMusicPanelState();
 
         socket.on('sendBgMusicPlaylists', createPlaylistButtons);
         socket.emit('getBgMusicPlaylists');
