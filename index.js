@@ -285,8 +285,16 @@ io.on('connection', (socket) => {
   socket.on('forceReset', () => {
     applicationState['lastBC'] = 'bcdefault';
     applicationState['alertLevel'] = defaultSecurityLevel;
+
+    // Clear background music state on the server
+    applicationState.bgMusic.playlistName = null;
+    applicationState.bgMusic.files = [];
+    applicationState.bgMusic.isPaused = false;
+
+    io.emit('stopAllAudio');
     io.emit('F5');
     console.log('[admin] command => FORCE_RESET');
+    syncAppState();
   });
 
   socket.on('requestDynamicData', () => syncConnectionCounter());

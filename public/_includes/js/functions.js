@@ -222,11 +222,6 @@ function sendBroadCast(location) {
   socket.emit('broadcastSend', location);
 }
 
-function invokeEldritchTruth() {
-  socket.emit('broadcastAudio', '/sounds/audio-misc/1-welcome-video-lounge.mp3');
-  broadcastAudio('/sounds/audio-misc/1-welcome-video-lounge.mp3');
-}
-
 /* broadcast from adminpanel to index.js. Sends a "play this file!" request to every connected client. */
 function broadcastAudio(audiofile) {
   socket.emit('broadcastAudio', audiofile);

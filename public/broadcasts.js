@@ -90,6 +90,7 @@ var bcsinglespartynow = new broadcastObj("Singles Party", "activities/bcsinglesp
 /* other PSA's */
 // var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 2, "600000", "tal");
 var bcmeeting = new broadcastObj("Meeting in Main", "other/bcmeeting", 4, "0", "tal");
+var bcgatherforwelcome = new broadcastObj("Gather for Welcome Video", "other/bcgatherforwelcome", 2, "0", "tal");
 
 /* medical PSA's */
 // var bcmedical = new broadcastObj("Blood Donation Request", "medical/bcmedical", 2, "0", "tal");

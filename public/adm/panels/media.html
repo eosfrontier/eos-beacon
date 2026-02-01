@@ -15,18 +15,19 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button class="btn btn-danger btn-half-width" onclick="sendBroadCast(bcreset);"><i class="fa fa-stop"></i>&nbsp;STOP
       VIDEO</button>
-    <p>Send this before turning on the video to get player's attention.</p>
-    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmission);">
+    <p>Send this before turning on the video to get player's attention and pause the background music.</p>
+    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="toggleBgMusicPause();sendBroadCast(bctransmission);">
       <i class="fa fa-satellite-dish"></i>&nbsp;INCOMING TRANSMISSION
     </button>
   </div>
   <div id="auto-video-list" class="items">
   </div>
   <div class="items">
-    <p>Send this at the end of the video</p>
-    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctransmissionend);">
+    <p>Send this at the end of the video to resume the background music.</p>
+    <button class="btn btn-primary btn-ui btn-ui-holo-alt" onclick="toggleBgMusicPause();sendBroadCast(bctransmissionend);">
       <i class="fa fa-octagon"></i>&nbsp;END TRANSMISSION SCREEN
     </button>
+    <p>After sending this, return to activities.</p>
   </div>
 </div>
 <div id="OC-AUDIO" class="hidden-block col-xs-12" style="display:none;">
