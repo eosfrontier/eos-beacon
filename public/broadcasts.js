@@ -85,6 +85,7 @@ var bcforevermatch_10m = new broadcastObj("Forever Match (10m Warning)", "activi
 var bcforevermatch_5m = new broadcastObj("Forever Match (5m Warning)", "activities/bcforevermatch_5m", 2, "0", "tal");
 var bcartclass_5m = new broadcastObj("Art Class (5m Warning)", "activities/bcartclass_5m", 2, "0", "tal");
 var bcsexed_5m = new broadcastObj("SexEd Class (5m Warning)", "activities/bcsexed_5m", 2, "0", "tal");
+var bcsinglespartynow = new broadcastObj("Singles Party", "activities/bcsinglespartynow", 2, "0", "tal");
 
 /* other PSA's */
 // var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 2, "600000", "tal");

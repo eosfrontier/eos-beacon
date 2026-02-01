@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Autoplay Bridge</title>
+    <style>
+        /* Overlay to force a user interaction */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); color: white;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 100;
+        }
+     
+
+    </style>
+</head>
+<body>
+
+    <!-- <div id="overlay">
+        <h1>Ready to listen?</h1>
+        <button id="start-button">Enter & Play Music</button>
+    </div> -->
+
+    <div id="embed-iframe"></div>
+
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+
+    <script>
+        stopAllAudio();
+        runParty();
+        function runParty(){
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            const element = document.getElementById('embed-iframe');
+            const options = {
+                width: '100%',
+                height: '600',
+                uri: 'spotify:playlist:5EtDFPlE9FKxJu3gbQyZEx', // Replace with your ID
+                theme: 'dark'
+            };
+            
+            const callback = (EmbedController) => {
+                const button = document.getElementById('start-button');
+                const overlay = document.getElementById('overlay');
+
+                // button.addEventListener('click', () => {
+                    // 1. Play the music
+                    EmbedController.play();
+                    // 2. Hide the overlay
+            //         overlay.style.display = 'none';
+            //     });
+            };
+            
+            IFrameAPI.createController(element, options, callback);
+        };
+    }
+    </script>
+</body>
+</html>
+

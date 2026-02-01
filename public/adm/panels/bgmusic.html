@@ -1,0 +1,42 @@
+<div class="adm-panel">
+    <div class="adm-panel-header">
+        <div class="adm-panel-title">
+            <i class="fa fa-music"></i>&nbsp;Background Music
+        </div>
+    </div>
+    <div class="adm-panel-content">
+        <p>Select a playlist to start a shuffled background music loop for all clients. Playlists are folders located in <code>/public/sounds/bgmusic/</code>.</p>
+        <div id="bgmusic-playlist-buttons" class="items">
+            <!-- Playlist buttons will be inserted here -->
+        </div>
+        <hr>
+        <button class="btn btn-ui btn-danger" onclick="stopAllAudio()">
+            <i class="fa fa-stop-circle"></i>&nbsp;Stop All Music
+        </button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const playlistContainer = document.getElementById('bgmusic-playlist-buttons');
+
+        function createPlaylistButtons(playlists) {
+            playlistContainer.innerHTML = ''; // Clear existing buttons
+            if (!playlists || playlists.length === 0) {
+                playlistContainer.innerHTML = '<p>No playlists found.</p>';
+                return;
+            }
+
+            playlists.forEach(playlistName => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-ui btn-ui-holo';
+                btn.innerHTML = `<i class="fa fa-play-circle"></i>&nbsp;${playlistName}`;
+                btn.onclick = () => startBgMusicPlaylist(playlistName);
+                playlistContainer.appendChild(btn);
+            });
+        }
+
+        socket.on('sendBgMusicPlaylists', createPlaylistButtons);
+        socket.emit('getBgMusicPlaylists');
+    })();
+</script>

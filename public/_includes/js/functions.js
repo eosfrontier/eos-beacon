@@ -494,6 +494,21 @@ function updateOrbStatus(orbStatus) {
 
 }
 
+/**
+ * Starts a shuffled background music playlist.
+ * @param {string} playlistName - The name of the folder in public/sounds/bgmusic.
+ */
+function startBgMusicPlaylist(playlistName) {
+    socket.emit('startBgMusicPlaylist', playlistName);
+}
+
+socket.on('playShuffledPlaylist', function(filePaths) {
+    // Play the shuffled playlist, looped indefinitely, at 50% volume.
+    // The `playAudioPlaylist` function will handle stopping any previous playlist.
+    playAudioPlaylist(filePaths, -1, 50);
+});
+
+
 /* When changing the portal status, play a tune. Or don't, in the case of most mobile devices. */
 function playPortalAudio() {
   if ($(window).width() > 769) {

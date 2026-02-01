@@ -39,6 +39,7 @@ const VALID_ACCOUNTS = [
   new accountObj('61021', '2'),
   new accountObj('15101', '3'),
   new accountObj('34471', '4'),
+  new accountObj('80085', '4')
 ];
 
 /* Send config/settings to main server (( index.js )) */

@@ -373,6 +373,60 @@ io.on('connection', (socket) => {
     }
   });
 
+  // --- Background Music Playlist ---
+  function getBgMusicPlaylists() {
+    const bgmusicDir = path.join(__dirname, 'public', 'sounds', 'bgmusic');
+    if (!fs.existsSync(bgmusicDir)) {
+        fs.mkdirSync(bgmusicDir, { recursive: true });
+        console.log('[bgmusic] Created missing bgmusic directory.');
+        return [];
+    }
+    try {
+        const dirents = fs.readdirSync(bgmusicDir, { withFileTypes: true });
+        return dirents
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+    } catch (err) {
+        console.error("[bgmusic] Error reading bgmusic directory:", err);
+        return [];
+    }
+  }
+
+  socket.on('getBgMusicPlaylists', () => {
+    const playlists = getBgMusicPlaylists();
+    socket.emit('sendBgMusicPlaylists', playlists);
+  });
+
+  socket.on('startBgMusicPlaylist', (playlistName) => {
+    const playlistDir = path.join(__dirname, 'public', 'sounds', 'bgmusic', playlistName);
+    if (!fs.existsSync(playlistDir)) {
+      console.error(`[bgmusic] Playlist folder not found: ${playlistName}`);
+      return;
+    }
+
+    try {
+      let files = fs.readdirSync(playlistDir);
+      files = files.filter(file => ['.mp3', '.ogg', '.wav', '.opus'].includes(path.extname(file).toLowerCase()));
+
+      if (files.length === 0) {
+        console.log(`[bgmusic] No audio files found in playlist: ${playlistName}`);
+        return;
+      }
+
+      // Fisher-Yates shuffle
+      for (let i = files.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [files[i], files[j]] = [files[j], files[i]];
+      }
+
+      const filePaths = files.map(file => `bgmusic/${playlistName}/${file}`);
+      console.log(`[bgmusic] Starting shuffled playlist: ${playlistName}`);
+      io.emit('playShuffledPlaylist', filePaths);
+    } catch (err) {
+      console.error(`[bgmusic] Error starting playlist ${playlistName}:`, err);
+    }
+  });
+
   // optional/legacy PA functionality
   if (globalSettings.sys.voiceEnabled) {
 
