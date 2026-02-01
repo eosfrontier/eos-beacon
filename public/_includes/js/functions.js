@@ -389,16 +389,28 @@ function stopAllAudio() {
 
 
 socket.on('stopAllAudio', function() {
-  // Stop broadcast audio
-  if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
-  const existingAudio = BCaudioCache.find('audio');
-  if (existingAudio.length > 0 && !existingAudio.get(0).paused) {
-      // An audio is playing, fade it out first.
-      existingAudio.animate({ volume: 0 }, 1500, function() {
-        $(this).remove();
-      });
-    } else {
-      console.warn('No audio was playing');
+    // Stop broadcast audio
+    if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
+    const existingBCAudio = BCaudioCache.find('audio');
+    if (existingBCAudio.length > 0 && !existingBCAudio.get(0).paused) {
+        existingBCAudio.animate({ volume: 0 }, 500, function() {
+            $(this).remove();
+        });
+    }
+
+    // Stop custom/playlist audio
+    if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+    const existingCustomAudio = customAudioCache.find('audio');
+    if (existingCustomAudio.length > 0 && !existingCustomAudio.get(0).paused) {
+        existingCustomAudio.animate({ volume: 0 }, 500, function() {
+            $(this).remove();
+        });
+    }
+
+    // Clear any running playlist timeouts
+    if (playlistTimeouts.length > 0) {
+        playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        playlistTimeouts = [];
     }
 });
 
