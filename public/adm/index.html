@@ -12,14 +12,21 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-
-  <title>BEACON - BROADCASTING &amp; INFORMATION SYSTEMS</title>
-
+  <% if (defaultAppName && defaultAppName !== '0' && defaultAppDescription) { %>
+    <title><%= defaultAppName %> - <%= defaultAppDescription %></title>
+    <% } else { %>
+      <title>BEACON - BROADCASTING &amp; INFORMATION SYSTEMS</title>
+      <% } %>
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="/_includes/css/style.css" />
   <link rel="stylesheet" type="text/css" href="/_includes/css/adm.css" />
-
-  <link rel="stylesheet" type="text/css" href="/_includes/css/alert-tal.css" />
+  <% if (defaultColorScheme && defaultColorScheme !== '0') { %>
+    <link rel="stylesheet" type="text/css" href="/_includes/css/alert-<%= defaultColorScheme %>.css" />
+  <% } else { %>
+    <link rel="stylesheet" type="text/css" href="/_includes/css/alert-default.css" />
+  <% } %>
+  
 
   <link rel="icon" href="/icons/favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="/icons/favicon.ico" type="image/x-icon"/>
@@ -195,10 +202,8 @@
 
     /* update all titles and descriptions on load.*/
     socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled) {
-      icDateEnabled = ICDateEnabled;
       if (appName && appDescription) {
         const titleText = appName + ' - ' + appDescription;
-        document.title = titleText;
         $('#appHeader').text(titleText);
       }
     });

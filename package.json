@@ -28,6 +28,7 @@
   "author": "Thijs Boerma",
   "license": "ISC",
   "dependencies": {
+    "ejs": "^4.0.1",
     "express": "^4.19.2",
     "socket.io": "^4.6.2"
   }

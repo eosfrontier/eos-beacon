@@ -7,6 +7,8 @@ const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
 
+app.engine('html', require('ejs').renderFile);
+
 
 app.set('view engine', 'ejs');
 
@@ -43,7 +45,7 @@ function getVideoBroadcasts() {
                 file: `videos/${key}`,
                 priority: 9,
                 duration: "0",
-                colorscheme: "0"
+                colorscheme: defaultColorScheme
               });
             });
           });
@@ -58,6 +60,7 @@ function getVideoBroadcasts() {
 const port = process.env.PORT || globalSettings.sys.port;
 
 const scheduleFilePath = path.join(__dirname, 'schedule.json');
+const defaultColorScheme = globalSettings.data.defaultColorScheme || '0';
 
 const defaultSecurityLevel = globalSettings.data.defaultSecurityLevel || 'Code green - All clear';
 
@@ -136,10 +139,17 @@ function initializeRouting() {
   if (globalSettings.sys.voiceEnabled) {
     express.static.mime.define({ 'audio/ogg;codec=opus': ['opus'] });
   }
+  app.get('/', (req, res) => res.render(path.join(__dirname, 'public', 'index.html'), {
+    defaultColorScheme,
+    defaultAppName,
+    defaultAppDescription
+  }));
+  app.get('/adm/', (req, res) => res.render(path.join(__dirname, 'public', 'adm', 'index.html'), {
+    defaultColorScheme,
+    defaultAppName,
+    defaultAppDescription
+  }));
   app.use(express.static(path.join(__dirname, 'public')));
-  app.get('/', (req, res) =>
-    res.sendFile('index.html', { root: __dirname + '/public/' })
-  );
 
   // Route to get video broadcasts, now using the shared function
   app.get('/get-video-broadcasts', async (req, res) => {
@@ -209,7 +219,7 @@ io.on('connection', (socket) => {
   console.log(`\t[IO] ${applicationState.countClients} active client(s).`);
 
   // initial configdata
-  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline, defaultICDateEnabled, defaultYearOffset), 1000);
+  setTimeout(() => socket.emit('startConfig', port, defaultAppName, defaultAppDescription, defaultAppTagline, defaultICDateEnabled, defaultYearOffset, defaultColorScheme), 1000);
 
   socket.on('updateSecurity', (input) => {
     const _str = sanitizeUserString(input);

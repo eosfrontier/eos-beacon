@@ -24,7 +24,7 @@ $(document).ready(function () {
   if (document.getElementById('main')) observer.observe(document.getElementById('main'), { childList: true, subtree: true });
 
   /* update all titles, descriptions and the IP adress upper right on load.*/
-  socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled, yearOffset) {
+  socket.on('startConfig', function (port, appName, appDescription, appTagline, ICDateEnabled, yearOffset, defaultColorScheme) {
     globalICDateEnabled = ICDateEnabled;
     globalYearOffset = yearOffset;
     globalAppName = appName;
@@ -37,6 +37,16 @@ $(document).ready(function () {
       $('#appTitle').text('[' + appName + ']');
       $('#appTagline').text(appTagline);
 
+    }
+
+    if (defaultColorScheme && defaultColorScheme !== '0') {
+      activeColorScheme = defaultColorScheme;
+
+      // Update the default broadcasts to use the new default color scheme
+      if (window.bcdefault) {
+        window.bcdefault.colorscheme = defaultColorScheme;
+      }
+      if (window.bcreset) window.bcreset.colorscheme = defaultColorScheme;
     }
   });
 

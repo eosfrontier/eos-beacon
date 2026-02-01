@@ -90,8 +90,8 @@ $(document).ready(function () {
       initialized = 1;
     }
     // Update App Name from config
-    if (dynamicData.appName) {
-      document.title = dynamicData.appName;
+    if (dynamicData.appName && dynamicData.appDescription) {
+      document.title = dynamicData.appName + ' - ' + dynamicData.appDescription;
     }
   });
 

@@ -30,7 +30,7 @@ var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 1, "0
 var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal");
 
 /* Activities */
-var bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 99, "0", "tal");
+var bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 98, "0", "tal");
 var bcfirstimplantcalibration1 = new broadcastObj("FIRST Match Implant Calibration", "activities/bcfirstimplantcalibration1", 2, "0", "tal");
 var bcfirstimplantcalibration2 = new broadcastObj("Implant Calibration 1 Part 2", "activities/bcfirstimplantcalibration2", 2, "0", "tal");
 var bcfirstimplantcalibration3 = new broadcastObj("Implant Calibration 1 Part 3", "activities/bcfirstimplantcalibration3", 2, "0", "tal");
@@ -97,11 +97,11 @@ var bcmeeting = new broadcastObj("Meeting in Main", "other/bcmeeting", 4, "0", "
 // var bcmedicalsupport = new broadcastObj("Insufficient Medical Staff", "medical/bcmedicalsupport", 6, "0", "tal");
 
 /* reminders */
-var bchydrate = new broadcastObj("Hydration Reminder", "reminders/bchydrate", 1, "600000", "tal");
-var bcsunscreen = new broadcastObj("Sunscreen Reminder", "reminders/bcsunscreen", 1, "600000", "tal");
-var bcthankyou = new broadcastObj("Kindness Reminder", "reminders/bcthankyou", 1, "600000", "tal");
+var bchydrate = new broadcastObj("Hydration Reminder", "reminders/bchydrate", 2, "600000", "tal");
+var bcsunscreen = new broadcastObj("Sunscreen Reminder", "reminders/bcsunscreen", 2, "600000", "tal");
+var bcthankyou = new broadcastObj("Kindness Reminder", "reminders/bcthankyou", 2, "600000", "tal");
 // var bctalon = new broadcastObj("Talon Reminder", "reminders/bctalon", 1, "600000", "tal");
-var bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 1, "3600000", "tal");
+var bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 2, "3600000", "tal");
 var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 2, "0", "gray");
 
 /* hazards */

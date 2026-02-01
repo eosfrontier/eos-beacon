@@ -16,6 +16,7 @@ SYSTEM_SETTINGS = {
 /* Settings for defaults that appear on screen. For example, the default security level */
 APPLICATION_DEFAULTS = {
   defaultSecurityLevel: "Status: Synchronized - Optimal Pairing Conditions",
+  defaultColorScheme: "tal", /* set to '0' for default styling. */
 }
 
 /* creating the account object, to re use later */
