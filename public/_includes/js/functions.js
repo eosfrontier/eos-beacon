@@ -18,6 +18,7 @@ var notifiContCache = "";
 var loopSoundCounter = 1
 var loopSoundTimer
 let playlistTimeouts = [];
+let isPlaylistActive = false;
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
 function navigate(target, icDateEnabled, yearOffset) {
@@ -389,6 +390,8 @@ function stopAllAudio() {
 
 
 socket.on('stopAllAudio', function() {
+    isPlaylistActive = false; // Stop any active playlist loops
+
     // Stop broadcast audio
     if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
     const existingBCAudio = BCaudioCache.find('audio');
@@ -650,16 +653,29 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
 /**
  * Plays a list of audio files sequentially.
  * @param {string[]} audioFiles - An array of paths to the audio files.
- * @param {number} loopCount - How many times to loop the playlist. -1 for infinite.
+ * @param {number} [loopCount=1] - How many times to loop the playlist. -1 for infinite.
+ * @param {number} [volume=100] - The volume for the playlist, from 0 to 100.
  */
 function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
+    // Stop any existing playlist before starting a new one.
+    if (isPlaylistActive) {
+        playlistTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        playlistTimeouts = [];
+    }
+    isPlaylistActive = true;
+
     let currentIndex = 0;
     let loops = 0;
 
     function playNext() {
+        if (!isPlaylistActive) {
+            return; // Stop execution if the playlist has been cancelled
+        }
+
         if (currentIndex >= audioFiles.length) {
             loops++;
             if (loopCount !== -1 && loops >= loopCount) {
+                isPlaylistActive = false; // Playlist finished
                 return; // All loops have been completed
             }
             currentIndex = 0; // Start from the beginning
@@ -672,6 +688,8 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
         const audio = new Audio(fullPath);
 
         const onCanPlay = () => {
+            if (!isPlaylistActive) return; // Check again before playing
+
             // Broadcast the audio file to all clients
             generateAudioPlayer(relativePath, 0, volume);
 
@@ -680,6 +698,10 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
             const durationInMs = (audio.duration * 1000) + 500;
             
             const timeoutId = setTimeout(() => {
+                // Final check to ensure the playlist wasn't stopped while waiting.
+                // This is a safeguard against race conditions where the timer fires
+                // just before clearTimeout is called.
+                if (!isPlaylistActive) return;
                 currentIndex++;
                 playNext();
             }, durationInMs);
@@ -690,6 +712,7 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
         };
 
         const onError = (e) => {
+            if (!isPlaylistActive) return; // Check again
             console.error(`Could not load audio metadata for ${fullPath}:`, e);
             // Skip to the next file if there's an error
             currentIndex++;
