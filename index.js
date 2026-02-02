@@ -91,6 +91,7 @@ const applicationState = {
     trackStartedAt: 0,
     pausedAtTime: 0, // elapsed time in ms when pause was triggered
     volume: 50,
+    duration: 0,
   },
 };
 
@@ -296,6 +297,7 @@ io.on('connection', (socket) => {
     applicationState.bgMusic.currentIndex = 0;
     applicationState.bgMusic.trackStartedAt = 0;
     applicationState.bgMusic.pausedAtTime = 0;
+    applicationState.bgMusic.duration = 0;
 
     io.emit('stopAllAudio');
     io.emit('F5');
@@ -372,6 +374,7 @@ io.on('connection', (socket) => {
     applicationState.bgMusic.currentIndex = 0;
     applicationState.bgMusic.trackStartedAt = 0;
     applicationState.bgMusic.pausedAtTime = 0;
+    applicationState.bgMusic.duration = 0;
     syncAppState();
     io.emit('bgMusicStopped');
   });
@@ -476,6 +479,7 @@ io.on('connection', (socket) => {
       applicationState.bgMusic.currentIndex = 0;
       applicationState.bgMusic.trackStartedAt = Date.now();
       applicationState.bgMusic.pausedAtTime = 0;
+      applicationState.bgMusic.duration = 0;
 
       console.log(`[bgmusic] Starting shuffled playlist: ${playlistName}`);
       io.emit('playShuffledPlaylist', filePaths);
@@ -529,6 +533,7 @@ io.on('connection', (socket) => {
     bgMusic.trackStartedAt = Date.now();
     bgMusic.isPaused = false;
     bgMusic.pausedAtTime = 0;
+    bgMusic.duration = 0; // Reset duration for the new track
 
     console.log(`[bgmusic] Changing to track index: ${bgMusic.currentIndex}`);
     io.emit('changeBgMusicTrack', bgMusic.currentIndex);
@@ -550,7 +555,19 @@ io.on('connection', (socket) => {
         console.log(`[bgmusic] Seeking to ${newTime}s`);
         // Tell all clients to seek to the new time.
         io.emit('bgMusicSeek', newTime);
+        syncAppState(); // Broadcast the updated state to all clients
       }
+    }
+  });
+
+  socket.on('reportBgMusicDuration', (data) => {
+    const bgMusic = applicationState.bgMusic;
+    // Only update if the report is for the currently playing track
+    if (bgMusic.playlistName && bgMusic.currentIndex === data.index && bgMusic.duration !== data.duration) {
+        bgMusic.duration = data.duration;
+        console.log(`[bgmusic] Received duration for track ${data.index}: ${data.duration}`);
+        // Broadcast this metadata update to all clients
+        io.emit('bgMusicMetaUpdate', { duration: bgMusic.duration, currentIndex: bgMusic.currentIndex });
     }
   });
 

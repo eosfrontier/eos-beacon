@@ -217,7 +217,31 @@
 
     /* sets 'Current broadcast' to the global dynamicdata. This adds too little and will potentially be removed to save bandwidth. */
     socket.on('updateDynamicData', function(dynamicData){
-      cpanelStatus(window[dynamicData['lastBC']]['title']);
+        cpanelStatus(window[dynamicData['lastBC']]['title']);
+
+        // --- BG Music Sync Logic ---
+        // This ensures the admin panel stays in sync with the server's music state,
+        // especially after track changes.
+        if (dynamicData.bgMusic) {
+            const serverState = dynamicData.bgMusic;
+            const isActiveNow = !!serverState.playlistName;
+
+            // Update local state from server
+            playlistState.isActive = isActiveNow;
+            playlistState.isPaused = serverState.isPaused;
+            playlistState.volume = serverState.volume;
+            playlistState.duration = serverState.duration || 0;
+            playlistState.trackStartedAt = serverState.trackStartedAt;
+            playlistState.pausedAtTime = serverState.pausedAtTime;
+            playlistState.currentIndex = serverState.currentIndex;
+            playlistState.files = serverState.files || [];
+            playlistState.loopCount = isActiveNow ? -1 : 0;
+
+            // If the BG Music panel is currently loaded, update its UI.
+            if (document.getElementById('bgmusic-status')) {
+                updateBgMusicPanelState();
+            }
+        }
     });
 
     /* sets the title when a broadcast is sent by the server */

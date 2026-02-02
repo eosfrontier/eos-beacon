@@ -31,14 +31,18 @@ let playlistState = {
     currentIndex: 0,
     loops: 0,
     timeoutId: null,
-    resumeTime: 0,
-      isResuming: false,
+    resumeTime: 0, // Time to start a track from
+    isResuming: false, // Flag for fade-in logic
+    duration: 0, // Total duration of the current track
+    trackStartedAt: 0, // Server timestamp when the track began
+    pausedAtTime: 0, // Elapsed time in ms when pause was triggered
 };
 
 let mainScreenLoaded = false;
 let playOnLoad = false;
 let isScrubbing = false;
 let bgMusicTimeUpdateInterval = null;
+let adminSliderUpdateInterval = null;
 
 
 $(document).on('mainScreenLoaded', function() {
@@ -383,11 +387,40 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shou
             audioPlayer.volume = targetVolume;
         }
 
-        if (startTime > 0 && isFinite(startTime)) {
-            $(audioPlayer).one('loadedmetadata', function() {
+        $(audioPlayer).one('loadedmetadata', function () {
+            if (startTime > 0 && isFinite(startTime)) {
                 this.currentTime = startTime;
-            });
-        }
+            }
+
+            // If it's a background music track, set up timers and slider
+            if (playlistState.isActive && playlistState.loopCount === -1) {
+                updateBgMusicPanelState();
+
+            // This is a background music track. Report its duration to the server.
+            socket.emit('reportBgMusicDuration', { duration: this.duration, index: playlistState.currentIndex });
+
+                const duration = this.duration;
+                const timeSlider = document.getElementById('bgmusic-time-slider');
+                const durationEl = document.getElementById('bgmusic-duration');
+
+                if (timeSlider && durationEl && !isNaN(duration)) {
+                    timeSlider.max = duration;
+                    durationEl.textContent = formatTrackTime(duration);
+                }
+
+                // Adjust duration if we are resuming from a specific time
+                const durationInMs = ((this.duration - this.currentTime) * 1000) + 500;
+
+                if (bgMusicTimeUpdateInterval) clearInterval(bgMusicTimeUpdateInterval);
+                bgMusicTimeUpdateInterval = setInterval(updateBgMusicTimeSlider, 500);
+
+                if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+                playlistState.timeoutId = setTimeout(() => {
+                    if (!playlistState.isActive || playlistState.isPaused) return;
+                    socket.emit('nextBgMusicTrack');
+                }, durationInMs);
+            }
+        });
 
         customAudioCache.empty().append(audioPlayer);
         const playPromise = audioPlayer.play();
@@ -776,6 +809,8 @@ socket.on('syncBgMusic', (serverState) => {
         playlistState.isPaused = serverState.isPaused;
         playlistState.loops = 0;
         playlistState.timeoutId = null;
+        playlistState.trackStartedAt = serverState.trackStartedAt;
+        playlistState.duration = serverState.duration || 0;
 
         // Calculate the initial playback offset
         const offset = serverState.isPaused ? serverState.pausedAtTime : (Date.now() - serverState.trackStartedAt);
@@ -895,6 +930,15 @@ socket.on('bgMusicSeek', (timeInSeconds) => {
     }
 });
 
+socket.on('bgMusicMetaUpdate', (data) => {
+    // This event is just for updating the UI, not for changing playback state.
+    if (playlistState.isActive && playlistState.loopCount === -1 && playlistState.currentIndex === data.currentIndex) {
+        console.log(`[bgmusic] Received metadata update. Duration: ${data.duration}`);
+        playlistState.duration = data.duration;
+        updateBgMusicPanelState();
+    }
+});
+
 function formatTrackTime(totalSeconds) {
     if (isNaN(totalSeconds) || totalSeconds < 0) {
         return "0:00";
@@ -911,10 +955,42 @@ function setScrubbing(scrubbing) {
         clearInterval(bgMusicTimeUpdateInterval);
         bgMusicTimeUpdateInterval = null;
     }
+    if (scrubbing && adminSliderUpdateInterval) {
+        clearInterval(adminSliderUpdateInterval);
+        adminSliderUpdateInterval = null; // Corrected typo here
+    } else if (!scrubbing) {
+        // When scrubbing stops, restart the appropriate interval if a playlist is active and not paused
+        if (playlistState.isActive && playlistState.loopCount === -1 && !playlistState.isPaused) {
+            // Determine if we are on the client page (with local audio) or admin panel (no local audio)
+            const audioEl = $('#custom-audio').find('audio').get(0);
+            if (audioEl && !isNaN(audioEl.duration)) {
+                // Client page, update local audio slider
+                if (!bgMusicTimeUpdateInterval) {
+                    bgMusicTimeUpdateInterval = setInterval(updateBgMusicTimeSlider, 500);
+                }
+            } else {
+                // Admin panel, update based on server state
+                if (!adminSliderUpdateInterval) {
+                    adminSliderUpdateInterval = setInterval(updateAdminSlider, 500);
+                }
+            }
+        }
+    }
 }
 
 function seekBgMusic(timeInSeconds) {
-    socket.emit('seekBgMusic', timeInSeconds);
+    // Optimistically update the local state to prevent rubber-banding for the active user.
+    // The server will broadcast the authoritative state to all clients.
+    const newTime = parseFloat(timeInSeconds);
+    if (!isNaN(newTime)) {
+        if (playlistState.isPaused) {
+            playlistState.pausedAtTime = newTime * 1000;
+        } else if (playlistState.trackStartedAt > 0) {
+            // This mimics the server's calculation to keep the UI in sync locally.
+            playlistState.trackStartedAt = Date.now() - (newTime * 1000);
+        }
+    }
+    socket.emit('seekBgMusic', timeInSeconds); // Inform the server of the change.
 }
 
 function onBgMusicSliderInput(timeInSeconds) {
@@ -939,6 +1015,31 @@ function updateBgMusicTimeSlider() {
 
     timeSlider.value = audioEl.currentTime;
     currentTimeEl.textContent = formatTrackTime(audioEl.currentTime);
+}
+
+/**
+ * Updates the admin panel slider by calculating progress from server-synced timestamps.
+ * This is used when the page does not have a local audio element to reference.
+ */
+function updateAdminSlider() {
+    if (isScrubbing || !playlistState.isActive || playlistState.loopCount !== -1 || playlistState.isPaused) {
+        return;
+    }
+
+    const timeSlider = document.getElementById('bgmusic-time-slider');
+    const currentTimeEl = document.getElementById('bgmusic-current-time');
+
+    // Only calculate if we have a valid start time
+    if (playlistState.trackStartedAt > 0) {
+        // Calculate time based on server-synced state.
+        const offset = Date.now() - playlistState.trackStartedAt;
+        const currentTime = offset / 1000;
+
+        if (timeSlider && currentTimeEl && currentTime <= timeSlider.max) {
+            timeSlider.value = currentTime;
+            currentTimeEl.textContent = formatTrackTime(currentTime);
+        }
+    }
 }
 
 /* CLOCK */
@@ -1176,68 +1277,15 @@ function playNextTrack() {
     }
 
     const relativePath = playlistState.files[playlistState.currentIndex];
-    const fullPath = relativePath.startsWith('/') ? relativePath : '/sounds/' + relativePath;
+    const startTime = playlistState.resumeTime;
+    const shouldFade = !!playlistState.isResuming;
 
-    const audio = new Audio(fullPath);
+    if (shouldFade) {
+        playlistState.isResuming = false; // Consume the flag
+    }
 
-    const onCanPlay = async () => {
-        if (!playlistState.isActive || playlistState.isPaused) {
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
-            return;
-        }
-
-        const startTime = playlistState.resumeTime;
-        const shouldFade = !!playlistState.isResuming;
-        const playPromise = generateAudioPlayer(
-            relativePath,
-            1,
-            playlistState.volume,
-            startTime,
-            shouldFade
-        );
-
-        try {
-            await playPromise;
-            // Playback started successfully.
-            updateBgMusicPanelState();
-
-            if (shouldFade) playlistState.isResuming = false; // Consume the flag
-            playlistState.resumeTime = 0; // Consume resume time
-
-            const durationInMs = ((audio.duration - startTime) * 1000) + 500;
-
-            if (bgMusicTimeUpdateInterval) clearInterval(bgMusicTimeUpdateInterval);
-            bgMusicTimeUpdateInterval = setInterval(updateBgMusicTimeSlider, 500);
-
-            playlistState.timeoutId = setTimeout(() => {
-                if (!playlistState.isActive || playlistState.isPaused) return;
-                socket.emit('nextBgMusicTrack');
-            }, durationInMs);
-        } catch (error) {
-            console.log('[audio] Playback was prevented by the browser. It will start on user interaction.');
-            // Cleanup for unlockAudio to retry.
-            if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
-            customAudioCache.find('audio').remove();
-            // Set flag for unlockAudio to pick up
-            playOnLoad = true;
-        }
-
-        audio.removeEventListener('canplaythrough', onCanPlay);
-        audio.removeEventListener('error', onError);
-    };
-
-    const onError = (e) => {
-        if (!playlistState.isActive || playlistState.isPaused) return;
-        console.error(`Could not load audio metadata for ${fullPath}:`, e);
-        playlistState.currentIndex++;
-        playNextTrack();
-        audio.removeEventListener('canplaythrough', onCanPlay);
-        audio.removeEventListener('error', onError);
-    };
-
-    audio.addEventListener('canplaythrough', onCanPlay);
-    audio.addEventListener('error', onError);
+    generateAudioPlayer(relativePath, 1, playlistState.volume, startTime, shouldFade);
+    playlistState.resumeTime = 0; // Consume resume time
 }
 
 /**
@@ -1293,11 +1341,35 @@ function updateBgMusicPanelState() {
             timeSlider.disabled = false;
             // On initial load/sync, set the slider value.
             if (!isScrubbing) {
-                timeSlider.value = playlistState.resumeTime;
+                // On admin panel, we must calculate current time from server timestamps
+                let currentTime = 0;
+                if (playlistState.isPaused) {
+                    currentTime = playlistState.pausedAtTime / 1000;
+                } else if (playlistState.trackStartedAt > 0) {
+                    const offset = Date.now() - playlistState.trackStartedAt;
+                    currentTime = offset / 1000;
+                }
+
+                timeSlider.value = currentTime;
                 if (currentTimeEl) {
-                    currentTimeEl.textContent = formatTrackTime(playlistState.resumeTime);
+                    currentTimeEl.textContent = formatTrackTime(currentTime);
                 }
             }
+        }
+
+        // Update duration from the synced state
+        const duration = playlistState.duration || 0;
+        if (timeSlider && duration > 0) {
+            timeSlider.max = duration;
+        }
+        if (durationEl) {
+            durationEl.textContent = formatTrackTime(duration);
+        }
+
+        // Start an interval to update the slider on the admin panel
+        // This won't run on the client page because the elements don't exist there.
+        if (!adminSliderUpdateInterval && timeSlider) {
+            adminSliderUpdateInterval = setInterval(updateAdminSlider, 500);
         }
 
         statusContainer.style.display = 'block';
@@ -1305,6 +1377,12 @@ function updateBgMusicPanelState() {
         nextButton.disabled = false;
         pauseButton.disabled = false;
     } else {
+        // Stop the admin slider interval if no playlist is active
+        if (adminSliderUpdateInterval) {
+            clearInterval(adminSliderUpdateInterval);
+            adminSliderUpdateInterval = null;
+        }
+
         statusContainer.style.display = 'none';
         // Also disable buttons if no playlist is active
         if (prevButton) prevButton.disabled = true;
@@ -1314,6 +1392,7 @@ function updateBgMusicPanelState() {
         if (timeSlider) {
             timeSlider.disabled = true;
             timeSlider.value = 0;
+            timeSlider.max = 100;
         }
         if (currentTimeEl) currentTimeEl.textContent = "0:00";
         if (durationEl) durationEl.textContent = "0:00";
