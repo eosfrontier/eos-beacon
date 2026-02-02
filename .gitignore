@@ -10,4 +10,3 @@ LOGS/eventlog.txt
 *.mp3
 *.ssml
 *.csv
-/schedule.json
