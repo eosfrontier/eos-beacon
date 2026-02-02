@@ -426,7 +426,19 @@ io.on('connection', (socket) => {
     socket.emit('sendBgMusicPlaylists', playlists);
   });
 
-  socket.on('startBgMusicPlaylist', (playlistName) => {
+  socket.on('startBgMusicPlaylist', (data) => {
+    // Support both old (string) and new (object) format for backward compatibility
+    const playlistName = typeof data === 'object' && data !== null ? data.playlistName : data;
+    const volume = typeof data === 'object' && data !== null ? data.volume : undefined;
+
+    if (volume !== undefined && volume !== null) {
+        const newVolume = Math.max(0, Math.min(100, parseInt(volume, 10)));
+        if (!isNaN(newVolume)) {
+            applicationState.bgMusic.volume = newVolume;
+            console.log(`[bgmusic] Volume set to ${newVolume} with new playlist.`);
+        }
+    }
+
     const playlistDir = path.join(__dirname, 'public', 'sounds', 'bgmusic', playlistName);
     if (!fs.existsSync(playlistDir)) {
       console.error(`[bgmusic] Playlist folder not found: ${playlistName}`);

@@ -607,9 +607,11 @@ function updateOrbStatus(orbStatus) {
 /**
  * Starts a shuffled background music playlist.
  * @param {string} playlistName - The name of the folder in public/sounds/bgmusic.
+ * @param {number} [volume] - Optional volume level (0-100). Uses last set volume if not provided.
  */
-function startBgMusicPlaylist(playlistName) {
-    socket.emit('startBgMusicPlaylist', playlistName);
+function startBgMusicPlaylist(playlistName, volume) {
+    // Pass data as an object to accommodate optional volume
+    socket.emit('startBgMusicPlaylist', { playlistName, volume });
 }
 
 /**
