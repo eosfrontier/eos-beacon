@@ -20,7 +20,7 @@ function broadcastObj(title, file, priority, duration, colorscheme) {
 
 /* System broadcasts */
 var bcdefault = new broadcastObj("Default Broadcast", "bcdefault", 1, "0", "tal");
-var bcreset = new broadcastObj("CLEAR SCREEN", "bcdefault", 100, "0", "tal");
+var bcreset = new broadcastObj("CLEAR SCREEN", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
 var bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 2, "0", "tal");
