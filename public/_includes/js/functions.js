@@ -444,9 +444,17 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shou
             });
         }
 
-        if (isInterrupting) {
+        if (isInterrupting) { // For one-off sounds interrupting BG music
             $(audioPlayer).on('ended', function() {
                 resumePlaylist();
+            });
+        } else if (playlistState.isActive && playlistState.loopCount !== -1) {
+            // For temporary playlists (which are not BG music)
+            $(audioPlayer).on('ended', function() {
+                if (!playlistState.isPaused) {
+                    playlistState.currentIndex++;
+                    playNextTrack();
+                }
             });
         }
 
