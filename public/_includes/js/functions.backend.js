@@ -79,5 +79,5 @@ function getCookie(cname) {
 
 function logout() {
   setCookie('auth', 'false', '-1');
-  location.href = "/adm/index.html";
+  location.href = "/adm/";
 }
