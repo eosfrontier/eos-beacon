@@ -548,10 +548,8 @@ io.on('connection', (socket) => {
           bgMusic.pausedAtTime = newTime * 1000;
         }
         console.log(`[bgmusic] Seeking to ${newTime}s`);
-        // Tell all clients to re-sync to the new time.
-        // This will cause them to stop the current track and start a new one at the correct offset.
-        io.emit('syncBgMusic', bgMusic);
-        syncAppState();
+        // Tell all clients to seek to the new time.
+        io.emit('bgMusicSeek', newTime);
       }
     }
   });

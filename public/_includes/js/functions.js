@@ -868,6 +868,33 @@ socket.on('setBgMusicPaused', (isPaused) => {
     updateBgMusicPanelState();
 });
 
+socket.on('bgMusicSeek', (timeInSeconds) => {
+    // Only act if we are currently playing a background music playlist.
+    if (playlistState.isActive && playlistState.loopCount === -1) {
+        if (playlistState.isPaused) {
+            // If paused, just update the resumeTime. The server state is already updated.
+            // When the user hits play, it will resume from this new time.
+            playlistState.resumeTime = timeInSeconds;
+            console.log(`[bgmusic] Seek while paused. New resume time: ${timeInSeconds}s.`);
+            updateBgMusicPanelState();
+        } else {
+            const audioEl = $('#custom-audio').find('audio').get(0);
+            if (audioEl) {
+                console.log(`[bgmusic] Seeking to ${timeInSeconds}s.`);
+                audioEl.currentTime = timeInSeconds;
+
+                // We also need to reset the timeout that schedules the next track.
+                if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+                const remainingTime = (audioEl.duration - audioEl.currentTime) * 1000;
+                playlistState.timeoutId = setTimeout(() => {
+                    if (!playlistState.isActive || playlistState.isPaused) return;
+                    socket.emit('nextBgMusicTrack');
+                }, remainingTime + 500);
+            }
+        }
+    }
+});
+
 function formatTrackTime(totalSeconds) {
     if (isNaN(totalSeconds) || totalSeconds < 0) {
         return "0:00";
