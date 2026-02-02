@@ -728,6 +728,13 @@ function updateOrbStatus(orbStatus) {
 
 }
 
+/* When changing the portal status, play a tune. Or don't, in the case of most mobile devices. */
+function playPortalAudio() {
+  if ($(window).width() > 769) {
+    $('#portalaudio').trigger('play');
+  }
+}
+
 /**
  * Starts a shuffled background music playlist.
  * @param {string} playlistName - The name of the folder in public/sounds/bgmusic.
