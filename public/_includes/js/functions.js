@@ -772,6 +772,12 @@ function setBgMusicVolume(volume) {
     socket.emit('setBgMusicVolume', volume);
 }
 
+socket.on('playAudioPlaylist', function(audioFiles, loopCount, volume) {
+    console.log(`[playlist] Received command to play playlist. Files: ${audioFiles.length}, Loops: ${loopCount}`);
+    // This function handles interrupting BG music and playing a temporary list.
+    playAudioPlaylist(audioFiles, loopCount, volume);
+});
+
 socket.on('playShuffledPlaylist', function(filePaths) {
     // Play the shuffled playlist, looped indefinitely. The server will send a volume update right after.
     // The `playAudioPlaylist` function will handle stopping any previous playlist.

@@ -1,0 +1,43 @@
+<div class="adm-panel">
+    <div class="adm-panel-header">
+        <div class="adm-panel-title">
+            <i class="fa fa-comment-dots"></i>&nbsp;Text-to-Speech
+        </div>
+    </div>
+    <div class="adm-panel-content">
+        <p>Enter text to be spoken as an interrupt to all clients. The message will be repeated once.</p>
+        <form id="tts-form">
+            <div class="form-group">
+                <label for="tts-text">Message:</label>
+                <textarea id="tts-text" class="form-control" rows="3" required maxlength="200" placeholder="Enter message here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-volume-up"></i>&nbsp;Speak
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const form = document.getElementById('tts-form');
+        const textarea = document.getElementById('tts-text');
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = textarea.value.trim();
+            if (text && socket) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating...';
+                socket.emit('tts-speak', text);
+            }
+        });
+
+        socket.on('tts-complete', function() {
+            submitButton.disabled = false;
+            submitButton.innerHTML = '<i class="fa fa-volume-up"></i>&nbsp;Speak';
+            textarea.value = '';
+        });
+    })();
+</script>

@@ -3,6 +3,8 @@ const app = express();
 const http = require('http').Server(app);
 const { Server } = require("socket.io");
 const io = require('socket.io')(http);
+const gtts = require('gtts');
+const getMP3Duration = require('get-mp3-duration');
 const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
@@ -58,6 +60,7 @@ function getVideoBroadcasts() {
 
 // Defaults
 const port = process.env.PORT || globalSettings.sys.port;
+const tmpDir = path.join(__dirname, 'public', 'sounds', 'tmp');
 
 const scheduleFilePath = path.join(__dirname, 'schedule.json');
 const defaultColorScheme = globalSettings.data.defaultColorScheme || '0';
@@ -189,6 +192,13 @@ http.listen(port, () => {
     globalSettings.cfg.appname +
     ' INFORMATION & BROADCASTING SERVICES'
   );
+
+  // Ensure the temporary directory for TTS exists
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir, { recursive: true });
+    console.log('[tts] Created temporary directory for TTS files.');
+  }
+
   loadSchedule();
   setInterval(checkSchedule, 1000); // Check schedule every second
 });
@@ -377,6 +387,50 @@ io.on('connection', (socket) => {
     applicationState.bgMusic.duration = 0;
     syncAppState();
     io.emit('bgMusicStopped');
+  });
+
+  socket.on('tts-speak', (text) => {
+    if (!text || typeof text !== 'string') {
+      return;
+    }
+
+    const sanitizedText = text.substring(0, 200); // Limit length
+    const speechText = `${sanitizedText}. I repeat: ${sanitizedText}`;
+    const speech = new gtts(speechText, 'en');
+    const filename = `tts-${Date.now()}.mp3`;
+    const filePath = path.join(tmpDir, filename);
+
+    speech.save(filePath, (err, result) => {
+      if (err) {
+        console.error('[tts] Error saving TTS file:', err);
+        socket.emit('tts-complete'); // Re-enable button on client
+        return;
+      }
+
+      console.log(`[tts] Generated speech file: ${filename}`);
+      socket.emit('tts-complete'); // Re-enable button on client
+
+      // Broadcast the command to play the temporary audio file
+      // Path must be relative to /public/sounds/ for generateAudioPlayer
+      const publicPath = `tmp/${filename}`;
+      io.emit('playAudioPlaylist', [publicPath], 1);
+
+      // Get duration and schedule deletion
+      try {
+        const buffer = fs.readFileSync(filePath);
+        const duration = getMP3Duration(buffer); // duration in milliseconds
+
+        setTimeout(() => {
+          fs.unlink(filePath, (unlinkErr) => {
+            if (unlinkErr) console.error(`[tts] Error deleting temp file ${filename}:`, unlinkErr);
+            else console.log(`[tts] Deleted temp file: ${filename}`);
+          });
+        }, duration + 5000); // Delete 5 seconds after it should have finished
+      } catch (durationErr) {
+        console.error('[tts] Error getting MP3 duration. Deleting after 60s.', durationErr);
+        setTimeout(() => fs.unlink(filePath, (err) => {}), 60000);
+      }
+    });
   });
 
   const readAudioDirectory = (dir) => {

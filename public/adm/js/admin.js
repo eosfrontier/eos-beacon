@@ -11,6 +11,7 @@ $(document).ready(function() {
         { id: 'SCHEDULE', icon: 'fa-clock', text: 'SCHEDULE', rank: 2, extraClass: 'btn-ui-holo-alt' },
         { id: 'MEDIA', icon: 'fa-photo-film', text: 'MEDIA', rank: 1, extraClass: 'btn-ui-holo-alt' },
         { id: 'BGMUSIC', icon: 'fa-music', text: 'BG MUSIC', rank: 1, extraClass: 'btn-ui-holo-alt' },
+        { id: 'TTS', icon: 'fa-comment-dots', text: 'TTS', rank: 2, extraClass: 'btn-ui-holo-alt' },
         { id: 'OVERLORD', icon: 'fa-microchip', text: 'OVERLORD', rank: 4, extraClass: 'btn-ui-holo-red' },
         { id: 'CMD', icon: 'fa-terminal', text: 'OTHER', rank: 4, extraClass: 'btn-ui-holo-red' }
         // Commented out panels can be added here when ready
@@ -21,9 +22,9 @@ $(document).ready(function() {
     // Permissions map by rank
     const rankPermissions = {
         '1': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'CMD'],
-        '2': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE' /*, 'MEDICAL'*/],
-        '3': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE' /*, 'ORB'*/],
-        '4': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE'/*, 'OVERLORD' , 'MEDICAL', 'ORB'*/]
+        '2': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE', 'TTS' /*, 'MEDICAL'*/],
+        '3': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE', 'TTS' /*, 'ORB'*/],
+        '4': [/*'BROADCAST', */'REMINDERS', 'SECURITY', 'KITCHEN', 'ACTIVITIES', 'MEDIA', 'BGMUSIC', 'CMD', 'SCHEDULE', 'TTS'/*, 'OVERLORD' , 'MEDICAL', 'ORB'*/]
     };
 
     function generateCPanel() {
