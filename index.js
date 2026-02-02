@@ -354,11 +354,17 @@ io.on('connection', (socket) => {
   /* broadcast from adminpanel to index.js. Sends a "stop all audio!" request to every connected client. */
   socket.on('stopAllAudio', () => {
     console.log('[audio] => stop all audio broadcasted');
+    io.emit('stopAllAudio');
+  });
+
+  socket.on('stopBgMusicOnly', () => {
+    console.log('[bgmusic] => stop background music broadcasted');
+    // Clear the server state for background music
     applicationState.bgMusic.playlistName = null;
     applicationState.bgMusic.files = [];
     applicationState.bgMusic.isPaused = false;
     syncAppState();
-    io.emit('stopAllAudio');
+    io.emit('bgMusicStopped');
   });
 
   const readAudioDirectory = (dir) => {

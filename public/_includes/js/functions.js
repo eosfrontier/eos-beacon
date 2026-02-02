@@ -435,39 +435,96 @@ function stopAllAudio() {
   socket.emit('stopAllAudio');
 }
 
+function stopBgMusicOnly() {
+    socket.emit('stopBgMusicOnly');
+}
 
-socket.on('stopAllAudio', function() {
-    // Clear any saved background playlist state
-    backgroundPlaylistState = null;
+socket.on('bgMusicStopped', function() {
+    console.log('[bgmusic] Received command to stop background music.');
+    // Only act if a background music playlist is active or paused
+    if (playlistState.isActive && playlistState.loopCount === -1) {
+        if (playlistState.timeoutId) {
+            clearTimeout(playlistState.timeoutId);
+        }
 
-    // Stop any active playlist loops
-    if (playlistState.isActive) {
+        // Stop and remove the audio element
+        if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+        customAudioCache.find('audio').remove();
+
+        // Reset the state
         playlistState.isActive = false;
         playlistState.isPaused = false;
-        if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+        playlistState.files = [];
+        playlistState.currentIndex = 0;
+        playlistState.loops = 0;
         playlistState.timeoutId = null;
+        playlistState.resumeTime = 0;
+
+        // This was a hard stop, so clear any saved interruption state too.
+        backgroundPlaylistState = null;
+
+        updateBgMusicPanelState();
+    }
+});
+
+socket.on('stopAllAudio', function() {
+    console.log('[audio] Received stopAllAudio command (for interruptions).');
+
+    // If a background playlist was interrupted (by another playlist or a one-off sound)...
+    if (backgroundPlaylistState || (playlistState.isPaused && playlistState.loopCount === -1)) {
+        console.log('[audio] Cancelling interruption and resuming background music.');
+
+        // Stop all potentially interrupting audio sources with a fade
+        if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+        customAudioCache.find('audio').animate({ volume: 0 }, 300, function() { $(this).remove(); });
+
+        if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
+        BCaudioCache.find('audio').animate({ volume: 0 }, 300, function() { $(this).remove(); });
+
+        // If the interruption was a temporary playlist, clear its state
+        if (backgroundPlaylistState) {
+            if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+            // Restore the background music state
+            playlistState = backgroundPlaylistState;
+            backgroundPlaylistState = null;
+        }
+
+        // Use a small timeout to allow fades to complete before resuming
+        setTimeout(function() {
+            resumePlaylist();
+        }, 350);
+        return;
     }
 
-    // Stop broadcast audio
+    // If we get here, no background music was paused.
+    // This command should only stop temporary sounds, leaving an active background music playlist untouched.
+
+    // Stop broadcast audio (from generateBCaudio)
     if (BCaudioCache == "") { BCaudioCache = $('#BCAUDIO'); }
-    const existingBCAudio = BCaudioCache.find('audio');
-    if (existingBCAudio.length > 0 && !existingBCAudio.get(0).paused) {
-        existingBCAudio.animate({ volume: 0 }, 500, function() {
-            $(this).remove();
-        });
-    }
+    BCaudioCache.find('audio').animate({ volume: 0 }, 500, function() { $(this).remove(); });
 
-    // Stop custom/playlist audio
+    // Check the main audio player.
     if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
-    const existingCustomAudio = customAudioCache.find('audio');
-    if (existingCustomAudio.length > 0 && !existingCustomAudio.get(0).paused) {
-        existingCustomAudio.animate({ volume: 0 }, 500, function() {
-            $(this).remove();
-        });
+    const audioEl = customAudioCache.find('audio').get(0);
+
+    if (audioEl) {
+        // If the currently active playlist is NOT a background music playlist, then it's temporary. Stop it.
+        if (playlistState.isActive && playlistState.loopCount !== -1) {
+            console.log('[audio] Stopping temporary playlist.');
+            $(audioEl).animate({ volume: 0 }, 500, function() {
+                $(this).remove();
+                // If a temporary playlist was stopped, update its state
+                if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+                playlistState.isActive = false;
+                updateBgMusicPanelState();
+            });
+        } else if (!playlistState.isActive) {
+            // If no playlist is active, any sound in here is a one-off temporary sound.
+            console.log('[audio] Stopping one-off temporary audio.');
+            $(audioEl).animate({ volume: 0 }, 500, function() { $(this).remove(); });
+        }
+        // If playlistState.isActive and loopCount IS -1, it's background music, so we do nothing.
     }
-
-    updateBgMusicPanelState();
-
 });
 
 /* portal status. */
