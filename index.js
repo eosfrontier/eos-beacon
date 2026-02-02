@@ -87,6 +87,9 @@ const applicationState = {
     playlistName: null,
     files: [],
     isPaused: false,
+    currentIndex: 0,
+    trackStartedAt: 0,
+    pausedAtTime: 0, // elapsed time in ms when pause was triggered
     volume: 50,
   },
 };
@@ -290,6 +293,9 @@ io.on('connection', (socket) => {
     applicationState.bgMusic.playlistName = null;
     applicationState.bgMusic.files = [];
     applicationState.bgMusic.isPaused = false;
+    applicationState.bgMusic.currentIndex = 0;
+    applicationState.bgMusic.trackStartedAt = 0;
+    applicationState.bgMusic.pausedAtTime = 0;
 
     io.emit('stopAllAudio');
     io.emit('F5');
@@ -363,6 +369,9 @@ io.on('connection', (socket) => {
     applicationState.bgMusic.playlistName = null;
     applicationState.bgMusic.files = [];
     applicationState.bgMusic.isPaused = false;
+    applicationState.bgMusic.currentIndex = 0;
+    applicationState.bgMusic.trackStartedAt = 0;
+    applicationState.bgMusic.pausedAtTime = 0;
     syncAppState();
     io.emit('bgMusicStopped');
   });
@@ -464,6 +473,9 @@ io.on('connection', (socket) => {
       applicationState.bgMusic.playlistName = playlistName;
       applicationState.bgMusic.files = filePaths;
       applicationState.bgMusic.isPaused = false;
+      applicationState.bgMusic.currentIndex = 0;
+      applicationState.bgMusic.trackStartedAt = Date.now();
+      applicationState.bgMusic.pausedAtTime = 0;
 
       console.log(`[bgmusic] Starting shuffled playlist: ${playlistName}`);
       io.emit('playShuffledPlaylist', filePaths);
@@ -485,21 +497,63 @@ io.on('connection', (socket) => {
 
   socket.on('toggleBgMusicPause', () => {
     if (applicationState.bgMusic.playlistName) {
-      applicationState.bgMusic.isPaused = !applicationState.bgMusic.isPaused;
+      const bgMusic = applicationState.bgMusic;
+      bgMusic.isPaused = !bgMusic.isPaused;
+
+      if (bgMusic.isPaused) {
+        // Store how far into the track we were when we paused.
+        bgMusic.pausedAtTime = Date.now() - bgMusic.trackStartedAt;
+      } else {
+        // Adjust trackStartedAt to account for the time we were paused.
+        bgMusic.trackStartedAt = Date.now() - bgMusic.pausedAtTime;
+        bgMusic.pausedAtTime = 0;
+      }
+
       console.log(`[bgmusic] Pause state is now: ${applicationState.bgMusic.isPaused}`);
       io.emit('setBgMusicPaused', applicationState.bgMusic.isPaused);
       syncAppState();
     }
   });
 
-  socket.on('nextBgMusicTrack', () => {
-    console.log('[bgmusic] Skipping to next track.');
-    io.emit('nextBgMusicTrack');
-  });
+  const changeBgMusicTrack = (direction) => {
+    const bgMusic = applicationState.bgMusic;
+    if (!bgMusic.playlistName) return;
 
-  socket.on('prevBgMusicTrack', () => {
-    console.log('[bgmusic] Going to previous track.');
-    io.emit('prevBgMusicTrack');
+    bgMusic.currentIndex += direction;
+    if (bgMusic.currentIndex >= bgMusic.files.length) {
+      bgMusic.currentIndex = 0;
+    } else if (bgMusic.currentIndex < 0) {
+      bgMusic.currentIndex = bgMusic.files.length - 1;
+    }
+
+    bgMusic.trackStartedAt = Date.now();
+    bgMusic.isPaused = false;
+    bgMusic.pausedAtTime = 0;
+
+    console.log(`[bgmusic] Changing to track index: ${bgMusic.currentIndex}`);
+    io.emit('changeBgMusicTrack', bgMusic.currentIndex);
+    syncAppState();
+  };
+
+  socket.on('nextBgMusicTrack', () => changeBgMusicTrack(1));
+  socket.on('prevBgMusicTrack', () => changeBgMusicTrack(-1));
+
+  socket.on('seekBgMusic', (timeInSeconds) => {
+    const bgMusic = applicationState.bgMusic;
+    if (bgMusic.playlistName) {
+      const newTime = parseFloat(timeInSeconds);
+      if (!isNaN(newTime) && newTime >= 0) {
+        bgMusic.trackStartedAt = Date.now() - (newTime * 1000);
+        if (bgMusic.isPaused) {
+          bgMusic.pausedAtTime = newTime * 1000;
+        }
+        console.log(`[bgmusic] Seeking to ${newTime}s`);
+        // Tell all clients to re-sync to the new time.
+        // This will cause them to stop the current track and start a new one at the correct offset.
+        io.emit('syncBgMusic', bgMusic);
+        syncAppState();
+      }
+    }
   });
 
   // optional/legacy PA functionality

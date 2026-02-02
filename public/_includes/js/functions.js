@@ -32,12 +32,59 @@ let playlistState = {
     loops: 0,
     timeoutId: null,
     resumeTime: 0,
+      isResuming: false,
 };
+
+let mainScreenLoaded = false;
+let playOnLoad = false;
+let isScrubbing = false;
+let bgMusicTimeUpdateInterval = null;
+
+
+$(document).on('mainScreenLoaded', function() {
+    mainScreenLoaded = true;
+    if (playOnLoad) {
+        console.log('[bgmusic] Main screen loaded, now attempting to play synced music.');
+        // This first attempt will be blocked by the browser's autoplay policy
+        // if the user hasn't interacted yet. The `unlockAudio` function will
+        // handle retrying playback upon the first user interaction.
+        playNextTrack();
+    }
+});
+
+let audioUnlocked = false;
+function unlockAudio() {
+    if (audioUnlocked) {
+        return;
+    }
+    // Create a dummy audio element and play it. This is the most reliable way
+    // to unlock audio playback across all browsers.
+    const unlockAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+    unlockAudio.play().then(() => {
+        audioUnlocked = true;
+        console.log('[audio] Audio unlocked by user interaction.');
+
+        // If a background music playlist was synced and is waiting to play, start it now.
+        if (playlistState.isActive && playlistState.isPaused === false && playlistState.loopCount === -1 && playlistState.timeoutId === null) {
+            const audioEl = $('#custom-audio').find('audio').get(0);
+            if (!audioEl) {
+                console.log('[bgmusic] Starting synced playlist after user interaction.');
+                playNextTrack();
+            }
+        }
+    }).catch(() => {}); // Ignore errors, the user might need to interact again.
+}
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
 function navigate(target, icDateEnabled, yearOffset) {
   if (target != "") {
-    $('#main').empty().load(target + '.html');
+    $('#main').empty().load(target + '.html', function() {
+        // When the main screen is loaded for the first time, trigger an event
+        // so we know the UI is stable.
+        if (target === 'mainScreen') {
+            $(document).trigger('mainScreenLoaded');
+        }
+    });
   }
   /* At the loading of the MAIN SCREEN we get the perfect opportunity to do an async time. We can't do this in the time function itself, as that keeps refreshing every 1s*/
   if (icDateEnabled) {
@@ -277,7 +324,7 @@ function clearBroadcast(duration) {
 
 }
 
-function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0) {
+function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shouldFade = false) {
 
   if (customAudioCache == "") {
     customAudioCache = $('#custom-audio');
@@ -324,17 +371,45 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0) {
           + '</audio>').get(0); // .get(0) to access the raw DOM element
 
         // Clamp volume between 0 and 100 and convert to 0.0-1.0 range
-        var cleanVolume = Math.max(0, Math.min(100, volume));
-        audioPlayer.volume = cleanVolume / 100;
+        const cleanVolume = Math.max(0, Math.min(100, volume));
+        const targetVolume = cleanVolume / 100;
 
-        if (startTime > 0) {
+        if (shouldFade) {
+            audioPlayer.volume = 0;
+            $(audioPlayer).one('playing', function() {
+                $(this).animate({ volume: targetVolume }, 500); // 500ms fade-in
+            });
+        } else {
+            audioPlayer.volume = targetVolume;
+        }
+
+        if (startTime > 0 && isFinite(startTime)) {
             $(audioPlayer).one('loadedmetadata', function() {
                 this.currentTime = startTime;
             });
         }
 
         customAudioCache.empty().append(audioPlayer);
-        audioPlayer.play();
+        const playPromise = audioPlayer.play();
+
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('[audio] Playback was prevented by the browser. It will start on user interaction.');
+                // If this was a background music track, we need to reset its state
+                // so that the unlockAudio function can restart it.
+                if (playlistState.isActive && playlistState.loopCount === -1) {
+                    if (playlistState.timeoutId) {
+                        clearTimeout(playlistState.timeoutId);
+                        playlistState.timeoutId = null;
+                    }
+                    if (bgMusicTimeUpdateInterval) {
+                        clearInterval(bgMusicTimeUpdateInterval);
+                        bgMusicTimeUpdateInterval = null;
+                    }
+                    $(audioPlayer).remove();
+                }
+            });
+        }
 
         if (isInterrupting) {
             $(audioPlayer).on('ended', function() {
@@ -436,6 +511,10 @@ function stopAllAudio() {
 }
 
 function stopBgMusicOnly() {
+    if (bgMusicTimeUpdateInterval) {
+        clearInterval(bgMusicTimeUpdateInterval);
+        bgMusicTimeUpdateInterval = null;
+    }
     socket.emit('stopBgMusicOnly');
 }
 
@@ -445,6 +524,10 @@ socket.on('bgMusicStopped', function() {
     if (playlistState.isActive && playlistState.loopCount === -1) {
         if (playlistState.timeoutId) {
             clearTimeout(playlistState.timeoutId);
+        }
+        if (bgMusicTimeUpdateInterval) {
+            clearInterval(bgMusicTimeUpdateInterval);
+            bgMusicTimeUpdateInterval = null;
         }
 
         // Stop and remove the audio element
@@ -654,28 +737,62 @@ socket.on('playShuffledPlaylist', function(filePaths) {
     playAudioPlaylist(filePaths, -1, playlistState.volume);
 });
 
+socket.on('changeBgMusicTrack', (newIndex) => {
+    // This event is the authoritative command to change the track.
+    if (!playlistState.isActive || playlistState.loopCount !== -1) {
+        // This client isn't playing background music, so ignore.
+        return;
+    }
+    console.log(`[bgmusic] Received command to change to track index: ${newIndex}`);
+
+    if (bgMusicTimeUpdateInterval) clearInterval(bgMusicTimeUpdateInterval);
+    clearTimeout(playlistState.timeoutId);
+    $('#custom-audio').find('audio').remove();
+
+    playlistState.currentIndex = newIndex;
+    playlistState.resumeTime = 0;
+    playNextTrack();
+});
+
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });
+
 socket.on('syncBgMusic', (serverState) => {
     // Received by a client on connection if a playlist is active on the server.
     console.log('[bgmusic] Syncing initial state from server:', serverState.playlistName);
-
-    // Only sync if we are not currently playing a background music playlist.
+// Only sync if we are not currently playing a background music playlist.
     if (!playlistState.isActive || playlistState.loopCount !== -1) {
         // Set the local state to match the server.
+        if (bgMusicTimeUpdateInterval) {
+            clearInterval(bgMusicTimeUpdateInterval);
+            bgMusicTimeUpdateInterval = null;
+        }
+
         playlistState.files = serverState.files;
         playlistState.loopCount = -1; // It's a background music playlist
         playlistState.volume = serverState.volume;
+        playlistState.currentIndex = serverState.currentIndex;
         playlistState.isActive = true;
         playlistState.isPaused = serverState.isPaused;
-        playlistState.currentIndex = 0; // Start from the beginning of the shuffled list.
         playlistState.loops = 0;
         playlistState.timeoutId = null;
+
+        // Calculate the initial playback offset
+        const offset = serverState.isPaused ? serverState.pausedAtTime : (Date.now() - serverState.trackStartedAt);
+        playlistState.resumeTime = offset / 1000; // convert to seconds
 
         // Update the UI if the admin panel is open.
         updateBgMusicPanelState();
 
-        // Start playback if we're not supposed to be paused.
+        // Attempt to play if not paused, respecting the page load state.
         if (!playlistState.isPaused) {
-            playNextTrack();
+            if (mainScreenLoaded) {
+                console.log('[bgmusic] Playlist synced. Attempting to start playback.');
+                playNextTrack();
+            } else {
+                console.log('[bgmusic] Playlist synced. Will start after main screen loads.');
+                playOnLoad = true;
+            }
         }
     }
 });
@@ -713,90 +830,89 @@ socket.on('setBgMusicPaused', (isPaused) => {
     playlistState.isPaused = isPaused;
 
     if (isPaused) { // It's playing, so pause
-        if (audioEl) audioEl.pause();
+        if (bgMusicTimeUpdateInterval) {
+            clearInterval(bgMusicTimeUpdateInterval);
+            bgMusicTimeUpdateInterval = null;
+        }
+
+        if (audioEl) {
+            $(audioEl).animate({ volume: 0 }, 500, function() {
+                this.pause();
+            });
+        }
         if (playlistState.timeoutId) {
             clearTimeout(playlistState.timeoutId);
             playlistState.timeoutId = null;
         }
     } else { // It's paused, so resume
         if (audioEl) {
+            const targetVolume = playlistState.volume / 100;
+            audioEl.volume = 0;
             audioEl.play();
+            $(audioEl).animate({ volume: targetVolume }, 500);
+
             const remainingTime = (audioEl.duration - audioEl.currentTime) * 1000;
             if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
+            if (bgMusicTimeUpdateInterval) clearInterval(bgMusicTimeUpdateInterval);
+            bgMusicTimeUpdateInterval = setInterval(updateBgMusicTimeSlider, 500);
             playlistState.timeoutId = setTimeout(() => {
                 if (!playlistState.isActive || playlistState.isPaused) return;
-                playlistState.currentIndex++;
-                playNextTrack();
+                socket.emit('nextBgMusicTrack');
             }, remainingTime + 500);
         } else {
             // No audio element, means we were paused between tracks. Just start the next one.
+            playlistState.isResuming = true;
             playNextTrack();
         }
     }
     updateBgMusicPanelState();
 });
 
-socket.on('nextBgMusicTrack', () => {
-    if (!playlistState.isActive || playlistState.loopCount !== -1) {
-        console.log('[bgmusic] "next" command ignored: not a background music playlist.');
-        return;
+function formatTrackTime(totalSeconds) {
+    if (isNaN(totalSeconds) || totalSeconds < 0) {
+        return "0:00";
     }
-    console.log('[bgmusic] "next" command received, skipping track.');
-    if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
-    playlistState.currentIndex++;
-    // playNextTrack handles wrapping around
-    playNextTrack();
-});
-
-socket.on('prevBgMusicTrack', () => {
-    if (!playlistState.isActive || playlistState.loopCount !== -1) {
-        console.log('[bgmusic] "prev" command ignored: not a background music playlist.');
-        return;
-    }
-    console.log('[bgmusic] "prev" command received, skipping to previous track.');
-    if (playlistState.timeoutId) clearTimeout(playlistState.timeoutId);
-    playlistState.currentIndex--;
-    if (playlistState.currentIndex < 0) {
-        playlistState.currentIndex = playlistState.files.length - 1;
-    }
-    playNextTrack();
-});
-
-/* When changing the portal status, play a tune. Or don't, in the case of most mobile devices. */
-function playPortalAudio() {
-  if ($(window).width() > 769) {
-    $('#portalaudio').trigger('play');
-  }
+    totalSeconds = Math.floor(totalSeconds);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-/* function to create a video player on devices with enough screen width. */
-function generateVideo(name, type) {
-
-  if ($(window).width() > 768) {
-
-    $('#video-container').html('<video id="broadcastVideo" class="video-js" controls preload="auto"><source src="/video/' + name + '" type="video/' + type + '"></source></video>');
-
-    /* ask videojs to turn our video element into a tuned up video element. */
-    videojs("broadcastVideo", { "controls": true, "autoplay": true, "preload": "auto" }, function () { });
-
-  } else {
-
-    /* client's screen is too small, put on a fallback instead. */
-    $('#video-container').html(
-      '<div class=\"container-fluid\">'
-      + '<h2>Broadcast:Transmission</h2>'
-      + '<p>Video tranmission is currently playing on compatible/certified devices.</p>'
-      + '<br/>'
-      + '<div class=\"animloadbar\">'
-      + '<span class=\"animloadbar-bar\"></span>'
-      + '</div>'
-      + '</div>'
-    );
-
-  }
-
+function setScrubbing(scrubbing) {
+    isScrubbing = scrubbing;
+    if (scrubbing && bgMusicTimeUpdateInterval) {
+        clearInterval(bgMusicTimeUpdateInterval);
+        bgMusicTimeUpdateInterval = null;
+    }
 }
 
+function seekBgMusic(timeInSeconds) {
+    socket.emit('seekBgMusic', timeInSeconds);
+}
+
+function onBgMusicSliderInput(timeInSeconds) {
+    const currentTimeEl = document.getElementById('bgmusic-current-time');
+    if (currentTimeEl) {
+        currentTimeEl.textContent = formatTrackTime(timeInSeconds);
+    }
+}
+
+function updateBgMusicTimeSlider() {
+    if (isScrubbing || !playlistState.isActive || playlistState.loopCount !== -1 || playlistState.isPaused) {
+        return;
+    }
+
+    const timeSlider = document.getElementById('bgmusic-time-slider');
+    const currentTimeEl = document.getElementById('bgmusic-current-time');
+    const audioEl = $('#custom-audio').find('audio').get(0);
+
+    if (!timeSlider || !currentTimeEl || !audioEl || isNaN(audioEl.duration)) {
+        return;
+    }
+
+    timeSlider.value = audioEl.currentTime;
+    currentTimeEl.textContent = formatTrackTime(audioEl.currentTime);
+}
 
 /* CLOCK */
 function updateClock() {
@@ -954,6 +1070,7 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
     playlistState.loops = 0;
     playlistState.timeoutId = null;
     playlistState.resumeTime = 0;
+    playlistState.isResuming = false;
 
     playNextTrack();
     // Update panel state after a short delay to ensure DOM is ready
@@ -966,22 +1083,23 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
 function pausePlaylist() {
     if (playlistState.isActive && !playlistState.isPaused) {
         console.log('[playlist] Pausing playlist for interruption.');
-        if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
-        const customAudio = customAudioCache.find('audio');
-        if (customAudio.length > 0) {
-            playlistState.resumeTime = customAudio.get(0).currentTime;
-        } else {
-            playlistState.resumeTime = 0; // Paused between tracks
-        }
 
         playlistState.isPaused = true;
         if (playlistState.timeoutId) {
             clearTimeout(playlistState.timeoutId);
             playlistState.timeoutId = null;
         }
-        // Stop the currently playing track from the playlist
+
+        if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+        const customAudio = customAudioCache.find('audio');
         if (customAudio.length > 0) {
-            customAudio.remove();
+            playlistState.resumeTime = customAudio.get(0).currentTime;
+            // Fade out and remove
+            $(customAudio).animate({ volume: 0 }, 500, function() {
+                $(this).remove();
+            });
+        } else {
+            playlistState.resumeTime = 0; // Paused between tracks
         }
     }
 }
@@ -993,6 +1111,7 @@ function resumePlaylist() {
     if (playlistState.isActive && playlistState.isPaused) {
         console.log('[playlist] Resuming playlist.');
         playlistState.isPaused = false;
+        playlistState.isResuming = true;
         // Replay the current track from where it left off.
         playNextTrack();
     }
@@ -1034,27 +1153,48 @@ function playNextTrack() {
 
     const audio = new Audio(fullPath);
 
-    const onCanPlay = () => {
+    const onCanPlay = async () => {
         if (!playlistState.isActive || playlistState.isPaused) {
             audio.removeEventListener('canplaythrough', onCanPlay);
             audio.removeEventListener('error', onError);
             return;
         }
 
-        updateBgMusicPanelState();
-
         const startTime = playlistState.resumeTime;
-        generateAudioPlayer(relativePath, 1, playlistState.volume, startTime);
-        playlistState.resumeTime = 0; // Consume it
+        const shouldFade = !!playlistState.isResuming;
+        const playPromise = generateAudioPlayer(
+            relativePath,
+            1,
+            playlistState.volume,
+            startTime,
+            shouldFade
+        );
 
-        // Adjust duration if we are resuming from a specific time
-        const durationInMs = ((audio.duration - startTime) * 1000) + 500;
+        try {
+            await playPromise;
+            // Playback started successfully.
+            updateBgMusicPanelState();
 
-        playlistState.timeoutId = setTimeout(() => {
-            if (!playlistState.isActive || playlistState.isPaused) return;
-            playlistState.currentIndex++;
-            playNextTrack();
-        }, durationInMs);
+            if (shouldFade) playlistState.isResuming = false; // Consume the flag
+            playlistState.resumeTime = 0; // Consume resume time
+
+            const durationInMs = ((audio.duration - startTime) * 1000) + 500;
+
+            if (bgMusicTimeUpdateInterval) clearInterval(bgMusicTimeUpdateInterval);
+            bgMusicTimeUpdateInterval = setInterval(updateBgMusicTimeSlider, 500);
+
+            playlistState.timeoutId = setTimeout(() => {
+                if (!playlistState.isActive || playlistState.isPaused) return;
+                socket.emit('nextBgMusicTrack');
+            }, durationInMs);
+        } catch (error) {
+            console.log('[audio] Playback was prevented by the browser. It will start on user interaction.');
+            // Cleanup for unlockAudio to retry.
+            if (customAudioCache == "") { customAudioCache = $('#custom-audio'); }
+            customAudioCache.find('audio').remove();
+            // Set flag for unlockAudio to pick up
+            playOnLoad = true;
+        }
 
         audio.removeEventListener('canplaythrough', onCanPlay);
         audio.removeEventListener('error', onError);
@@ -1088,6 +1228,9 @@ function updateBgMusicPanelState() {
     const nextButton = document.getElementById('bgmusic-next-btn');
     const volumeSlider = document.getElementById('bgmusic-volume-slider');
     const volumeLabel = document.getElementById('bgmusic-volume-label');
+    const timeSlider = document.getElementById('bgmusic-time-slider');
+    const currentTimeEl = document.getElementById('bgmusic-current-time');
+    const durationEl = document.getElementById('bgmusic-duration');
 
     // Check if a background music playlist is active
     if (playlistState.isActive && playlistState.loopCount === -1) {
@@ -1119,6 +1262,17 @@ function updateBgMusicPanelState() {
             volumeLabel.textContent = playlistState.volume;
         }
 
+        if (timeSlider) {
+            timeSlider.disabled = false;
+            // On initial load/sync, set the slider value.
+            if (!isScrubbing) {
+                timeSlider.value = playlistState.resumeTime;
+                if (currentTimeEl) {
+                    currentTimeEl.textContent = formatTrackTime(playlistState.resumeTime);
+                }
+            }
+        }
+
         statusContainer.style.display = 'block';
         prevButton.disabled = false;
         nextButton.disabled = false;
@@ -1130,5 +1284,11 @@ function updateBgMusicPanelState() {
         if (nextButton) nextButton.disabled = true;
         if (pauseButton) pauseButton.disabled = true;
         if (volumeSlider) volumeSlider.disabled = true;
+        if (timeSlider) {
+            timeSlider.disabled = true;
+            timeSlider.value = 0;
+        }
+        if (currentTimeEl) currentTimeEl.textContent = "0:00";
+        if (durationEl) durationEl.textContent = "0:00";
     }
 }

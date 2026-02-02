@@ -191,7 +191,7 @@
     setCookie('usercode',keycode,'1');
     setCookie('rank',loginRank,'1');
     $('#admkeypad').hide();
-    $.getScript('/_includes/js/adminPanel.js', function() {
+    $.getScript('js/adminPanel.js', function() {
       $('#cPanel').load('/adm/cpanel.html');
     });
   });
@@ -235,7 +235,7 @@
     /* on pageload: if the user is already logged in, load the adminpanel. */
     if(admAUTH == 'TRUE') {
       $('#admkeypad').hide();
-      $.getScript('/_includes/js/adminPanel.js', function() {
+      $.getScript('js/adminPanel.js', function() {
         $('#cPanel').load('/adm/cpanel.html');
       });
     }

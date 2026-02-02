@@ -5,7 +5,7 @@ $(document).ready(function() {
     const adminPanels = [
         // { id: /*'BROADCAST', */icon: 'fa-wifi', text: /*'BROADCAST', */rank: 1 },
         { id: 'REMINDERS', icon: 'fa-bell', text: 'REMINDERS', rank: 1, extraClass: 'btn-ui-holo-alt' },
-        { id: 'SECURITY', icon: 'fa-exclamation-circle', text: 'SECURITY LVL', rank: 1, extraClass: 'btn-ui-holo-red' },
+        { id: 'SECURITY', icon: 'fa-exclamation-circle', text: 'ALERT LVL', rank: 1, extraClass: 'btn-ui-holo-red' },
         { id: 'KITCHEN', icon: 'fa-cutlery', text: 'KITCHEN', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'ACTIVITIES', icon: 'fa-calendar-days', text: 'ACTIVITIES', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'SCHEDULE', icon: 'fa-clock', text: 'SCHEDULE', rank: 2, extraClass: 'btn-ui-holo-alt' },
