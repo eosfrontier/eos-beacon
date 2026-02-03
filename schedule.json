@@ -7,17 +7,17 @@
     "id": 1769801832810
   },
   {
-    "time": "01:00:00",
-    "broadcastKey": "bcgotobed",
-    "broadcast": "{\"title\":\"Sleep Reminder\",\"file\":\"reminders/bcgotobed\",\"priority\":2,\"duration\":\"0\",\"colorscheme\":\"gray\"}",
-    "sent": false,
-    "id": 1769801905776
-  },
-  {
     "time": "10:00:00",
     "broadcastKey": "bcbreakfast1",
     "broadcast": "{\"title\":\"FIRST Breakfast announcement\",\"file\":\"kitchen/bcbreakfast1\",\"priority\":1,\"duration\":\"0\",\"colorscheme\":\"tal\"}",
     "sent": false,
     "id": 1769802203520
+  },
+  {
+    "time": "01:00:00",
+    "broadcastKey": "bcgotobed",
+    "broadcast": "{\"title\":\"Sleep Reminder\",\"file\":\"reminders/bcgotobed\",\"priority\":1,\"duration\":\"0\",\"colorscheme\":\"gray\"}",
+    "sent": false,
+    "id": 1770131581295
   }
 ]
