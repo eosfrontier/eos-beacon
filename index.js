@@ -447,9 +447,10 @@ io.on('connection', (socket) => {
 
   socket.on('generate-match-audio', async ({
     csvData,
-    runNumber
+    runNumber,
+    matchType
   }) => {
-    if (!csvData || !runNumber || (runNumber !== '7' && runNumber !== '8')) {
+    if (!csvData || !runNumber || !matchType || (runNumber !== '7' && runNumber !== '8')) {
       return socket.emit('match-audio-error', {
         message: 'Invalid data received.'
       });
@@ -488,7 +489,7 @@ io.on('connection', (socket) => {
         return clean;
       };
 
-      const outputDir = path.join(__dirname, 'public', 'sounds', 'audio', 'Matches', `Run ${runNumber}`, 'Final Match');
+      const outputDir = path.join(__dirname, 'public', 'sounds', 'audio', 'Matches', `Run ${runNumber}`, `${matchType} Match`);
       // Clean up existing directory before generating new files.
       if (fs.existsSync(outputDir)) {
         console.log(`[match-audio] Removing existing directory: ${outputDir}`);

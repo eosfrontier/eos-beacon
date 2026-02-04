@@ -33,12 +33,23 @@
                 <label for="match-csv-file">Matches CSV File:</label>
                 <input type="file" id="match-csv-file" class="form-control-file" accept=".csv" required>
             </div>
-            <div class="form-group">
-                <label for="match-run-number">Run Number:</label>
-                <select id="match-run-number" class="form-control" style="width: auto;">
-                    <option value="7">Run 7</option>
-                    <option value="8">Run 8</option>
-                </select>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="form-group">
+                    <label for="match-run-number">Run Number:</label>
+                    <select id="match-run-number" class="form-control" style="width: auto;">
+                        <option value="7">Run 7</option>
+                        <option value="8">Run 8</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="match-type">Match:</label>
+                    <select id="match-type" class="form-control" style="width: auto;">
+                        <option value="1st">1st Match</option>
+                        <option value="2nd">2nd Match</option>
+                        <option value="3rd">3rd Match</option>
+                        <option value="Final">Final Match</option>
+                    </select>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-cogs"></i>&nbsp;Generate Audio
@@ -75,6 +86,7 @@
         const matchForm = document.getElementById('match-audio-form');
         const fileInput = document.getElementById('match-csv-file');
         const runSelect = document.getElementById('match-run-number');
+        const matchTypeSelect = document.getElementById('match-type');
         const matchSubmitButton = matchForm.querySelector('button[type="submit"]');
         const statusDiv = document.getElementById('match-audio-status');
 
@@ -90,12 +102,13 @@
             reader.onload = function(event) {
                 const csvData = event.target.result;
                 const runNumber = runSelect.value;
+                const matchType = matchTypeSelect.value;
 
                 matchSubmitButton.disabled = true;
                 matchSubmitButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating...';
                 statusDiv.innerHTML = 'Processing... this may take a moment.';
 
-                socket.emit('generate-match-audio', { csvData, runNumber });
+                socket.emit('generate-match-audio', { csvData, runNumber, matchType });
             };
             reader.readAsText(file);
         });
