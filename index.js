@@ -14,9 +14,55 @@ const path = require('path');
 // Helper function to split text into chunks for TTS generation
 function splitText(text, maxLength = 150) {
   if (!text) return [];
-  // Regex to split text into chunks of up to maxLength, breaking at spaces, commas, or periods.
-  const regex = new RegExp(`.{1,${maxLength}}(?=[\\s\\.,]|$)`, 'g');
-  return text.match(regex) || [];
+  const chunks = [];
+  let remainingText = text;
+
+  while (remainingText.length > 0) {
+    if (remainingText.length <= maxLength) {
+      chunks.push(remainingText);
+      break;
+    }
+
+    let chunk = remainingText.substring(0, maxLength);
+    let splitIndex = -1;
+
+    // Search backwards from the end of the chunk for a good split point.
+    // 1. Prioritize sentence-ending punctuation
+    for (let i = chunk.length - 1; i >= 0; i--) {
+      if ('.!?'.includes(chunk[i])) {
+        splitIndex = i + 1;
+        break;
+      }
+    }
+
+    // 2. Then try phrase-ending punctuation
+    if (splitIndex === -1) {
+      for (let i = chunk.length - 1; i >= 0; i--) {
+        if (',;:'.includes(chunk[i])) {
+          splitIndex = i + 1;
+          break;
+        }
+      }
+    }
+
+    // 3. Finally, try to split at the last space
+    if (splitIndex === -1) {
+      const lastSpace = chunk.lastIndexOf(' ');
+      if (lastSpace > 0) { // Only split if it's not the first character
+        splitIndex = lastSpace + 1;
+      }
+    }
+
+    // If no natural break was found, split at maxLength
+    if (splitIndex === -1) {
+      splitIndex = maxLength;
+    }
+
+    chunks.push(remainingText.substring(0, splitIndex).trim());
+    remainingText = remainingText.substring(splitIndex).trim();
+  }
+
+  return chunks.filter(chunk => chunk.length > 0);
 }
 
 app.engine('html', require('ejs').renderFile);
