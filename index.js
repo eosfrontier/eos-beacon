@@ -535,67 +535,119 @@ io.on('connection', (socket) => {
       const generationPromises = records.map(async (row, index) => {
         const id = (index + 1).toString().padStart(2, '0');
         const rowTimestamp = Date.now();
-        const mergedMatchFile = path.join(tmpDir, `match-merged-${id}-${rowTimestamp}.mp3`);
-        let tempChunkFiles = [];
 
         try {
           const p1_raw = row.Person1;
           const p2_raw = row.Person2;
+          const p1_pronoun = row['Person 1 Pronoun'];
 
-          if (!p1_raw || !p2_raw) {
-            console.warn(`[match-audio] Skipping row ${index + 1} due to missing data.`);
+          if (!p1_raw) {
+            console.warn(`[match-audio] Skipping row ${index + 1} due to missing Person1 data.`);
             return; // Skip this iteration
           }
 
           const p1 = convertRomanNumeralsToWords(p1_raw);
-          const p2 = convertRomanNumeralsToWords(p2_raw);
-          // 2. Generate audio for the main match text in chunks.
-          const matchText = `${p1} is matched with... ${p2}.`;
-          const textChunks = splitText(matchText, 150);
+          const cleanP1 = cleanNameForFile(p1);
+          let fileName;
 
-          tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
-            const tempChunkFile = path.join(tmpDir, `match-chunk-${id}-${i}-${rowTimestamp}.mp3`);
-            return new Promise((res, rej) => {
-              new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
-                if (err) return rej(err);
-                res(tempChunkFile);
+          if (!p2_raw && p1_pronoun) {
+            // --- UNMATCHED CASE ---
+            fileName = `${id}_${cleanP1}_UNMATCHED.mp3`;
+            const finalFilePath = path.join(outputDir, fileName);
+            let tempChunkFiles = [];
+
+            try {
+              const speechText = `${p1} is UNMATCHED... I repeat... ${p1} is UNMATCHED. ${p1_pronoun} will be allowed to take remedial classes and reattempt the online programme next year.`;
+              const textChunks = splitText(speechText, 150);
+
+              if (textChunks.length === 0) {
+                console.warn(`[match-audio] Skipping unmatched row ${index + 1} because speech text is empty.`);
+                return;
+              }
+
+              tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+                const tempChunkFile = path.join(tmpDir, `unmatched-chunk-${id}-${i}-${rowTimestamp}.mp3`);
+                return new Promise((res, rej) => {
+                  new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
+                    if (err) return rej(err);
+                    res(tempChunkFile);
+                  });
+                });
+              }));
+
+              await new Promise((res, rej) => {
+                audioconcat(tempChunkFiles)
+                  .concat(finalFilePath)
+                  .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+                  .on('end', (output) => res(output));
               });
-            });
-          }));
+            } finally {
+              // Cleanup for unmatched case
+              tempChunkFiles.forEach(file => {
+                if (fs.existsSync(file)) fs.unlinkSync(file);
+              });
+            }
+          } else if (p2_raw) {
+            // --- MATCHED CASE (existing logic) ---
+            const p2 = convertRomanNumeralsToWords(p2_raw);
+            const cleanP2 = cleanNameForFile(p2);
+            fileName = `${id}_${cleanP1}_&_${cleanP2}.mp3`;
+            const finalFilePath = path.join(outputDir, fileName);
 
-          if (tempChunkFiles.length > 0) {
-            await new Promise((res, rej) => {
-              audioconcat(tempChunkFiles)
-                .concat(mergedMatchFile)
-                .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
-                .on('end', (output) => res(output));
-            });
+            const mergedMatchFile = path.join(tmpDir, `match-merged-${id}-${rowTimestamp}.mp3`);
+            let tempChunkFiles = [];
+
+            try {
+              // 2. Generate audio for the main match text in chunks.
+              const matchText = `${p1} is matched with... ${p2}.`;
+              const textChunks = splitText(matchText, 150);
+
+              tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+                const tempChunkFile = path.join(tmpDir, `match-chunk-${id}-${i}-${rowTimestamp}.mp3`);
+                return new Promise((res, rej) => {
+                  new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
+                    if (err) return rej(err);
+                    res(tempChunkFile);
+                  });
+                });
+              }));
+
+              if (tempChunkFiles.length > 0) {
+                await new Promise((res, rej) => {
+                  audioconcat(tempChunkFiles)
+                    .concat(mergedMatchFile)
+                    .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+                    .on('end', (output) => res(output));
+                });
+              } else {
+                return;
+              }
+
+              // 3. Merge the final audio: [merged_match, i_repeat, merged_match]
+              await new Promise((res, rej) => {
+                audioconcat([mergedMatchFile, iRepeatFile, mergedMatchFile])
+                  .concat(finalFilePath)
+                  .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+                  .on('end', (output) => res(output));
+              });
+            } finally {
+              // Cleanup for matched case
+              if (fs.existsSync(mergedMatchFile)) fs.unlinkSync(mergedMatchFile);
+              tempChunkFiles.forEach(file => {
+                if (fs.existsSync(file)) fs.unlinkSync(file);
+              });
+            }
           } else {
+            // Case where p2 is blank and pronoun is also blank.
+            console.warn(`[match-audio] Skipping row ${index + 1} due to incomplete data (e.g., Person2 is blank but no pronoun provided).`);
             return;
           }
 
-          // 3. Merge the final audio: [merged_match, i_repeat, merged_match]
-          const cleanP1 = cleanNameForFile(p1);
-          const cleanP2 = cleanNameForFile(p2);
-          const fileName = `${id}_${cleanP1}_&_${cleanP2}.mp3`;
-          const finalFilePath = path.join(outputDir, fileName);
-          await new Promise((res, rej) => {
-            audioconcat([mergedMatchFile, iRepeatFile, mergedMatchFile])
-              .concat(finalFilePath)
-              .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
-              .on('end', (output) => res(output));
-          });
-
           console.log(`[match-audio] [${id}] Generated: ${fileName}`);
+
         } catch (err) {
           console.error(`[match-audio] Error processing row ${index + 1}:`, err);
           throw err; // Re-throw to fail the Promise.all
-        } finally {
-          // Cleanup temp files regardless of success or failure
-          if (fs.existsSync(mergedMatchFile)) fs.unlinkSync(mergedMatchFile);
-          tempChunkFiles.forEach(file => {
-            if (fs.existsSync(file)) fs.unlinkSync(file);
-          });
         }
       });
 
@@ -611,7 +663,7 @@ io.on('connection', (socket) => {
       console.error('[match-audio] A critical error occurred:', err);
       socket.emit('match-audio-error', {
         message: err.message || 'An unknown error occurred.'
-       });
+      });
     } finally {
       // Cleanup the shared iRepeatFile after everything is done
       if (fs.existsSync(iRepeatFile)) {
@@ -637,8 +689,7 @@ io.on('connection', (socket) => {
       await new Promise((res, rej) => {
         new gtts('I repeat.', 'en-uk').save(iRepeatFile, (err) => (err ? rej(err) : res()));
       });
-      console.log(`Generated iRepeat`);
-      console.log(`Generating audio for: ${text}`);
+
       // 2. Generate main text audio in chunks
       const textChunks = splitText(text, 150);
       if (textChunks.length === 0) {
@@ -701,16 +752,27 @@ io.on('connection', (socket) => {
   });
 
   const readAudioDirectory = (dir) => {
-    const dirents = fs.readdirSync(dir, { withFileTypes: true });
+    const dirents = fs.readdirSync(dir, {
+      withFileTypes: true
+    });
     const files = dirents.map((dirent) => {
       const res = path.resolve(dir, dirent.name);
       const relativePath = '/sounds' + res.split(path.join(__dirname, 'public', 'sounds'))[1].replace(/\\/g, '/');
       if (dirent.isDirectory()) {
-        return { name: dirent.name, type: 'folder', path: relativePath, children: readAudioDirectory(res) };
+        return {
+          name: dirent.name,
+          type: 'folder',
+          path: relativePath,
+          children: readAudioDirectory(res)
+        };
       } else {
         // Only include audio files
         if (['.mp3', '.ogg', '.wav', '.opus'].includes(path.extname(dirent.name).toLowerCase())) {
-          return { name: dirent.name, type: 'file', path: relativePath };
+          return {
+            name: dirent.name,
+            type: 'file',
+            path: relativePath
+          };
         }
         return null;
       }
@@ -739,12 +801,16 @@ io.on('connection', (socket) => {
   function getBgMusicPlaylists() {
     const bgmusicDir = path.join(__dirname, 'public', 'sounds', 'bgmusic');
     if (!fs.existsSync(bgmusicDir)) {
-      fs.mkdirSync(bgmusicDir, { recursive: true });
+      fs.mkdirSync(bgmusicDir, {
+        recursive: true
+      });
       console.log('[bgmusic] Created missing bgmusic directory.');
       return [];
     }
     try {
-      const dirents = fs.readdirSync(bgmusicDir, { withFileTypes: true });
+      const dirents = fs.readdirSync(bgmusicDir, {
+        withFileTypes: true
+      });
       return dirents
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
@@ -888,7 +954,10 @@ io.on('connection', (socket) => {
       bgMusic.duration = data.duration;
       console.log(`[bgmusic] Received duration for track ${data.index}: ${data.duration}`);
       // Broadcast this metadata update to all clients
-      io.emit('bgMusicMetaUpdate', { duration: bgMusic.duration, currentIndex: bgMusic.currentIndex });
+      io.emit('bgMusicMetaUpdate', {
+        duration: bgMusic.duration,
+        currentIndex: bgMusic.currentIndex
+      });
     }
   });
 
@@ -929,9 +998,11 @@ io.on('connection', (socket) => {
         '-' +
         new Date().toISOString().substring(11, 23).replace(/[:.]/g, '');
 
-      fs.mkdir(pa_folder, { recursive: true }, function (err) {
+      fs.mkdir(pa_folder, {
+        recursive: true
+      }, function (err) {
         if (err) throw err;
-        fs.truncate(pa_folder + pa_name + '.opus', function (err) { });
+        fs.truncate(pa_folder + pa_name + '.opus', function (err) {});
       });
     });
     socket.on('uploadPA', function (data) {
