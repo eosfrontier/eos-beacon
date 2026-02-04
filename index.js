@@ -11,6 +11,14 @@ const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
 
+// Helper function to split text into chunks for TTS generation
+function splitText(text, maxLength = 150) {
+  if (!text) return [];
+  // Regex to split text into chunks of up to maxLength, breaking at spaces, commas, or periods.
+  const regex = new RegExp(`.{1,${maxLength}}(?=[\\s\\.,]|$)`, 'g');
+  return text.match(regex) || [];
+}
+
 app.engine('html', require('ejs').renderFile);
 
 
@@ -391,12 +399,18 @@ io.on('connection', (socket) => {
     io.emit('bgMusicStopped');
   });
 
-  socket.on('generate-match-audio', async ({ csvData, runNumber }) => {
+  socket.on('generate-match-audio', async ({
+    csvData,
+    runNumber
+  }) => {
     if (!csvData || !runNumber || (runNumber !== '7' && runNumber !== '8')) {
-      return socket.emit('match-audio-error', { message: 'Invalid data received.' });
+      return socket.emit('match-audio-error', {
+        message: 'Invalid data received.'
+      });
     }
 
-    console.log(`[match-audio] Received request to generate audio for Run ${runNumber}.`);
+    const timestamp = Date.now();
+    const iRepeatFile = path.join(tmpDir, `match-irepeat-global-${timestamp}.mp3`);
 
     try {
       const records = parse(csvData, {
@@ -404,8 +418,19 @@ io.on('connection', (socket) => {
         skip_empty_lines: true
       });
 
+       console.log(`[match-audio] Received request to generate audio for Run ${runNumber}.`);
+
+      // 1. Generate the "I repeat" audio once for the entire batch.
+      await new Promise((res, rej) => {
+        new gtts('I repeat.', 'en-uk').save(iRepeatFile, (err) => (err ? rej(err) : res()));
+      });
+      console.log(`[match-audio] Generated shared 'I repeat' file.`);
+
+
       if (!records.length || !records[0].Person1 || !records[0].Person2) {
-          return socket.emit('match-audio-error', { message: 'CSV must have "Person1" and "Person2" columns.' });
+         return socket.emit('match-audio-error', {
+          message: 'CSV must have "Person1" and "Person2" columns.'
+        });
       }
 
       const cleanNameForFile = (name) => {
@@ -421,15 +446,21 @@ io.on('connection', (socket) => {
       // Clean up existing directory before generating new files.
       if (fs.existsSync(outputDir)) {
         console.log(`[match-audio] Removing existing directory: ${outputDir}`);
-        fs.rmSync(outputDir, { recursive: true, force: true });
+        fs.rmSync(outputDir, {
+          recursive: true,
+          force: true
+        });
       }
-      fs.mkdirSync(outputDir, { recursive: true });
+      fs.mkdirSync(outputDir, {
+        recursive: true
+      });
       console.log(`[match-audio] Re-created empty directory: ${outputDir}`);
 
       const generationPromises = records.map(async (row, index) => {
         const id = (index + 1).toString().padStart(2, '0');
-        const tempFile1 = path.join(tmpDir, `match-part1-${id}-${Date.now()}.mp3`);
-        const tempFile2 = path.join(tmpDir, `match-part2-${id}-${Date.now()}.mp3`);
+        const rowTimestamp = Date.now();
+        const mergedMatchFile = path.join(tmpDir, `match-merged-${id}-${rowTimestamp}.mp3`);
+        let tempChunkFiles = [];
 
         try {
           const p1 = row.Person1;
@@ -440,28 +471,40 @@ io.on('connection', (socket) => {
             return; // Skip this iteration
           }
 
+
+
+          // 2. Generate audio for the main match text in chunks.
+          const matchText = `${p1} is matched with... ${p2}.`;
+          const textChunks = splitText(matchText, 150);
+
+          tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+            const tempChunkFile = path.join(tmpDir, `match-chunk-${id}-${i}-${rowTimestamp}.mp3`);
+            return new Promise((res, rej) => {
+              new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
+                if (err) return rej(err);
+                res(tempChunkFile);
+              });
+            });
+          }));
+
+          if (tempChunkFiles.length > 0) {
+            await new Promise((res, rej) => {
+              audioconcat(tempChunkFiles)
+                .concat(mergedMatchFile)
+                .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+                .on('end', (output) => res(output));
+            });
+          } else {
+            return;
+          }
+
+          // 3. Merge the final audio: [merged_match, i_repeat, merged_match]
           const cleanP1 = cleanNameForFile(p1);
           const cleanP2 = cleanNameForFile(p2);
           const fileName = `${id}_${cleanP1}_&_${cleanP2}.mp3`;
           const finalFilePath = path.join(outputDir, fileName);
-
-          // Split into two parts to avoid gtts character limit issues.
-          const speechText1 = `${p1} is matched with... ${p2}.`;
-          const speechText2 = `I repeat. ${p1} is matched with... ${p2}.`;
-
-          // Generate part 1
           await new Promise((res, rej) => {
-            new gtts(speechText1, 'en-uk').save(tempFile1, (err) => (err ? rej(err) : res()));
-          });
-
-          // Generate part 2
-          await new Promise((res, rej) => {
-            new gtts(speechText2, 'en-uk').save(tempFile2, (err) => (err ? rej(err) : res()));
-          });
-
-          // Merge the two files using audioconcat
-          await new Promise((res, rej) => {
-            audioconcat([tempFile1, tempFile2])
+            audioconcat([mergedMatchFile, iRepeatFile, mergedMatchFile])
               .concat(finalFilePath)
               .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
               .on('end', (output) => res(output));
@@ -473,8 +516,10 @@ io.on('connection', (socket) => {
           throw err; // Re-throw to fail the Promise.all
         } finally {
           // Cleanup temp files regardless of success or failure
-          if (fs.existsSync(tempFile1)) fs.unlinkSync(tempFile1);
-          if (fs.existsSync(tempFile2)) fs.unlinkSync(tempFile2);
+          if (fs.existsSync(mergedMatchFile)) fs.unlinkSync(mergedMatchFile);
+          tempChunkFiles.forEach(file => {
+            if (fs.existsSync(file)) fs.unlinkSync(file);
+          });
         }
       });
 
@@ -482,56 +527,101 @@ io.on('connection', (socket) => {
       await Promise.all(generationPromises);
 
       console.log(`[match-audio] Successfully generated ${records.length} files for Run ${runNumber}.`);
-      socket.emit('match-audio-complete', { message: `Successfully generated ${records.length} audio files.` });
+      socket.emit('match-audio-complete', {
+        message: `Successfully generated ${records.length} audio files.`
+      });
 
     } catch (err) {
       console.error('[match-audio] A critical error occurred:', err);
-      socket.emit('match-audio-error', { message: err.message || 'An unknown error occurred.' });
+      socket.emit('match-audio-error', {
+        message: err.message || 'An unknown error occurred.'
+       });
+    } finally {
+      // Cleanup the shared iRepeatFile after everything is done
+      if (fs.existsSync(iRepeatFile)) {
+        fs.unlinkSync(iRepeatFile);
+      };
     }
   });
 
-  socket.on('tts-speak', (text) => {
+  socket.on('tts-speak', async (text) => {
     if (!text || typeof text !== 'string') {
       return;
     }
 
-    const sanitizedText = text.substring(0, 200); // Limit length
-    const speechText = `${sanitizedText}. I repeat: ${sanitizedText}`;
-    const speech = new gtts(speechText, 'en-uk');
-    const filename = `tts-${Date.now()}.mp3`;
-    const filePath = path.join(tmpDir, filename);
+    const timestamp = Date.now();
+    const iRepeatFile = path.join(tmpDir, `tts-irepeat-${timestamp}.mp3`);
+    const mergedTTSFile = path.join(tmpDir, `tts-merged-${timestamp}.mp3`);
+    const finalFilename = `tts-${timestamp}.mp3`;
+    const finalFilePath = path.join(tmpDir, finalFilename);
+    let tempChunkFiles = [];
 
-    speech.save(filePath, (err, result) => {
-      if (err) {
-        console.error('[tts] Error saving TTS file:', err);
-        socket.emit('tts-complete'); // Re-enable button on client
-        return;
+    try {
+      // 1. Generate "I repeat" audio
+      await new Promise((res, rej) => {
+        new gtts('I repeat.', 'en-uk').save(iRepeatFile, (err) => (err ? rej(err) : res()));
+      });
+      console.log(`Generated iRepeat`);
+      console.log(`Generating audio for: ${text}`);
+      // 2. Generate main text audio in chunks
+      const textChunks = splitText(text, 150);
+      if (textChunks.length === 0) {
+        throw new Error("No text to speak after sanitizing.");
       }
 
-      console.log(`[tts] Generated speech file: ${filename}`);
+      tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+        const tempChunkFile = path.join(tmpDir, `tts-chunk-${i}-${timestamp}.mp3`);
+        return new Promise((res, rej) => {
+          new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
+            if (err) return rej(err);
+            res(tempChunkFile);
+          });
+        });
+      }));
+
+      await new Promise((res, rej) => {
+        audioconcat(tempChunkFiles)
+          .concat(mergedTTSFile)
+          .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+          .on('end', (output) => res(output));
+      });
+
+      // 3. Merge final audio: [merged_tts, i_repeat, merged_tts]
+      await new Promise((res, rej) => {
+        audioconcat([mergedTTSFile, iRepeatFile, mergedTTSFile])
+          .concat(finalFilePath)
+          .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+          .on('end', (output) => res(output));
+      });
+
+      console.log(`[tts] Generated speech file: ${finalFilename}`);
       socket.emit('tts-complete'); // Re-enable button on client
 
       // Broadcast the command to play the temporary audio file
-      // Path must be relative to /public/sounds/ for generateAudioPlayer
-      const publicPath = `tmp/${filename}`;
+      const publicPath = `tmp/${finalFilename}`;
       io.emit('playAudioPlaylist', [publicPath], 1);
 
       // Get duration and schedule deletion
-      try {
-        const buffer = fs.readFileSync(filePath);
-        const duration = getMP3Duration(buffer); // duration in milliseconds
+      const buffer = fs.readFileSync(finalFilePath);
+      const duration = getMP3Duration(buffer); // duration in milliseconds
 
-        setTimeout(() => {
-          fs.unlink(filePath, (unlinkErr) => {
-            if (unlinkErr) console.error(`[tts] Error deleting temp file ${filename}:`, unlinkErr);
-            else console.log(`[tts] Deleted temp file: ${filename}`);
-          });
-        }, duration + 5000); // Delete 5 seconds after it should have finished
-      } catch (durationErr) {
-        console.error('[tts] Error getting MP3 duration. Deleting after 60s.', durationErr);
-        setTimeout(() => fs.unlink(filePath, (err) => {}), 60000);
-      }
-    });
+      setTimeout(() => {
+        fs.unlink(finalFilePath, (unlinkErr) => {
+          if (unlinkErr) console.error(`[tts] Error deleting temp file ${finalFilename}:`, unlinkErr);
+          else console.log(`[tts] Deleted temp file: ${finalFilename}`);
+        });
+      }, duration + 5000); // Delete 5 seconds after it should have finished
+    } catch (err) {
+      console.error('[tts] Error generating speech:', err);
+      socket.emit('tts-complete'); // Re-enable button on error
+    } finally {
+      // Cleanup temp files
+      if (fs.existsSync(iRepeatFile)) fs.unlinkSync(iRepeatFile);
+      if (fs.existsSync(mergedTTSFile)) fs.unlinkSync(mergedTTSFile);
+      tempChunkFiles.forEach(file => {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      });
+    }
   });
 
   const readAudioDirectory = (dir) => {
@@ -573,18 +663,18 @@ io.on('connection', (socket) => {
   function getBgMusicPlaylists() {
     const bgmusicDir = path.join(__dirname, 'public', 'sounds', 'bgmusic');
     if (!fs.existsSync(bgmusicDir)) {
-        fs.mkdirSync(bgmusicDir, { recursive: true });
-        console.log('[bgmusic] Created missing bgmusic directory.');
-        return [];
+      fs.mkdirSync(bgmusicDir, { recursive: true });
+      console.log('[bgmusic] Created missing bgmusic directory.');
+      return [];
     }
     try {
-        const dirents = fs.readdirSync(bgmusicDir, { withFileTypes: true });
-        return dirents
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
+      const dirents = fs.readdirSync(bgmusicDir, { withFileTypes: true });
+      return dirents
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
     } catch (err) {
-        console.error("[bgmusic] Error reading bgmusic directory:", err);
-        return [];
+      console.error("[bgmusic] Error reading bgmusic directory:", err);
+      return [];
     }
   }
 
@@ -599,11 +689,11 @@ io.on('connection', (socket) => {
     const volume = typeof data === 'object' && data !== null ? data.volume : undefined;
 
     if (volume !== undefined && volume !== null) {
-        const newVolume = Math.max(0, Math.min(100, parseInt(volume, 10)));
-        if (!isNaN(newVolume)) {
-            applicationState.bgMusic.volume = newVolume;
-            console.log(`[bgmusic] Volume set to ${newVolume} with new playlist.`);
-        }
+      const newVolume = Math.max(0, Math.min(100, parseInt(volume, 10)));
+      if (!isNaN(newVolume)) {
+        applicationState.bgMusic.volume = newVolume;
+        console.log(`[bgmusic] Volume set to ${newVolume} with new playlist.`);
+      }
     }
 
     const playlistDir = path.join(__dirname, 'public', 'sounds', 'bgmusic', playlistName);
@@ -719,10 +809,10 @@ io.on('connection', (socket) => {
     const bgMusic = applicationState.bgMusic;
     // Only update if the report is for the currently playing track
     if (bgMusic.playlistName && bgMusic.currentIndex === data.index && bgMusic.duration !== data.duration) {
-        bgMusic.duration = data.duration;
-        console.log(`[bgmusic] Received duration for track ${data.index}: ${data.duration}`);
-        // Broadcast this metadata update to all clients
-        io.emit('bgMusicMetaUpdate', { duration: bgMusic.duration, currentIndex: bgMusic.currentIndex });
+      bgMusic.duration = data.duration;
+      console.log(`[bgmusic] Received duration for track ${data.index}: ${data.duration}`);
+      // Broadcast this metadata update to all clients
+      io.emit('bgMusicMetaUpdate', { duration: bgMusic.duration, currentIndex: bgMusic.currentIndex });
     }
   });
 

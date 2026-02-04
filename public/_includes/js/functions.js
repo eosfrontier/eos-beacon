@@ -1419,3 +1419,9 @@ function updateBgMusicPanelState() {
         if (durationEl) durationEl.textContent = "0:00";
     }
 }
+
+// 1. Function to split text into chunks at natural pauses
+function splitText(text, maxLength = 150) {
+    const regex = new RegExp(`.{1,${maxLength}}(?=\\s|$)`, 'g');
+    return text.match(regex);
+}
