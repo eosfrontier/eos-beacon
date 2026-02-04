@@ -18,8 +18,39 @@
     </div>
 </div>
 
+<hr>
+
+<div class="adm-panel" style="border-top: none; margin-top: -1rem;">
+    <div class="adm-panel-header">
+        <div class="adm-panel-title">
+            <i class="fa fa-users"></i>&nbsp;Match Audio Generation
+        </div>
+    </div>
+    <div class="adm-panel-content">
+        <p>Upload a <code>matches.csv</code> file (with 'Person1' and 'Person2' columns) and select a Run number to generate the announcement audio files.</p>
+        <form id="match-audio-form">
+            <div class="form-group">
+                <label for="match-csv-file">Matches CSV File:</label>
+                <input type="file" id="match-csv-file" class="form-control-file" accept=".csv" required>
+            </div>
+            <div class="form-group">
+                <label for="match-run-number">Run Number:</label>
+                <select id="match-run-number" class="form-control" style="width: auto;">
+                    <option value="7">Run 7</option>
+                    <option value="8">Run 8</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-cogs"></i>&nbsp;Generate Audio
+            </button>
+            <div id="match-audio-status" style="margin-top: 15px;"></div>
+        </form>
+    </div>
+</div>
+
 <script>
     (function() {
+        // Original TTS form logic
         const form = document.getElementById('tts-form');
         const textarea = document.getElementById('tts-text');
         const submitButton = form.querySelector('button[type="submit"]');
@@ -38,6 +69,48 @@
             submitButton.disabled = false;
             submitButton.innerHTML = '<i class="fa fa-volume-up"></i>&nbsp;Speak';
             textarea.value = '';
+        });
+
+        // New Match Audio form logic
+        const matchForm = document.getElementById('match-audio-form');
+        const fileInput = document.getElementById('match-csv-file');
+        const runSelect = document.getElementById('match-run-number');
+        const matchSubmitButton = matchForm.querySelector('button[type="submit"]');
+        const statusDiv = document.getElementById('match-audio-status');
+
+        matchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            if (!file) {
+                statusDiv.innerHTML = '<span class="text-danger">Please select a CSV file.</span>';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const csvData = event.target.result;
+                const runNumber = runSelect.value;
+
+                matchSubmitButton.disabled = true;
+                matchSubmitButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating...';
+                statusDiv.innerHTML = 'Processing... this may take a moment.';
+
+                socket.emit('generate-match-audio', { csvData, runNumber });
+            };
+            reader.readAsText(file);
+        });
+
+        socket.on('match-audio-complete', function(data) {
+            matchSubmitButton.disabled = false;
+            matchSubmitButton.innerHTML = '<i class="fa fa-cogs"></i>&nbsp;Generate Audio';
+            statusDiv.innerHTML = `<span class="text-success">${data.message}</span>`;
+            fileInput.value = ''; // Clear the file input
+        });
+
+        socket.on('match-audio-error', function(data) {
+            matchSubmitButton.disabled = false;
+            matchSubmitButton.innerHTML = '<i class="fa fa-cogs"></i>&nbsp;Generate Audio';
+            statusDiv.innerHTML = `<span class="text-danger">Error: ${data.message}</span>`;
         });
     })();
 </script>

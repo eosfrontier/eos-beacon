@@ -28,6 +28,8 @@
   "author": "Thijs Boerma",
   "license": "ISC",
   "dependencies": {
+    "audioconcat": "^0.1.4",
+    "csv-parse": "^6.1.0",
     "ejs": "^4.0.1",
     "express": "^4.19.2",
     "get-mp3-duration": "^1.0.0",

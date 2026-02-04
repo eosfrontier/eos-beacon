@@ -5,6 +5,8 @@ const { Server } = require("socket.io");
 const io = require('socket.io')(http);
 const gtts = require('gtts');
 const getMP3Duration = require('get-mp3-duration');
+const { parse } = require('csv-parse/sync');
+const audioconcat = require('audioconcat');
 const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
@@ -389,6 +391,105 @@ io.on('connection', (socket) => {
     io.emit('bgMusicStopped');
   });
 
+  socket.on('generate-match-audio', async ({ csvData, runNumber }) => {
+    if (!csvData || !runNumber || (runNumber !== '7' && runNumber !== '8')) {
+      return socket.emit('match-audio-error', { message: 'Invalid data received.' });
+    }
+
+    console.log(`[match-audio] Received request to generate audio for Run ${runNumber}.`);
+
+    try {
+      const records = parse(csvData, {
+        columns: true,
+        skip_empty_lines: true
+      });
+
+      if (!records.length || !records[0].Person1 || !records[0].Person2) {
+          return socket.emit('match-audio-error', { message: 'CSV must have "Person1" and "Person2" columns.' });
+      }
+
+      const cleanNameForFile = (name) => {
+        if (!name) return '';
+        // Remove single quotes, double quotes, and periods
+        let clean = name.replace(/['"\.]/g, "");
+        // Replace spaces with underscores
+        clean = clean.replace(/\s+/g, "_");
+        return clean;
+      };
+
+      const outputDir = path.join(__dirname, 'public', 'sounds', 'audio', 'Matches', `Run ${runNumber}`, 'Final Match');
+      // Clean up existing directory before generating new files.
+      if (fs.existsSync(outputDir)) {
+        console.log(`[match-audio] Removing existing directory: ${outputDir}`);
+        fs.rmSync(outputDir, { recursive: true, force: true });
+      }
+      fs.mkdirSync(outputDir, { recursive: true });
+      console.log(`[match-audio] Re-created empty directory: ${outputDir}`);
+
+      const generationPromises = records.map(async (row, index) => {
+        const id = (index + 1).toString().padStart(2, '0');
+        const tempFile1 = path.join(tmpDir, `match-part1-${id}-${Date.now()}.mp3`);
+        const tempFile2 = path.join(tmpDir, `match-part2-${id}-${Date.now()}.mp3`);
+
+        try {
+          const p1 = row.Person1;
+          const p2 = row.Person2;
+
+          if (!p1 || !p2) {
+            console.warn(`[match-audio] Skipping row ${index + 1} due to missing data.`);
+            return; // Skip this iteration
+          }
+
+          const cleanP1 = cleanNameForFile(p1);
+          const cleanP2 = cleanNameForFile(p2);
+          const fileName = `${id}_${cleanP1}_&_${cleanP2}.mp3`;
+          const finalFilePath = path.join(outputDir, fileName);
+
+          // Split into two parts to avoid gtts character limit issues.
+          const speechText1 = `${p1} is matched with... ${p2}.`;
+          const speechText2 = `I repeat. ${p1} is matched with... ${p2}.`;
+
+          // Generate part 1
+          await new Promise((res, rej) => {
+            new gtts(speechText1, 'en-uk').save(tempFile1, (err) => (err ? rej(err) : res()));
+          });
+
+          // Generate part 2
+          await new Promise((res, rej) => {
+            new gtts(speechText2, 'en-uk').save(tempFile2, (err) => (err ? rej(err) : res()));
+          });
+
+          // Merge the two files using audioconcat
+          await new Promise((res, rej) => {
+            audioconcat([tempFile1, tempFile2])
+              .concat(finalFilePath)
+              .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+              .on('end', (output) => res(output));
+          });
+
+          console.log(`[match-audio] [${id}] Generated: ${fileName}`);
+        } catch (err) {
+          console.error(`[match-audio] Error processing row ${index + 1}:`, err);
+          throw err; // Re-throw to fail the Promise.all
+        } finally {
+          // Cleanup temp files regardless of success or failure
+          if (fs.existsSync(tempFile1)) fs.unlinkSync(tempFile1);
+          if (fs.existsSync(tempFile2)) fs.unlinkSync(tempFile2);
+        }
+      });
+
+
+      await Promise.all(generationPromises);
+
+      console.log(`[match-audio] Successfully generated ${records.length} files for Run ${runNumber}.`);
+      socket.emit('match-audio-complete', { message: `Successfully generated ${records.length} audio files.` });
+
+    } catch (err) {
+      console.error('[match-audio] A critical error occurred:', err);
+      socket.emit('match-audio-error', { message: err.message || 'An unknown error occurred.' });
+    }
+  });
+
   socket.on('tts-speak', (text) => {
     if (!text || typeof text !== 'string') {
       return;
@@ -396,7 +497,7 @@ io.on('connection', (socket) => {
 
     const sanitizedText = text.substring(0, 200); // Limit length
     const speechText = `${sanitizedText}. I repeat: ${sanitizedText}`;
-    const speech = new gtts(speechText, 'en');
+    const speech = new gtts(speechText, 'en-uk');
     const filename = `tts-${Date.now()}.mp3`;
     const filePath = path.join(tmpDir, filename);
 
