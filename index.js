@@ -540,6 +540,7 @@ io.on('connection', (socket) => {
           const p1_raw = row.Person1;
           const p2_raw = row.Person2;
           const p1_pronoun = row['Person 1 Pronoun'];
+          const custom_followup = row['Custom_followup'];
 
           if (!p1_raw) {
             console.warn(`[match-audio] Skipping row ${index + 1} due to missing Person1 data.`);
@@ -550,14 +551,23 @@ io.on('connection', (socket) => {
           const cleanP1 = cleanNameForFile(p1);
           let fileName;
 
-          if (!p2_raw && p1_pronoun) {
+          if (!p2_raw) {
             // --- UNMATCHED CASE ---
+            let speechText;
+            if (custom_followup) {
+              speechText = `${p1} is UNMATCHED... I repeat... ${p1} is UNMATCHED. ${custom_followup}`;
+            } else if (p1_pronoun) {
+              speechText = `${p1} is UNMATCHED... I repeat... ${p1} is UNMATCHED. ${p1_pronoun} will be allowed to take remedial classes and reattempt the online programme next year.`;
+            } else {
+              console.warn(`[match-audio] Skipping unmatched row ${index + 1} because no followup text (pronoun or custom) was provided.`);
+              return;
+            }
+
             fileName = `${id}_${cleanP1}_UNMATCHED.mp3`;
             const finalFilePath = path.join(outputDir, fileName);
             let tempChunkFiles = [];
 
             try {
-              const speechText = `${p1} is UNMATCHED... I repeat... ${p1} is UNMATCHED. ${p1_pronoun} will be allowed to take remedial classes and reattempt the online programme next year.`;
               const textChunks = splitText(speechText, 150);
 
               if (textChunks.length === 0) {
