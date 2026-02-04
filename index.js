@@ -11,6 +11,35 @@ const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
 
+// Helper function to convert trailing Roman numerals in a name to words.
+function convertRomanNumeralsToWords(name) {
+  if (!name) return '';
+  const romanMap = {
+    'X': 'the tenth',
+    'IX': 'the ninth',
+    'VIII': 'the eighth',
+    'VII': 'the seventh',
+    'VI': 'the sixth',
+    'V': 'the fifth',
+    'IV': 'the fourth',
+    'III': 'the third',
+    'II': 'the second',
+    'I': 'the first',
+  };
+
+  // Regex to find a Roman numeral at the end of the string, preceded by a space.
+  // The order in the regex is important to match longer numerals first.
+  const romanRegex = /\s(X|IX|VIII|VII|VI|V|IV|III|II|I)$/;
+  const match = name.match(romanRegex);
+
+  if (match && romanMap[match[1]]) {
+    // Replace the Roman numeral part with the word equivalent, with a preceding comma for a natural pause.
+    return name.replace(romanRegex, `, ${romanMap[match[1]]}`);
+  }
+
+  return name;
+}
+
 // Helper function to split text into chunks for TTS generation
 function splitText(text, maxLength = 150) {
   if (!text) return [];
@@ -510,16 +539,16 @@ io.on('connection', (socket) => {
         let tempChunkFiles = [];
 
         try {
-          const p1 = row.Person1;
-          const p2 = row.Person2;
+          const p1_raw = row.Person1;
+          const p2_raw = row.Person2;
 
-          if (!p1 || !p2) {
+          if (!p1_raw || !p2_raw) {
             console.warn(`[match-audio] Skipping row ${index + 1} due to missing data.`);
             return; // Skip this iteration
           }
 
-
-
+          const p1 = convertRomanNumeralsToWords(p1_raw);
+          const p2 = convertRomanNumeralsToWords(p2_raw);
           // 2. Generate audio for the main match text in chunks.
           const matchText = `${p1} is matched with... ${p2}.`;
           const textChunks = splitText(matchText, 150);
