@@ -1,17 +1,14 @@
 <h2><i class="fa fa-terminal"></i>&nbsp;Activities</h2>
 
 <hr />
-<div class="col-xs-12">
-  <div class="items">
-    <button class="btn btn-outline-success btn-lg btn-block" onclick="stopAllAudio();sendBroadCast(bcreset);">
-      <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
-    </button>
-    <div class="btn btn-danger" onclick="stopAllAudio();"><i class="fa fa-stop"></i>&nbsp;STOP AUDIO</div>
-  </div>
+<div class="items">
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="stopAllAudio();sendBroadCast(bcreset);"><i
+      class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS</button>
 
-  <!-- Welcome Tab -->
-  <h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#Welcome').fadeIn();">> Welcome video</h4>
-  <div id="Welcome" class="hidden-block col-xs-12" style="display:none;">
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#Welcome">&gt; Welcome video
+  </div>
+  <div id="Welcome" class="activity-content hidden-block col-xs-12" style="display:none;">
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcgatherforwelcome);">
       <i class="fa fa-users"></i>&nbsp;GATHER FOR WELCOME VIDEO
     </button>
@@ -19,11 +16,11 @@
       <i class="fa fa-file-audio"></i>Open Video
     </div>
   </div>
-  <hr />
 
-  <h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#1stMatch').fadeIn();">Relationship Cycle 1</h4>
-
-  <div id="1stMatch" class="hidden-block col-xs-12" style="display:none;">
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#1stMatch">&gt; Relationship Cycle 1
+  </div>
+  <div id="1stMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsupportgroups);">
       <i class="fa fa-people-group"></i>&nbsp;Support Group Assignment
     </button>
@@ -60,9 +57,10 @@
       <i class="fa fa-people-arrows"></i>&nbsp;Tango Connection Class (Opt)
     </button>
   </div>
-  <hr />
-  <h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#2ndMatch').fadeIn();">Relationship Cycle 2</h4>
-  <div id="2ndMatch" class="hidden-block col-xs-12" style="display:none;">
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#2ndMatch">> Relationship Cycle 2
+  </div>
+  <div id="2ndMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast1);">
       <i class="fa fa-mug-saucer"></i>&nbsp;FIRST DAY Breakfast
     </button>
@@ -105,8 +103,8 @@
       <i class="fa fa-handshake-angle"></i>&nbsp;Second Relationships Begin
     </button>
     <!-- *****************
-     TO DO: Pick revising starting with Duo Juggling. It needs a 5 minute warning and it needs the audio file(s) fixed
-    *********************-->
+        TO DO: Pick revising starting with Duo Juggling. It needs a 5 minute warning and it needs the audio file(s) fixed
+        *********************-->
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcjugglingclass);">
       <i class="fa fa-hands-holding-circle"></i>&nbsp;Duo Juggling Class (Opt)
     </button>
@@ -147,10 +145,10 @@
           onclick="sendBroadCast(bcsinglesparty_5m);">5m Warning</button></div>
     </div>
   </div>
-  <hr />
-  <h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#3rdMatch').fadeIn();">Relationship Cycle 3</h4>
-
-  <div id="3rdMatch" class="hidden-block col-xs-12" style="display:none;">
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#3rdMatch">> Relationship Cycle 3
+  </div>
+  <div id="3rdMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcrelationshipbegin3);">
       <i class="fa fa-handshake-angle"></i>&nbsp;Third Relationships Begin
     </button>
@@ -195,27 +193,25 @@
           onclick="sendBroadCast(bcrelationshipend3_5m);">5m Warning</button></div>
     </div>
   </div>
-  <hr />
-
-  <h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#FinalMatch').fadeIn();">Final Match</h4>
-
-  <div id="FinalMatch" class="hidden-block col-xs-12" style="display:none;">
-  <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcforevermatch);">
-    <i class="fa fa-infinity"></i>&nbsp;Forever Matches Announced
-  </button>
-  <div class="row" style="margin: 0 -5px 10px;">
-    <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
-        onclick="sendBroadCast(bcforevermatch_10m);">10m Warning</button></div>
-    <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
-        onclick="sendBroadCast(bcforevermatch_5m);">5m Warning</button></div>
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#FinalMatch">> Final Match
   </div>
-</div>
-  <hr />
+  <div id="FinalMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcforevermatch);">
+      <i class="fa fa-infinity"></i>&nbsp;Forever Matches Announced
+    </button>
+    <div class="row" style="margin: 0 -5px 10px;">
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcforevermatch_10m);">10m Warning</button></div>
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcforevermatch_5m);">5m Warning</button></div>
+    </div>
+  </div>
 
-<h4 class="holoContrast" onclick="$('.hidden-block').hide();$('#Wedding').fadeIn();">The Wedding/Finale</h4>
-
-  <div id="Wedding" class="hidden-block col-xs-12" style="display:none;">
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo activity-header" data-target="#Wedding">> The Wedding/Finale
+  </div>
+  <div id="Wedding" class="activity-content hidden-block col-xs-12" style="display:none;">
     Placeholder
   </div>
-</div>
 </div>

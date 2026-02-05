@@ -67,6 +67,22 @@ $(document).ready(function () {
         }
     }
 
+    // Handler for the accordion-style sections in activities.html
+    $(document).on('click', '.activity-header', function () {
+        const $target = $($(this).data('target'));
+
+        // If the target is already visible, do nothing to prevent flicker.
+        if ($target.is(':visible')) {
+            return;
+        }
+
+        // Hide all other content panels.
+        $('.activity-content').hide();
+
+        // Show the target panel.
+        $target.fadeIn('fast');
+    });
+
     // If the user is logged in, generate the control panel
     if (getCookie('auth') === 'TRUE') {
         if ((!admRANK || admRANK < 1) || (admRANK > 4)) {
