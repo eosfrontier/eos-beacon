@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     const admRANK = getCookie('rank');
 
     // Define the navigation panel structure
@@ -9,7 +9,7 @@ $(document).ready(function() {
         { id: 'KITCHEN', icon: 'fa-cutlery', text: 'KITCHEN', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'ACTIVITIES', icon: 'fa-calendar-days', text: 'ACTIVITIES', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'SCHEDULE', icon: 'fa-clock', text: 'SCHEDULE', rank: 2, extraClass: 'btn-ui-holo-alt' },
-        { id: 'MEDIA', icon: 'fa-photo-film', text: 'MEDIA', rank: 1, extraClass: 'btn-ui-holo-alt' },
+        { id: 'MEDIA', icon: 'fa-photo-film', text: 'MEDIA', rank: 1, extraClass: 'btn-outline-blue' },
         { id: 'BGMUSIC', icon: 'fa-music', text: 'BG MUSIC', rank: 1, extraClass: 'btn-ui-holo-alt' },
         { id: 'TTS', icon: 'fa-comment-dots', text: 'TTS', rank: 2, extraClass: 'btn-ui-holo-alt' },
         { id: 'OVERLORD', icon: 'fa-microchip', text: 'OVERLORD', rank: 4, extraClass: 'btn-ui-holo-red' },
@@ -77,17 +77,16 @@ $(document).ready(function() {
     }
 });
 
-function loadAdminPanel(panelId) {
+function loadAdminPanel(panelId, callback = null) {
     const panelFile = panelId.toLowerCase();
     const mainContainer = $('#main');
 
-    mainContainer.load(`/adm/panels/${panelFile}.html`, function(response, status, xhr) {
+    mainContainer.load(`/adm/panels/${panelFile}.html`, function (response, status, xhr) {
         if (status === "error") {
             mainContainer.load('/adm/404.html');
-            console.error(`Error loading panel ${panelFile}.html: ${xhr.status} ${xhr.statusText}`);
         } else {
-            // After loading, initialize scripts for specific panels.
-            switch(panelId) {
+            // Initialize panel-specific scripts
+            switch (panelId) {
                 case 'MEDIA':
                     if (socket) socket.emit('getMedia');
                     syncVideoBroadcasts(true, '#auto-video-list');
@@ -99,12 +98,56 @@ function loadAdminPanel(panelId) {
                     }
                     break;
             }
+
+            // Run callback only if it was provided
+            if (typeof callback === 'function') callback();
         }
     });
 }
 
-function navigateADM(panelId) {
+function loadAdminSubPanel(panelId, subPanelId, callback = null) {
+    // We pass a function to navigateADM to ensure the sub-panel 
+    // logic only runs AFTER the main panel HTML exists.
+    navigateADM(panelId, function () {
+        $(".hidden-block").hide();
+        $(subPanelId).fadeIn();
+
+        if (typeof callback === 'function') callback();
+    });
+}
+
+function loadAdminSubPanelFolder(panelId, subPanelId, fullClassId) {
+    loadAdminSubPanel(panelId, subPanelId, function () {
+        const openFolder = function () {
+            const $header = $(`.${fullClassId}`);
+            if ($header.length) {
+                // The click handler is already attached in adminPanel.js.
+                // We just need to trigger the click if the folder is not already open.
+                if (!$header.next('.audio-folder-content').is(':visible')) {
+                    $header.trigger('click');
+                }
+            } else {
+                console.warn(`Could not find element: .${fullClassId}`);
+            }
+        };
+
+        // If the target element already exists, open it.
+        // Otherwise, wait for the 'audioTreeBuilt' event which is fired
+        // from adminPanel.js when the audio tree is rendered.
+        if ($(`.${fullClassId}`).length > 0) {
+            openFolder();
+        } else {
+            $(document).one('audioTreeBuilt', openFolder);
+        }
+    });
+}
+
+
+
+function navigateADM(panelId, callback = null) {
     $('.adm-nav').removeClass('active');
     $(`#btn-adm${panelId}`).addClass('active');
-    loadAdminPanel(panelId);
+    loadAdminPanel(panelId, callback);
+        // Run callback only if it was provided
+    if (typeof callback === 'function') callback();
 }

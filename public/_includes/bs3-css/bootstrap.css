@@ -2656,9 +2656,11 @@ fieldset[disabled] .btn-link:focus {
 .btn-block {
   display: block;
   width: 100%;
+  font-size: 2rem;
 }
 .btn-block + .btn-block {
   margin-top: 5px;
+  height: 4.5rem;
 }
 input[type="submit"].btn-block,
 input[type="reset"].btn-block,

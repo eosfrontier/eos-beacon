@@ -10,6 +10,9 @@ $(document).ready(function() {
       $(this).next('.audio-folder-content').slideToggle('fast');
       $(this).find('.fa').toggleClass('fa-folder fa-folder-open');
     });
+
+    // Let other scripts know the tree is ready.
+    $(document).trigger('audioTreeBuilt');
   });
 
   /**
@@ -52,7 +55,7 @@ $(document).ready(function() {
         // Only render the folder if it contains audio files
         if (folderHasFiles(node)) {
           const $folder = $('<div>').addClass('audio-folder');
-          const $header = $('<div>').addClass('audio-folder-header').html(`${linePrefix}<i class="fa fa-folder"></i>&nbsp;${node.name.replace('.mp3', '')}`);
+          const $header = $('<div>').addClass(`audio-folder-header audio-folder-header-${node.name.replace('.mp3', '')}`).html(`${linePrefix}<i class="fa fa-folder".></i>&nbsp;${node.name.replace('.mp3', '')}`);
           const $content = $('<div>').addClass('audio-folder-content').hide();
 
           const childPrefix = isSmallScreen ? (prefix + '&nbsp;&nbsp;&nbsp;&nbsp;') : (prefix + (isLast ? '  ' : '│ '));

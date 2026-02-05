@@ -853,6 +853,33 @@ p.text-lg,
   background-color: transparent;
 }
 
+.btn-outline-amber {
+  color: orange;
+  border-color: orange;
+  background-image: none;
+  background-color: transparent;
+}
+
+.btn-outline-blue {
+  color: lightblue;
+  border-color: blue;
+  background-image: none;
+  background-color: transparent;
+}
+
+
+.btn-outline-success:hover, .btn-outline-success.active {
+  color: #000;
+  border-color: #5CB85C !important;
+  background-color: #5CB85C !important;
+}
+
+.btn-outline-blue:hover, .btn-outline-blue.active {
+  color: lightblue !important;
+  border-color: lightblue !important;
+  background-color: blue;
+}
+
 .btn-outline-warning {
   color: #F0AD4E;
   border-color: #F0AD4E;
@@ -880,7 +907,7 @@ p.text-lg,
 }
 
 .btn-outline-success:hover {
-  color: #000;
+  color: #fff;
   border-color: #5CB85C;
   background-color: #5CB85C;
 }

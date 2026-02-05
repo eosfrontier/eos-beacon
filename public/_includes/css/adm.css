@@ -124,4 +124,16 @@ html {
   }
 }
 
+
+.items {
+    display: flex;
+    gap: 5px;
+    align-content: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.btn-ui.btn-ui-holo-alt {
+    text-wrap: auto;
+}
 /*# sourceMappingURL=adm.css.map */

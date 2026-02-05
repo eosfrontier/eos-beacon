@@ -185,6 +185,12 @@ p {
   border-color: #ed3737;
   background-color: #ed3737;
 }
+
+.btn-outline-blue:hover, .btn-outline-blue.active {
+  color: #222222;
+  border-color: lightblue !important;
+  background-color: blue;
+}
 .btn-ui.btn-ui-holo-red:hover .glyphicon, .btn-ui.btn-ui-holo-red:hover .fa, .btn-ui.btn-ui-holo-red.active .glyphicon, .btn-ui.btn-ui-holo-red.active .fa {
   color: #222222;
   border-color: #ed3737;
