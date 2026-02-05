@@ -24,9 +24,12 @@
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsupportgroups);">
       <i class="fa fa-people-group"></i>&nbsp;Support Group Assignment
     </button>
-    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcfirstmatches);">
-      <i class="fa fa-handshake-angle"></i>&nbsp;Announce First Matches
-    </button>
+    <div class="row" style="margin-top: 15px;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin1_10m);">1st Relationship Being Computed</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin1_5m);">1st Match 1st Relationship </button></div>
+    </div>
     <div class="btn btn-block btn-ui btn-outline-blue"
       onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Matches');">
       <i class="fa fa-file-audio"></i>Open Matches
@@ -56,12 +59,7 @@
     <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bctangoclass);">
       <i class="fa fa-people-arrows"></i>&nbsp;Tango Connection Class (Opt)
     </button>
-  </div>
-  <div class="activity-section">
-    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#2ndMatch">> Relationship Cycle 2
-  </div>
-  <div id="2ndMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
-    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast1);">
+      <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast1);">
       <i class="fa fa-mug-saucer"></i>&nbsp;FIRST DAY Breakfast
     </button>
     <div class="row" style="margin-top: 15px;">
@@ -73,6 +71,11 @@
     <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipend1);">
       <i class="fa fa-hand-holding-heart"></i>&nbsp;First Relationships End
     </button>
+  </div>
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#2ndMatch">> Relationship Cycle 2
+  </div>
+  <div id="2ndMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
     <div class="row" style="margin-top: 15px;">
       <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
           onclick="sendBroadCast(bcrelationshipbegin2_10m);">2nd Relationship Being Computed</button></div>
