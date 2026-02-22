@@ -1,5 +1,5 @@
 const workerOptions = {
-    // Note the '/dist/' in the path
+    // These paths are verified to exist on jsDelivr
     encoderWorkerPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/encoderWorker.umd.js',
     OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/OggOpusEncoder.wasm',
     WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/WebMOpusEncoder.wasm'
@@ -79,12 +79,15 @@ if (isAuthenticated && navigator.mediaDevices) {
         }
     })
 }
-var mediaRecorder = null
-var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
+var mediaRecorder = null;
+var recorderState = 'idle'; 
+var isSpacePressed = false; // Prevents the 'key repeat' bug
+var originalVolumes = new Map(); // Crucial for restoring music volume!
 
 function saveTannoy(stream) {
     try {
-        // Initialize once with the modern API
+        // useAudioWorklet: true is correct here. 
+        // Note: This requires the page to be served over HTTPS (or localhost)
         mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions);
         
         mediaRecorder.ondataavailable = function (e) {
@@ -97,11 +100,9 @@ function saveTannoy(stream) {
             if (stream.getTracks) {
                 stream.getTracks().forEach(function (track) { track.stop(); });
             }
-
             if (this.broadcastOnStop !== false) {
                 socket.emit('broadcastPA');
             }
-
             mediaRecorder = null;
             recorderState = 'idle';
         }
@@ -112,22 +113,22 @@ function saveTannoy(stream) {
 
     } catch (err) {
         console.error("OpusMediaRecorder initialization failed:", err);
-        // Optional fallback logic if the Worklet fails
+        duckAudio(false);
+        recorderState = 'idle';
     }
 }
 
 function startRecording(event) {
-    if (event.keyCode == 32) {
-        // Prevent starting a new recording while one is already in progress.
+    // Only trigger if it's Space (32) AND not a repeat event AND we are idle
+    if (event.keyCode == 32 && !event.originalEvent.repeat) {
         if (recorderState === 'idle') {
-            recorderState = 'starting'; // Tentative state
-            duckAudio(true); // Duck other audio
+            recorderState = 'starting';
+            duckAudio(true);
 
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
                 .then(saveTannoy)
                 .catch(function (err) {
                     console.log("Microphone error: ", err);
-                    // If we can't get the mic, fully reset state.
                     duckAudio(false);
                     recorderState = 'idle';
                     $('.popupBroadcastPA').empty().remove();
@@ -148,17 +149,22 @@ function startRecording(event) {
 
 function stopRecording(event) {
     if (event.keyCode == 32) {
-        // Only initiate a stop if we are actively recording.
+        // Immediately allow space to be pressed again for the next round
         if (recorderState === 'recording' && mediaRecorder) {
             recorderState = 'stopping';
-            duckAudio(false); // Restore other audio
+            duckAudio(false); 
             mediaRecorder.stop();
+            $('.popupBroadcastPA').empty().remove();
+        } else if (recorderState === 'starting') {
+            // Case where user tapped space too fast before mic could even open
+            recorderState = 'idle';
+            duckAudio(false);
             $('.popupBroadcastPA').empty().remove();
         }
     }
 }
 
-var originalVolumes = new Map();
+
 
 /**
  * Dims the volume of other audio sources on the page.
