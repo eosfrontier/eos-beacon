@@ -19,78 +19,79 @@ function broadcastObj(title, file, priority, duration, colorscheme) {
 }
 
 /* System broadcasts */
-var bcdefault = new broadcastObj("Default Broadcast", "bcdefault", 1, "0", "tal");
-var bcreset = new broadcastObj("CLEAR SCREEN", "bcdefault", 99, "0", "tal");
+const bcdefault = new broadcastObj("Default Broadcast", "bcdefault", 1, "0", "tal");
+const bcreset = new broadcastObj("CLEAR SCREEN", "bcdefault", 99, "0", "tal");
 
 /* kitchen crew */
-var bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 1, "0", "tal");
-var bcbreakfast2 = new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 1, "0", "tal");
-var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 1, "0", "tal");
-var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 1, "0", "tal");
-var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal");
+const bcbreakfast1 = new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 1, "0", "tal");
+const bcbreakfast2 = new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 1, "0", "tal");
+const bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 1, "0", "tal");
+const bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 1, "0", "tal");
+const bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal");
 
 /* Activities */
-var bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 98, "0", "tal");
-var bcfirstimplantcalibration1 = new broadcastObj("FIRST Match Implant Calibration", "activities/bcfirstimplantcalibration1", 1, "0", "tal");
-var bcfirstimplantcalibration2 = new broadcastObj("Implant Calibration 1 Part 2", "activities/bcfirstimplantcalibration2", 1, "0", "tal");
-var bcfirstimplantcalibration3 = new broadcastObj("Implant Calibration 1 Part 3", "activities/bcfirstimplantcalibration3", 1, "0", "tal");
-var bcfirstimplantcalibration4 = new broadcastObj("Implant Calibration 1 Part 4", "activities/bcfirstimplantcalibration4", 1, "30000", "tal");
-var bcsecondimplantcalibration1 = new broadcastObj("SECOND Match Implant Calibration", "activities/bcsecondimplantcalibration1", 1, "0", "tal");
-var bcsecondimplantcalibration2 = new broadcastObj("Implant Calibration 2 Part 2", "activities/bcsecondimplantcalibration2", 1, "0", "tal");
-var bcsecondimplantcalibration3 = new broadcastObj("Implant Calibration 2 Part 3", "activities/bcsecondimplantcalibration3", 1, "0", "tal");
-var bcsecondimplantcalibration4 = new broadcastObj("Implant Calibration 2 Part 4", "activities/bcsecondimplantcalibration4", 1, "0", "tal");
-var bcsecondimplantcalibrationFinal = new broadcastObj("Implant Calibration 2 Complete", "activities/bcsecondimplantcalibrationFinal", 1, "0", "tal");
-var bcsupportgroups = new broadcastObj("Support Group Assignment", "activities/bcsupportgroups", 1, "0", "tal");var bcdinnerdate1 = new broadcastObj("Dinner Date & Free Time", "activities/bcdinnerdate1", 1, "0", "tal");
-var bcsexed = new broadcastObj("Sexual Education Class (Optional)", "activities/bcsexed", 1, "0", "tal");
-var bctangoclass = new broadcastObj("Tango Connection Class (Optional)", "activities/bctangoclass", 1, "0", "tal");
-var bcrelationshipend1 = new broadcastObj("First Relationships End", "activities/bcrelationshipend1", 1, "0", "tal");
-var bcsecondmatches = new broadcastObj("Second Matches Announced", "activities/bcsecondmatches", 1, "0", "tal");
-var bcrelationshipbegin2 = new broadcastObj("Second Relationships Begin", "activities/bcrelationshipbegin2", 1, "0", "tal");
-var bcjugglingclass = new broadcastObj("Duo Juggling Class (Optional)", "activities/bcjugglingclass", 1, "0", "tal");
-var bcparentingclass = new broadcastObj("Parenting Class (Optional)", "activities/bcparentingclass", 1, "0", "tal");
-var bcmeetfamily1 = new broadcastObj("Meet the Family Lunch 1", "activities/bcmeetfamily1", 1, "0", "tal");
-var bcsoundtherapy = new broadcastObj("Couples Sound Therapy (Optional)", "activities/bcsoundtherapy", 1, "0", "tal");
-var bcballroomclass = new broadcastObj("Ballroom Dancing Class (Optional)", "activities/bcballroomclass", 1, "0", "tal");
-var bcdinnerdate2 = new broadcastObj("Final Dinner Date (2nd)", "activities/bcdinnerdate2", 1, "0", "tal");
-var bcsinglesparty = new broadcastObj("Support Groups & Singles Party", "activities/bcsinglesparty", 1, "0", "tal");
-var bcrelationshipbegin3 = new broadcastObj("Third Relationships Begin", "activities/bcrelationshipbegin3", 1, "0", "tal");
-var bckaraoke = new broadcastObj("Karaoke! (Optional)", "activities/bckaraoke", 1, "0", "tal");
-var bcbreakfast3 = new broadcastObj("Breakfast (3rd)", "activities/bcbreakfast3", 1, "0", "tal");
-var bcsensualworkshop = new broadcastObj("Sensual Exploration Workshop (Optional)", "activities/bcsensualworkshop", 1, "0", "tal");
-var bcartclass = new broadcastObj("Art Class (Optional)", "activities/bcartclass", 1, "0", "tal");
-var bcmeetfamily2 = new broadcastObj("Meet the Family Lunch 2", "activities/bcmeetfamily2", 1, "0", "tal");
-var bcrelationshipend3 = new broadcastObj("Third Relationship Ends", "activities/bcrelationshipend3", 1, "0", "tal");
-var bcforevermatch = new broadcastObj("Forever Matches Announced", "activities/bcforevermatch", 1, "0", "tal");
+const bcwedding = new broadcastObj("Wedding", "activities/bcwedding", 98, "0", "tal");
+const bcfirstimplantcalibration1 = new broadcastObj("FIRST Match Implant Calibration", "activities/bcfirstimplantcalibration1", 1, "0", "tal");
+const bcfirstimplantcalibration2 = new broadcastObj("Implant Calibration 1 Part 2", "activities/bcfirstimplantcalibration2", 1, "0", "tal");
+const bcfirstimplantcalibration3 = new broadcastObj("Implant Calibration 1 Part 3", "activities/bcfirstimplantcalibration3", 1, "0", "tal");
+const bcfirstimplantcalibration4 = new broadcastObj("Implant Calibration 1 Part 4", "activities/bcfirstimplantcalibration4", 1, "30000", "tal");
+const bcsecondimplantcalibration1 = new broadcastObj("SECOND Match Implant Calibration", "activities/bcsecondimplantcalibration1", 1, "0", "tal");
+const bcsecondimplantcalibration2 = new broadcastObj("Implant Calibration 2 Part 2", "activities/bcsecondimplantcalibration2", 1, "0", "tal");
+const bcsecondimplantcalibration3 = new broadcastObj("Implant Calibration 2 Part 3", "activities/bcsecondimplantcalibration3", 1, "0", "tal");
+const bcsecondimplantcalibration4 = new broadcastObj("Implant Calibration 2 Part 4", "activities/bcsecondimplantcalibration4", 1, "0", "tal");
+const bcsecondimplantcalibrationFinal = new broadcastObj("Implant Calibration 2 Complete", "activities/bcsecondimplantcalibrationFinal", 1, "0", "tal");
+const bcsupportgroups = new broadcastObj("Support Group Assignment", "activities/bcsupportgroups", 1, "0", "tal");
+const bcdinnerdate1 = new broadcastObj("Dinner Date & Free Time", "activities/bcdinnerdate1", 1, "0", "tal");
+const bcsexed = new broadcastObj("Sexual Education Class (Optional)", "activities/bcsexed", 1, "0", "tal");
+const bctangoclass = new broadcastObj("Tango Connection Class (Optional)", "activities/bctangoclass", 1, "0", "tal");
+const bcrelationshipend1 = new broadcastObj("First Relationships End", "activities/bcrelationshipend1", 1, "0", "tal");
+const bcsecondmatches = new broadcastObj("Second Matches Announced", "activities/bcsecondmatches", 1, "0", "tal");
+const bcrelationshipbegin2 = new broadcastObj("Second Relationships Begin", "activities/bcrelationshipbegin2", 1, "0", "tal");
+const bcjugglingclass = new broadcastObj("Duo Juggling Class (Optional)", "activities/bcjugglingclass", 1, "0", "tal");
+const bcparentingclass = new broadcastObj("Parenting Class (Optional)", "activities/bcparentingclass", 1, "0", "tal");
+const bcmeetfamily1 = new broadcastObj("Meet the Family Lunch 1", "activities/bcmeetfamily1", 1, "0", "tal");
+const bcsoundtherapy = new broadcastObj("Couples Sound Therapy (Optional)", "activities/bcsoundtherapy", 1, "0", "tal");
+const bcballroomclass = new broadcastObj("Ballroom Dancing Class (Optional)", "activities/bcballroomclass", 1, "0", "tal");
+const bcdinnerdate2 = new broadcastObj("Final Dinner Date (2nd)", "activities/bcdinnerdate2", 1, "0", "tal");
+const bcsinglesparty = new broadcastObj("Support Groups & Singles Party", "activities/bcsinglesparty", 1, "0", "tal");
+const bcrelationshipbegin3 = new broadcastObj("Third Relationships Begin", "activities/bcrelationshipbegin3", 1, "0", "tal");
+const bckaraoke = new broadcastObj("Karaoke! (Optional)", "activities/bckaraoke", 1, "0", "tal");
+const bcbreakfast3 = new broadcastObj("Breakfast (3rd)", "activities/bcbreakfast3", 1, "0", "tal");
+const bcsensualworkshop = new broadcastObj("Sensual Exploration Workshop (Optional)", "activities/bcsensualworkshop", 1, "0", "tal");
+const bcartclass = new broadcastObj("Art Class (Optional)", "activities/bcartclass", 1, "0", "tal");
+const bcmeetfamily2 = new broadcastObj("Meet the Family Lunch 2", "activities/bcmeetfamily2", 1, "0", "tal");
+const bcrelationshipend3 = new broadcastObj("Third Relationship Ends", "activities/bcrelationshipend3", 1, "0", "tal");
+const bcforevermatch = new broadcastObj("Forever Matches Announced", "activities/bcforevermatch", 1, "0", "tal");
 
 /* Activity Warnings */
-var bcrelationshipend1_20m = new broadcastObj("First Match Implant Calibration Forms", "activities/bcrelationshipend1_20m", 1, "0", "tal");
-var bcrelationshipend1_15m = new broadcastObj("First Match End (15m Warning)", "activities/bcrelationshipend1_15m", 1, "0", "tal");
-var bcrelationshipbegin2_10m = new broadcastObj("2nd Rel. Matches being computed", "activities/bcrelationshipbegin2_10m", 1, "0", "tal");
-var bcrelationshipbegin2_5m = new broadcastObj("First Matches 2nd Rel.", "activities/bcrelationshipbegin2_5m", 1, "0", "tal");
-var bcrelationshipbegin1_10m = new broadcastObj("2nd Rel. Matches being computed", "activities/bcrelationshipbegin1_10m", 1, "0", "tal");
-var bcrelationshipbegin1_5m = new broadcastObj("First Matches 2nd Rel.", "activities/bcrelationshipbegin1_5m", 1, "0", "tal");
-var bcmeetfamily1_10m = new broadcastObj("Meet Family 1 (10m Warning)", "activities/bcmeetfamily1_10m", 1, "0", "tal");
-var bcmeetfamily1_5m = new broadcastObj("Meet Family 1 (5m Warning)", "activities/bcmeetfamily1_5m", 1, "0", "tal");
-var bcdinnerdate2_10m = new broadcastObj("Final Dinner 2 (10m Warning)", "activities/bcdinnerdate2_10m", 1, "0", "tal");
-var bcdinnerdate2_5m = new broadcastObj("Final Dinner 2 (5m Warning)", "activities/bcdinnerdate2_5m", 1, "0", "tal");
-var bcsinglesparty_10m = new broadcastObj("Singles Party (10m Warning)", "activities/bcsinglesparty_10m", 1, "0", "tal");
-var bcsinglesparty_5m = new broadcastObj("Singles Party (5m Warning)", "activities/bcsinglesparty_5m", 1, "0", "tal");
-var bcrelationshipbegin3_10m = new broadcastObj("Third Begin (10m Warning)", "activities/bcrelationshipbegin3_10m", 1, "0", "tal");
-var bcrelationshipbegin3_5m = new broadcastObj("Third Begin (5m Warning)", "activities/bcrelationshipbegin3_5m", 1, "0", "tal");
-var bcmeetfamily2_10m = new broadcastObj("Meet Family 2 (10m Warning)", "activities/bcmeetfamily2_10m", 1, "0", "tal");
-var bcmeetfamily2_5m = new broadcastObj("Meet Family 2 (5m Warning)", "activities/bcmeetfamily2_5m", 1, "0", "tal");
-var bcrelationshipend3_10m = new broadcastObj("Third End (10m Warning)", "activities/bcrelationshipend3_10m", 1, "0", "tal");
-var bcrelationshipend3_5m = new broadcastObj("Third End (5m Warning)", "activities/bcrelationshipend3_5m", 1, "0", "tal");
-var bcforevermatch_10m = new broadcastObj("Forever Match (10m Warning)", "activities/bcforevermatch_10m", 1, "0", "tal");
-var bcforevermatch_5m = new broadcastObj("Forever Match (5m Warning)", "activities/bcforevermatch_5m", 1, "0", "tal");
-var bcartclass_5m = new broadcastObj("Art Class (5m Warning)", "activities/bcartclass_5m", 1, "0", "tal");
-var bcsexed_5m = new broadcastObj("SexEd Class (5m Warning)", "activities/bcsexed_5m", 1, "0", "tal");
-var bcsinglespartynow = new broadcastObj("Singles Party", "activities/bcsinglespartynow", 1, "0", "tal");
+const bcrelationshipend1_20m = new broadcastObj("First Match Implant Calibration Forms", "activities/bcrelationshipend1_20m", 1, "0", "tal");
+const bcrelationshipend1_15m = new broadcastObj("First Match End (15m Warning)", "activities/bcrelationshipend1_15m", 1, "0", "tal");
+const bcrelationshipbegin2_10m = new broadcastObj("2nd Rel. Matches being computed", "activities/bcrelationshipbegin2_10m", 1, "0", "tal");
+const bcrelationshipbegin2_5m = new broadcastObj("First Matches 2nd Rel.", "activities/bcrelationshipbegin2_5m", 1, "0", "tal");
+const bcrelationshipbegin1_10m = new broadcastObj("2nd Rel. Matches being computed", "activities/bcrelationshipbegin1_10m", 1, "0", "tal");
+const bcrelationshipbegin1_5m = new broadcastObj("First Matches 2nd Rel.", "activities/bcrelationshipbegin1_5m", 1, "0", "tal");
+const bcmeetfamily1_10m = new broadcastObj("Meet Family 1 (10m Warning)", "activities/bcmeetfamily1_10m", 1, "0", "tal");
+const bcmeetfamily1_5m = new broadcastObj("Meet Family 1 (5m Warning)", "activities/bcmeetfamily1_5m", 1, "0", "tal");
+const bcdinnerdate2_10m = new broadcastObj("Final Dinner 2 (10m Warning)", "activities/bcdinnerdate2_10m", 1, "0", "tal");
+const bcdinnerdate2_5m = new broadcastObj("Final Dinner 2 (5m Warning)", "activities/bcdinnerdate2_5m", 1, "0", "tal");
+const bcsinglesparty_10m = new broadcastObj("Singles Party (10m Warning)", "activities/bcsinglesparty_10m", 1, "0", "tal");
+const bcsinglesparty_5m = new broadcastObj("Singles Party (5m Warning)", "activities/bcsinglesparty_5m", 1, "0", "tal");
+const bcrelationshipbegin3_10m = new broadcastObj("Third Begin (10m Warning)", "activities/bcrelationshipbegin3_10m", 1, "0", "tal");
+const bcrelationshipbegin3_5m = new broadcastObj("Third Begin (5m Warning)", "activities/bcrelationshipbegin3_5m", 1, "0", "tal");
+const bcmeetfamily2_10m = new broadcastObj("Meet Family 2 (10m Warning)", "activities/bcmeetfamily2_10m", 1, "0", "tal");
+const bcmeetfamily2_5m = new broadcastObj("Meet Family 2 (5m Warning)", "activities/bcmeetfamily2_5m", 1, "0", "tal");
+const bcrelationshipend3_10m = new broadcastObj("Third End (10m Warning)", "activities/bcrelationshipend3_10m", 1, "0", "tal");
+const bcrelationshipend3_5m = new broadcastObj("Third End (5m Warning)", "activities/bcrelationshipend3_5m", 1, "0", "tal");
+const bcforevermatch_10m = new broadcastObj("Forever Match (10m Warning)", "activities/bcforevermatch_10m", 1, "0", "tal");
+const bcforevermatch_5m = new broadcastObj("Forever Match (5m Warning)", "activities/bcforevermatch_5m", 1, "0", "tal");
+const bcartclass_5m = new broadcastObj("Art Class (5m Warning)", "activities/bcartclass_5m", 1, "0", "tal");
+const bcsexed_5m = new broadcastObj("SexEd Class (5m Warning)", "activities/bcsexed_5m", 1, "0", "tal");
+const bcsinglespartynow = new broadcastObj("Singles Party", "activities/bcsinglespartynow", 1, "0", "tal");
 
 /* other PSA's */
 // var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 1, "600000", "tal");
-var bcmeeting = new broadcastObj("Meeting in Main", "other/bcmeeting", 4, "0", "tal");
-var bcgatherforwelcome = new broadcastObj("Gather for Welcome Video", "other/bcgatherforwelcome", 1, "0", "tal");
+const bcmeeting = new broadcastObj("Meeting in Main", "other/bcmeeting", 4, "0", "tal");
+const bcgatherforwelcome = new broadcastObj("Gather for Welcome Video", "other/bcgatherforwelcome", 1, "0", "tal");
 
 /* medical PSA's */
 // var bcmedical = new broadcastObj("Blood Donation Request", "medical/bcmedical", 1, "0", "tal");
@@ -99,12 +100,12 @@ var bcgatherforwelcome = new broadcastObj("Gather for Welcome Video", "other/bcg
 // var bcmedicalsupport = new broadcastObj("Insufficient Medical Staff", "medical/bcmedicalsupport", 6, "0", "tal");
 
 /* reminders */
-var bchydrate = new broadcastObj("Hydration Reminder", "reminders/bchydrate", 1, "600000", "tal");
-var bcsunscreen = new broadcastObj("Sunscreen Reminder", "reminders/bcsunscreen", 1, "600000", "tal");
-var bcthankyou = new broadcastObj("Kindness Reminder", "reminders/bcthankyou", 1, "600000", "tal");
+const bchydrate = new broadcastObj("Hydration Reminder", "reminders/bchydrate", 1, "600000", "tal");
+const bcsunscreen = new broadcastObj("Sunscreen Reminder", "reminders/bcsunscreen", 1, "600000", "tal");
+const bcthankyou = new broadcastObj("Kindness Reminder", "reminders/bcthankyou", 1, "600000", "tal");
 // var bctalon = new broadcastObj("Talon Reminder", "reminders/bctalon", 1, "600000", "tal");
-var bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 1, "3600000", "tal");
-var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 1, "0", "gray");
+const bcmorning = new broadcastObj("Morning Reminder", "reminders/bcmorning", 1, "3600000", "tal");
+const bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 1, "0", "gray");
 
 /* hazards */
 // var bcviral = new broadcastObj("Unknown Viral Pathogens detected", "hazards/bcviral", 8, "0", "hazard");
@@ -130,11 +131,11 @@ var bcgotobed = new broadcastObj("Sleep Reminder", "reminders/bcgotobed", 1, "0"
 // var bcportalout_voice = new broadcastObj("Portal Outgoing", "portal/bcportalout_voice", 3, "17500", "tal");
 
 /* Overlord-only */
-var bctransmission = new broadcastObj("Transmission Incoming", "overlord/bctransmission", 5, "10000", "tal");
-var bctransmissionend = new broadcastObj("Transmission Ended", "overlord/bctransmissionend", 10, "17500", "tal");
+const bctransmission = new broadcastObj("Transmission Incoming", "overlord/bctransmission", 5, "10000", "tal");
+const bctransmissionend = new broadcastObj("Transmission Ended", "overlord/bctransmissionend", 10, "17500", "tal");
 // var bclowpower = new broadcastObj("POWER SUPPLY WARNING", "overlord/bclowpower", 8, "0", "gray");
 // var bcreactorcrit = new broadcastObj("Reactor Critical", "overlord/bcreactorcrit", 9, "0", "attack");
-var bchackattack = new broadcastObj("IT Security Breach", "overlord/bchackattack", 9, "0", "tal");
+const bchackattack = new broadcastObj("IT Security Breach", "overlord/bchackattack", 9, "0", "tal");
 // var bcmissionout = new broadcastObj("Strati.OS Mission Alert", "overlord/bcMissionout", 9, "0", "tal");
 
 
