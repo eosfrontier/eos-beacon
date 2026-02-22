@@ -66,39 +66,47 @@ if (isAuthenticated && navigator.mediaDevices) {
     })
 }
 var mediaRecorder = null
-var runningRecorder = false
+var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
+
 function saveTannoy(stream) {
     mediaRecorder = new OpusMediaRecorder(stream, {}, workerOptions)
     mediaRecorder.ondataavailable = function (e) {
         if (e.data.size > 0) {
-            socket.emit('uploadPA', e.data)
+            socket.emit('uploadPA', e.data);
         }
     }
     mediaRecorder.onstop = function () {
-        $('#start-broadcast').attr('disabled', false)
-        if (stream.stop) { stream.stop() }
+        // Stop the stream to release the microphone
         if (stream.getTracks) {
-            stream.getTracks().forEach(function (track) { track.stop() })
+            stream.getTracks().forEach(function (track) { track.stop(); });
         }
-        socket.emit('broadcastPA')
+
+        // Now that the final data chunk has been sent, tell the server to broadcast.
+        socket.emit('broadcastPA');
+
+        // Fully reset state now that we're done.
+        mediaRecorder = null;
+        recorderState = 'idle';
     }
-    socket.emit('startPA')
-    mediaRecorder.start(1000)
+    socket.emit('startPA');
+    mediaRecorder.start(1000);
+    recorderState = 'recording';
 }
+
 function startRecording(event) {
-    // console.log('keyDown',event.keyCode)
     if (event.keyCode == 32) {
-        if (!runningRecorder) {
-            runningRecorder = true;
+        // Prevent starting a new recording while one is already in progress.
+        if (recorderState === 'idle') {
+            recorderState = 'starting'; // Tentative state
             duckAudio(true); // Duck other audio
 
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
                 .then(saveTannoy)
                 .catch(function (err) {
                     console.log("Microphone error: ", err);
-                    // If we can't get the mic, unduck audio and reset
+                    // If we can't get the mic, fully reset state.
                     duckAudio(false);
-                    runningRecorder = false;
+                    recorderState = 'idle';
                     $('.popupBroadcastPA').empty().remove();
                 });
 
@@ -107,28 +115,24 @@ function startRecording(event) {
                 '<div class="col-xs-12 col-sm-8 col-md-6 text-center disconnectedPopup popupBroadcastPA">'
                 + '<h2 class="text-bold">'
                 + '<i class="fa fa-microphone" style="font-size:24px; color: red;"></i> '
-                + 'RECORDING...<br>Release space to broadcast.'
+                + 'RECORDING...<br>Release spacebar to broadcast.'
                 + ' <i class="fa fa-microphone" style="font-size:24px; color: red;"></i>'
                 + '</h2>'
                 + '</div>');
         }
     }
-    // console.log('keyDown')
 }
+
 function stopRecording(event) {
-    // console.log('keyUp',event.keyCode)
     if (event.keyCode == 32) {
-        if (runningRecorder) {
+        // Only initiate a stop if we are actively recording.
+        if (recorderState === 'recording' && mediaRecorder) {
+            recorderState = 'stopping';
             duckAudio(false); // Restore other audio
-            if (mediaRecorder) {
-                mediaRecorder.stop();
-                mediaRecorder = null;
-            }
-            runningRecorder = false;
+            mediaRecorder.stop();
             $('.popupBroadcastPA').empty().remove();
         }
     }
-    // console.log('keyUp')
 }
 
 var originalVolumes = new Map();
@@ -144,7 +148,7 @@ function duckAudio(shouldDuck) {
         $('#custom-audio audio, #BCAUDIO audio').each(function() {
             if (!this.paused) {
                 originalVolumes.set(this, this.volume);
-                $(this).animate({ volume: 0.1 }, 200); // Duck to 10% volume
+                $(this).animate({ volume: 0.0 }, 200); // Duck to 0% volume
             }
         });
     } else {
