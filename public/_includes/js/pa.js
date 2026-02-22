@@ -69,7 +69,7 @@ var mediaRecorder = null
 var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
 
 function saveTannoy(stream) {
-    mediaRecorder = new OpusMediaRecorder(stream, {}, workerOptions)
+    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions)
     mediaRecorder.ondataavailable = function (e) {
         if (e.data.size > 0) {
             socket.emit('uploadPA', e.data);
