@@ -1,7 +1,10 @@
+// Get the base URL of your site (e.g., https://yourdomain.com)
+const base = window.location.origin;
+
 const workerOptions = {
-    encoderWorkerPath: '/js/opus/encoderWorker.umd.js',
-    OggOpusEncoderWasmPath: '/js/opus/OggOpusEncoder.wasm',
-    WebMOpusEncoderWasmPath: '/js/opus/WebMOpusEncoder.wasm'
+    encoderWorkerPath: base + '/js/opus/encoderWorker.umd.js',
+    OggOpusEncoderWasmPath: base + '/js/opus/OggOpusEncoder.wasm',
+    WebMOpusEncoderWasmPath: base + '/js/opus/WebMOpusEncoder.wasm'
 };
 
 function getCookie(cname) {
