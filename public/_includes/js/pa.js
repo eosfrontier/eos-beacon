@@ -2,9 +2,9 @@
 const base = window.location.origin;
 
 const workerOptions = {
-    encoderWorkerPath: base + '/js/opus/encoderWorker.umd.js',
-    OggOpusEncoderWasmPath: base + '/js/opus/OggOpusEncoder.wasm',
-    WebMOpusEncoderWasmPath: base + '/js/opus/WebMOpusEncoder.wasm'
+    encoderWorkerPath: base + '/_includes/js/opus/encoderWorker.umd.js',
+    OggOpusEncoderWasmPath: base + '/_includes/js/opus/OggOpusEncoder.wasm',
+    WebMOpusEncoderWasmPath: base + '/_includes/js/opus/WebMOpusEncoder.wasm'
 };
 
 function getCookie(cname) {
