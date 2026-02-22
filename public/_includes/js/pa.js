@@ -29,39 +29,50 @@ if (isAuthenticated && navigator.mediaDevices) {
 
     $('#pa-broadcast-btn').click(function () {
         console.log('click')
-
-        btn = $(this).find('i')
+        const btn = $(this).find('i');
         if (btn.hasClass('fa-microphone-slash')) {
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function (stream) {
+            // Use the Permissions API to check for microphone access without activating it.
+            // This avoids the unnecessary stream creation and the associated deprecation warning.
+            navigator.permissions.query({ name: 'microphone' }).then(function (permissionStatus) {
+                if (permissionStatus.state === 'denied') {
+                    $('#notificationContainer').append(
+                        '<div class="col-xs-12 col-sm-8 col-md-6 text-center disconnectedPopup popupBroadcastPA">'
+                        + '<h2 class="text-bold" style="color: red;">'
+                        + '<i class="fa fa-microphone-slash" style="font-size:24px;"></i> '
+                        + 'MICROPHONE ACCESS DENIED<br>Please enable microphone access in your browser settings.'
+                        + '</h2>'
+                        + '</div>');
+                    setTimeout(function () { $('.popupBroadcastPA').empty().remove() }, 5000);
+                    return;
+                }
+
+                // If permission is 'granted' or 'prompt', enable the PA feature.
+                // The actual browser prompt will appear when the user presses spacebar.
                 $('#notificationContainer').append(
                     '<div class="col-xs-12 col-sm-8 col-md-6 text-center disconnectedPopup popupBroadcastPA">'
                     + '<h2 class="text-bold">'
-                    + '<i class="fa fa-warning holoContrast" style="font-size:24px;"></i> '
-                    + 'VOICE BROADCAST ENABLED<br>Hold the space bar to record, it will be broadcast when you release'
-                    + ' <i class="fa fa-warning holoContrast" style="font-size:24px;"></i>'
+                    + '<i class="fa fa-info-circle holoContrast" style="font-size:24px;"></i> '
+                    + 'VOICE BROADCAST ENABLED<br>Hold the space bar to record. Broadcast happens on release.'
                     + '</h2>'
                     + '</div>');
-                setTimeout(function () { $('.popupBroadcastPA').empty(); $('.popupBroadcastPA').remove() }, 5000)
-                if (stream.stop) { stream.stop() }
-                if (stream.getTracks) {
-                    stream.getTracks().forEach(function (track) {
-                        track.stop()
-                    })
-                }
-                $(window).keydown(startRecording)
-                $(window).keyup(stopRecording)
-            }).catch(function (err) { console.log("Microphone error: " + err) })
-            btn.removeClass('fa-microphone-slash').addClass('fa-microphone')
+                setTimeout(function () { $('.popupBroadcastPA').empty().remove() }, 5000);
+
+                $(window).on('keydown', startRecording);
+                $(window).on('keyup', stopRecording);
+                btn.removeClass('fa-microphone-slash').addClass('fa-microphone');
+            }).catch(function (err) { console.log("Permissions API error: " + err); });
         } else {
-            $(window).off('keydown', startRecording)
-            $(window).off('keyup', stopRecording)
-            btn.removeClass('fa-microphone').addClass('fa-microphone-slash')
+            $(window).off('keydown', startRecording);
+            $(window).off('keyup', stopRecording);
+            btn.removeClass('fa-microphone').addClass('fa-microphone-slash');
             if (mediaRecorder) {
-                mediaRecorder.stop()
-                mediaRecorder = null
-                $('.popupBroadcastPA').empty();
-                $('.popupBroadcastPA').remove();
+                // Stop the recording but prevent it from being broadcast.
+                mediaRecorder.broadcastOnStop = false;
+                mediaRecorder.stop();
             }
+            // Clean up any lingering UI and restore audio.
+            $('.popupBroadcastPA').empty().remove();
+            duckAudio(false);
         }
     })
 }
@@ -81,8 +92,11 @@ function saveTannoy(stream) {
             stream.getTracks().forEach(function (track) { track.stop(); });
         }
 
-        // Now that the final data chunk has been sent, tell the server to broadcast.
-        socket.emit('broadcastPA');
+        // Broadcast unless explicitly told not to (e.g., by cancellation).
+        if (this.broadcastOnStop !== false) {
+            // Now that the final data chunk has been sent, tell the server to broadcast.
+            socket.emit('broadcastPA');
+        }
 
         // Fully reset state now that we're done.
         mediaRecorder = null;
