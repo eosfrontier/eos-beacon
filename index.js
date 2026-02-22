@@ -3,13 +3,32 @@ const app = express();
 const http = require('http').Server(app);
 const { Server } = require("socket.io");
 const io = require('socket.io')(http);
-const gtts = require('gtts');
 const getMP3Duration = require('get-mp3-duration');
 const { parse } = require('csv-parse/sync');
 const audioconcat = require('audioconcat');
 const fs = require('fs');
 const globalSettings = require('./config.js');
 const path = require('path');
+const axios = require('axios');
+const { pipeline } = require('stream/promises');
+
+/**
+ * Generates TTS audio from text and saves it to a file.
+ * @param {string} text The text to convert to speech.
+ * @param {string} lang The language code (e.g., 'en-uk').
+ * @param {string} filePath The full path to save the MP3 file.
+ * @returns {Promise<void>} A promise that resolves when the file is saved.
+ */
+async function saveTtsAudio(text, lang, filePath) {
+  const { getAudioUrl } = await import('google-tts-api');
+  const url = getAudioUrl(text, { lang });
+  const response = await axios({
+    method: 'get',
+    url: url,
+    responseType: 'stream'
+  });
+  await pipeline(response.data, fs.createWriteStream(filePath));
+}
 
 // Helper function to convert trailing Roman numerals in a name to words.
 function convertRomanNumeralsToWords(name) {
@@ -103,44 +122,43 @@ app.set('view engine', 'ejs');
  * Reads the video broadcast files and extracts their metadata.
  * @returns {Promise<Array>} A promise that resolves with an array of broadcast data objects.
  */
-function getVideoBroadcasts() {
-  return new Promise((resolve, reject) => {
-    const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
+async function getVideoBroadcasts() {
+  const directoryPath = path.join(__dirname, 'public', 'broadcasts', 'videos');
+  try {
+    const files = await fs.promises.readdir(directoryPath);
+    const htmlFiles = files.filter(file => file.endsWith('.html'));
 
-    fs.readdir(directoryPath, (err, files) => {
-      if (err) {
-        console.error("Could not read video broadcasts directory:", err);
-        return resolve([]); // Resolve with an empty array to handle gracefully
+    const broadcasts = await Promise.all(htmlFiles.map(async (file) => {
+      const filePath = path.join(directoryPath, file);
+      const key = file.replace('.html', '');
+      let title = "Untitled Broadcast";
+
+      try {
+        const content = await fs.promises.readFile(filePath, 'utf8');
+        const match = content.match(/<title>(.*?)<\/title>/i);
+        if (match && match[1]) {
+          title = match[1];
+        }
+      } catch (readErr) {
+        console.error(`Could not read file ${file}:`, readErr);
+        // Continue with the default title
       }
 
-      const promises = files
-        .filter(file => file.endsWith('.html'))
-        .map(file => {
-          return new Promise((resolveFile) => {
-            const filePath = path.join(directoryPath, file);
-            const key = file.replace('.html', '');
+      return {
+        key: key,
+        title: title,
+        file: `videos/${key}`,
+        priority: 9,
+        duration: "0",
+        colorscheme: defaultColorScheme
+      };
+    }));
 
-            fs.readFile(filePath, 'utf8', (readErr, content) => {
-              let title = "Untitled Broadcast";
-              if (!readErr) {
-                const match = content.match(/<title>(.*?)<\/title>/i);
-                if (match && match[1]) title = match[1];
-              }
-              resolveFile({
-                key: key,
-                title: title,
-                file: `videos/${key}`,
-                priority: 9,
-                duration: "0",
-                colorscheme: defaultColorScheme
-              });
-            });
-          });
-        });
-
-      Promise.all(promises).then(resolve);
-    });
-  });
+    return broadcasts;
+  } catch (err) {
+    console.error("Could not read video broadcasts directory:", err);
+    return []; // Return empty array on error, maintaining graceful failure
+  }
 }
 
 // Defaults
@@ -497,9 +515,7 @@ io.on('connection', (socket) => {
        console.log(`[match-audio] Received request to generate audio for Run ${runNumber}.`);
 
       // 1. Generate the "I repeat" audio once for the entire batch.
-      await new Promise((res, rej) => {
-        new gtts('I repeat.', 'en-uk').save(iRepeatFile, (err) => (err ? rej(err) : res()));
-      });
+      await saveTtsAudio('I repeat.', 'en-uk', iRepeatFile);
       console.log(`[match-audio] Generated shared 'I repeat' file.`);
 
 
@@ -575,14 +591,10 @@ io.on('connection', (socket) => {
                 return;
               }
 
-              tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+              tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
                 const tempChunkFile = path.join(tmpDir, `unmatched-chunk-${id}-${i}-${rowTimestamp}.mp3`);
-                return new Promise((res, rej) => {
-                  new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
-                    if (err) return rej(err);
-                    res(tempChunkFile);
-                  });
-                });
+                await saveTtsAudio(chunk, 'en-uk', tempChunkFile);
+                return tempChunkFile;
               }));
 
               await new Promise((res, rej) => {
@@ -612,14 +624,10 @@ io.on('connection', (socket) => {
               const matchText = `${p1} is matched with... ${p2}.`;
               const textChunks = splitText(matchText, 150);
 
-              tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+              tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
                 const tempChunkFile = path.join(tmpDir, `match-chunk-${id}-${i}-${rowTimestamp}.mp3`);
-                return new Promise((res, rej) => {
-                  new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
-                    if (err) return rej(err);
-                    res(tempChunkFile);
-                  });
-                });
+                await saveTtsAudio(chunk, 'en-uk', tempChunkFile);
+                return tempChunkFile;
               }));
 
               if (tempChunkFiles.length > 0) {
@@ -696,9 +704,7 @@ io.on('connection', (socket) => {
 
     try {
       // 1. Generate "I repeat" audio
-      await new Promise((res, rej) => {
-        new gtts('I repeat.', 'en-uk').save(iRepeatFile, (err) => (err ? rej(err) : res()));
-      });
+      await saveTtsAudio('I repeat.', 'en-uk', iRepeatFile);
 
       // 2. Generate main text audio in chunks
       const textChunks = splitText(text, 150);
@@ -706,14 +712,10 @@ io.on('connection', (socket) => {
         throw new Error("No text to speak after sanitizing.");
       }
 
-      tempChunkFiles = await Promise.all(textChunks.map((chunk, i) => {
+      tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
         const tempChunkFile = path.join(tmpDir, `tts-chunk-${i}-${timestamp}.mp3`);
-        return new Promise((res, rej) => {
-          new gtts(chunk, 'en-uk').save(tempChunkFile, (err) => {
-            if (err) return rej(err);
-            res(tempChunkFile);
-          });
-        });
+        await saveTtsAudio(chunk, 'en-uk', tempChunkFile);
+        return tempChunkFile;
       }));
 
       await new Promise((res, rej) => {
@@ -973,58 +975,81 @@ io.on('connection', (socket) => {
 
   // optional/legacy PA functionality
   if (globalSettings.sys.voiceEnabled) {
+    const pa_folder = path.join(__dirname, 'public', 'sounds', 'audio-pa');
 
-    var pa_name = null;
-    var pa_folder = './public/sounds/audio-pa/';
+    // Use a Map to store the PA filename for each socket to prevent race conditions
+    const paFiles = new Map();
 
-    socket.on('startPA', function () {
-      fs.readdir(pa_folder, function (err, files) {
-        var cleantime = new Date(new Date().getTime() - 60000);
-        if (err) {
-          console.log('PA cleanup readdir error: ' + err);
-        }
-        files.forEach(function (file) {
-          if (file) {
-            var path = pa_folder + file;
-            fs.stat(path, function (err, stat) {
-              if (err) {
-                console.log('PA cleanup stat error: ' + err);
-              }
-              if (stat.ctime < cleantime) {
-                console.log('[PA] unlinking', path, stat.ctime, cleantime);
-                fs.unlink(path, function (err) {
-                  if (err) {
-                    console.log('PA cleanup unlink error: ' + err);
-                  }
-                });
-              }
-            });
+    const cleanupOldPAFiles = async () => {
+      try {
+        await fs.promises.mkdir(pa_folder, { recursive: true });
+        const files = await fs.promises.readdir(pa_folder);
+        const cutoffTime = Date.now() - 60000; // 60 seconds ago
+
+        for (const file of files) {
+          const filePath = path.join(pa_folder, file);
+          try {
+            const stat = await fs.promises.stat(filePath);
+            if (stat.ctime.getTime() < cutoffTime) {
+              console.log('[PA] Unlinking old file:', filePath);
+              await fs.promises.unlink(filePath);
+            }
+          } catch (statErr) {
+            // Ignore errors for files that might have been deleted between readdir and stat
+            if (statErr.code !== 'ENOENT') {
+              console.error(`[PA] Error stating file ${file}:`, statErr);
+            }
           }
-        });
-      });
-      pa_name =
-        'PA-' +
-        socket.id +
-        '-' +
-        new Date().toISOString().substring(11, 23).replace(/[:.]/g, '');
+        }
+      } catch (err) {
+        console.error('[PA] Cleanup failed:', err);
+      }
+    };
 
-      fs.mkdir(pa_folder, {
-        recursive: true
-      }, function (err) {
-        if (err) throw err;
-        fs.truncate(pa_folder + pa_name + '.opus', function (err) {});
-      });
+    socket.on('startPA', async () => {
+      // Run cleanup, but don't block the response
+      cleanupOldPAFiles();
+
+      const pa_name = `PA-${socket.id}-${Date.now()}.opus`;
+      paFiles.set(socket.id, pa_name); // Store filename against socket.id
+
+      const filePath = path.join(pa_folder, pa_name);
+      try {
+        await fs.promises.writeFile(filePath, ''); // Create empty file
+        console.log(`[PA] Started for socket ${socket.id}: ${pa_name}`);
+      } catch (err) {
+        console.error(`[PA] Could not create file for ${socket.id}:`, err);
+      }
     });
-    socket.on('uploadPA', function (data) {
+
+    socket.on('uploadPA', async (data) => {
+      const pa_name = paFiles.get(socket.id);
+      if (!pa_name) {
+        console.error(`[PA] Received upload from socket ${socket.id} without starting PA.`);
+        return;
+      }
       // TODO: Force maximum length to stop the server from overflowing
-      fs.appendFile(pa_folder + pa_name + '.opus', data, function (err) {
-        if (err) throw err;
-      });
+      const filePath = path.join(pa_folder, pa_name);
+      try {
+        await fs.promises.appendFile(filePath, data);
+      } catch (err) {
+        console.error(`[PA] Error appending data for ${socket.id}:`, err);
+      }
     });
-    socket.on('broadcastPA', function () {
-      console.log('[audio] => PA: ' + pa_name);
-      io.emit('playAudioFile', '/audio-pa/' + pa_name + '.opus');
+
+    socket.on('broadcastPA', () => {
+      const pa_name = paFiles.get(socket.id);
+      if (pa_name) {
+        console.log('[audio] => PA: ' + pa_name);
+        // Correct path for static assets
+        io.emit('playAudioFile', `/sounds/audio-pa/${pa_name}`);
+      } else {
+        console.error(`[PA] Received broadcast from socket ${socket.id} without a file.`);
+      }
     });
+
+    // Clean up map on disconnect
+    socket.on('disconnect', () => paFiles.delete(socket.id));
   }
 
 });

@@ -11,4 +11,3 @@ LOGS/eventlog.txt
 *.ssml
 *.csv
 schedule.json
-/index.js
