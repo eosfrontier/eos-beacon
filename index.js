@@ -11,6 +11,7 @@ const globalSettings = require('./config.js');
 const path = require('path');
 const axios = require('axios');
 const { pipeline } = require('stream/promises');
+const { ALL_STATIC_BROADCASTS } = require('./public/broadcasts.js');
 
 /**
  * Generates TTS audio from text and saves it to a file.
@@ -243,9 +244,18 @@ function checkSchedule() {
   const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
   applicationState.schedule.forEach(job => {
     if (job.time === currentTime && !job.sent) {
-      io.emit('broadcastReceive', JSON.parse(job.broadcast)); // We store broadcast as a string
-      job.sent = true;
-      console.log(`[schedule] Fired scheduled broadcast: ${JSON.parse(job.broadcast).title}`);
+      try {
+        const broadcast = JSON.parse(job.broadcast);
+        if (broadcast) {
+          io.emit('broadcastReceive', broadcast);
+          job.sent = true;
+          console.log(`[schedule] Fired scheduled broadcast: ${broadcast.title}`);
+        } else {
+          console.error(`[schedule] Skipping job ID ${job.id}: broadcast data is empty.`);
+        }
+      } catch (e) {
+        console.error(`[schedule] Skipping job ID ${job.id}: could not parse broadcast JSON.`, e);
+      }
     }
   });
 }
@@ -267,15 +277,37 @@ function initializeRouting() {
   }));
   app.use(express.static(path.join(__dirname, 'public')));
 
-  // Route to get video broadcasts, now using the shared function
+  // Route to get all broadcast data (static + video)
+  app.get('/get-all-broadcasts', async (req, res) => {
+    try {
+      const videoBroadcasts = await getVideoBroadcasts();
+      const allBroadcasts = { ...ALL_STATIC_BROADCASTS };
+
+      // Add video broadcasts to the main object, using their key
+      videoBroadcasts.forEach(vb => {
+        allBroadcasts[vb.key] = vb;
+      });
+
+      res.json(allBroadcasts);
+    } catch (err) {
+      console.error("Error getting all broadcasts:", err);
+      res.status(500).json({ error: "Failed to load broadcast data." });
+    }
+  });
+
+  // This route is being added back for compatibility with client-side code
+  // that has not yet been updated to use '/get-all-broadcasts'.
   app.get('/get-video-broadcasts', async (req, res) => {
     const broadcasts = await getVideoBroadcasts();
     res.json(broadcasts);
   });
+
   app.get('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
   });
 }
+
+initializeRouting();
 
 // Init: FlavorText
 http.listen(port, () => {
@@ -312,30 +344,6 @@ const syncConnectionCounter = () => {
   applicationState.countClients = io.engine.clientsCount;
   syncAppState();
 };
-
-// 1. Create a function that handles the initialization
-async function initializeBroadcastSystem() {
-  try {
-    initializeRouting();
-
-    // 2. Get the video broadcast data directly
-    const broadcasts = await getVideoBroadcasts();
-
-    // 3. Register the variables globally on the server
-    // Note: `window` is a browser concept. On the server, you'd attach to `global`
-    // or manage state differently. For now, this part seems intended for client-side
-    // logic that was being run on the server. The key is getting `broadcasts` correctly.
-    console.log("Video broadcasts data fetched:", broadcasts.map(b => b.key));
-    console.log("Initialization Complete.");
-
-    // 4. Start the main application logic
-    // This would be where you might start listening for connections, etc.
-    // Since that's already happening below, we'll just log.
-
-  } catch (err) {
-    console.error("System failed to initialize:", err);
-  }
-}
 
 io.on('connection', (socket) => {
   syncConnectionCounter();
@@ -421,6 +429,11 @@ io.on('connection', (socket) => {
   socket.on('requestDynamicData', () => syncConnectionCounter());
 
   socket.on('broadcastSend', (value) => {
+    // Prevent client-side crashes from empty broadcasts
+    if (!value) {
+      console.error('[broadcast] Received an empty broadcastSend event. Aborting.');
+      return;
+    }
     // If value.file contains a slash, only take the part after the last one
     // Otherwise, just use value.file as is
     const cleanBCName = value.file.includes('/')
@@ -1010,7 +1023,7 @@ io.on('connection', (socket) => {
       // Run cleanup, but don't block the response
       cleanupOldPAFiles();
 
-      const pa_name = `PA-${socket.id}-${Date.now()}.opus`;
+      const pa_name = `PA-${socket.id}-${Date.now()}.wav`;
       paFiles.set(socket.id, pa_name); // Store filename against socket.id
 
       const filePath = path.join(pa_folder, pa_name);
@@ -1040,11 +1053,39 @@ io.on('connection', (socket) => {
     socket.on('broadcastPA', () => {
       const pa_name = paFiles.get(socket.id);
       if (pa_name) {
-        console.log('[audio] => PA: ' + pa_name);
-        // Correct path for static assets
-        io.emit('playAudioFile', `/sounds/audio-pa/${pa_name}`);
+        const filePath = path.join(pa_folder, pa_name);
+        // Check if file exists and has content before broadcasting
+        fs.stat(filePath, (err, stats) => {
+          if (err || stats.size === 0) {
+            console.error(`[PA] Broadcast aborted for socket ${socket.id}. File not found or empty: ${pa_name}`);
+            paFiles.delete(socket.id); // Clean up map
+            return;
+          }
+
+          console.log('[audio] => PA: ' + pa_name);
+          // Correct path for static assets
+          io.emit('playAudioFile', `/sounds/audio-pa/${pa_name}`);
+          // Clean up the map entry after successful broadcast
+          paFiles.delete(socket.id);
+        });
       } else {
         console.error(`[PA] Received broadcast from socket ${socket.id} without a file.`);
+      }
+    });
+
+    socket.on('cancelPA', () => {
+      // This can be triggered if the user cancels a recording.
+      const pa_name = paFiles.get(socket.id);
+      if (pa_name) {
+        paFiles.delete(socket.id); // Remove from map immediately
+        const filePath = path.join(pa_folder, pa_name);
+        fs.unlink(filePath, (err) => {
+          if (err && err.code !== 'ENOENT') {
+            console.error(`[PA] Error deleting cancelled file ${pa_name}:`, err);
+          } else {
+            console.log(`[PA] Deleted cancelled file: ${pa_name}`);
+          }
+        });
       }
     });
 
@@ -1053,6 +1094,3 @@ io.on('connection', (socket) => {
   }
 
 });
-
-// Start the sequence
-initializeBroadcastSystem();

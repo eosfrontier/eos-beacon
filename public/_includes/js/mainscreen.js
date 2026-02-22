@@ -59,35 +59,40 @@ $(document).ready(function () {
     if (initialized == 0) {
       console.log('first boot initialization...');
 
-      // Check if the variable exists yet
-      const bcKey = dynamicData['lastBC'];
+      const loadPaFeature = async function() {
+        if (!dynamicData.voiceEnabled) {
+          return;
+        }
 
-      if (window[bcKey]) {
-        // Variables are already there, proceed as normal
-        broadCast(window[bcKey]);
+        try {
+          // Dynamically import the PA module. This will handle its own dependencies.
+          await import('./_includes/js/pa.js');
+        } catch (err) {
+          console.error("Failed to load PA feature:", err);
+        }
+      };
+
+      const onFirstBootReady = async function() {
+        const bcKey = dynamicData['lastBC'];
+        // The broadcast might not exist on first load, so check for it.
+        if (window[bcKey]) {
+          broadCast(window[bcKey]);
+        }
+        await loadPaFeature(); // Load PA scripts after handling the initial broadcast.
         initialized = 1;
+      };
+
+      // Check if broadcast variables are loaded yet (they are fetched asynchronously)
+      const bcKey = dynamicData['lastBC'];
+      if (window[bcKey] || bcKey === 'bcdefault') { // bcdefault is always available
+        // Variables are already there, proceed as normal
+        onFirstBootReady();
       } else {
         // VARIABLES ARE MISSING (The Race Condition)
         console.warn(`Broadcast variable ${bcKey} not found yet. Queuing...`);
-
         // We wait for a custom event that we will fire when the fetch is done
-        window.addEventListener('broadcastsLoaded', function () {
-          console.log(`Resuming first boot for: ${bcKey}`);
-          broadCast(window[bcKey]);
-          initialized = 1;
-        }, { once: true }); // {once: true} ensures this only runs once
+        window.addEventListener('broadcastsLoaded', () => onFirstBootReady(), { once: true });
       }
-
-      if (dynamicData.voiceEnabled) {
-        const _element = $('#_extra');
-        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js\">');
-        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js\">');
-        _element.append('<script src="./_includes/js/pa.js">');
-
-      }
-
-      broadCast(window[dynamicData['lastBC']]);
-      initialized = 1;
     }
     // Update App Name from config
     if (dynamicData.appName && dynamicData.appDescription) {

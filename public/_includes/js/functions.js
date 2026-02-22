@@ -133,16 +133,19 @@ function getCurrentTime() {
 /* function: broadcast . CLIENT SIDE. This is triggered upon RECEIVING a broadcast from the server (index.js) */
 function broadCast(location) {
 
+  // Failsafe: If the server somehow sends an empty broadcast, don't crash the client.
+  if (!location) {
+    console.error("broadCast function called with an undefined or null location. Aborting.");
+    return;
+  }
+
   /* fills in the blanks. */
-  if (location['title'] == null) location['title'] = "Untitled Broadcast";
-  if (location['file'] == null) location['file'] = "404";
-  if (location['priority'] == null) location['priority'] = "1";
-  if (location['duration'] == null) location['duration'] = "0";
-  if (location['colorscheme'] == null) location['colorscheme'] = "tal";
+  location.title = location.title || "Untitled Broadcast";
+  location.file = location.file || "404";
+  location.priority = location.priority || "1";
+  location.duration = location.duration || "0";
+  location.colorscheme = location.colorscheme || "tal";
 
-
-  /* checks if anything is set in the broadcast call. */
-  /*if(location) {*/
 
   /* Cache the notification container div: This will save us a LOT of requests in the long run. */
   if (notifiContCache == "") { notifiContCache = $("#notificationContainer"); }
@@ -257,7 +260,6 @@ function broadCast(location) {
 
       notifiContCache.empty().load('/broadcasts/404.html');
     });
-  /*}*/
 
 }
 
