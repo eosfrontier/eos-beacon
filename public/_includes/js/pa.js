@@ -6,16 +6,22 @@
 import { MediaRecorder, register } from 'https://esm.sh/extendable-media-recorder';
 import { connect } from 'https://esm.sh/extendable-media-recorder-wav-encoder';
 
-// 2. Register the WAV encoder. Top-level await pauses module execution until this is done.
-try {
-    // This registers the WAV encoder with the MediaRecorder ponyfill.
-    // It uses an AudioWorklet, which avoids any deprecation warnings.
-    await register(await connect());
-} catch (err) {
-    console.error('Failed to register WAV encoder for PA system:', err);
-    // If registration fails, the PA system cannot function.
-    // We throw an error to halt the execution of this module and signal the failure.
-    throw err;
+// 2. Defer encoder registration until user interaction.
+// Registering the encoder on page load creates an AudioContext before any user gesture,
+// which can cause it to be "suspended" and interfere with other audio playback, like background music.
+let isEncoderRegistered = false;
+async function registerEncoder() {
+    if (isEncoderRegistered) return true;
+
+    try {
+        await register(await connect());
+        isEncoderRegistered = true;
+        console.log('PA WAV encoder registered successfully on user interaction.');
+        return true;
+    } catch (err) {
+        console.error('Failed to register WAV encoder for PA system:', err);
+        return false;
+    }
 }
 
 // --- All the original PA logic goes below, now at the top level of the module's scope ---
@@ -42,10 +48,27 @@ try {
     }
 
     if (isAuthenticated && navigator.mediaDevices) {
-        $('#pa-broadcast-btn').click(function () {
+        $('#pa-broadcast-btn').click(async function () {
             console.log('click')
             const btn = $(this).find('i');
             if (btn.hasClass('fa-microphone-slash')) {
+                // Register the encoder on the first click to enable.
+                // This happens after a user gesture, which is required for AudioContext.
+                const didRegister = await registerEncoder();
+                if (!didRegister) {
+                    $('#notificationContainer').append(
+                        '<div class="col-xs-12 col-sm-8 col-md-6 text-center disconnectedPopup popupBroadcastPA">'
+                        + '<h2 class="text-bold" style="color: red;">'
+                        + '<i class="fa fa-exclamation-triangle" style="font-size:24px;"></i> '
+                        + 'VOICE BROADCAST FAILED<br>Could not initialize audio encoder.'
+                        + '</h2>'
+                        + '</div>');
+                    setTimeout(function () {
+                        $('.popupBroadcastPA').empty().remove()
+                    }, 5000);
+                    return;
+                }
+
                 navigator.permissions.query({ name: 'microphone' }).then(function (permissionStatus) {
                     if (permissionStatus.state === 'denied') {
                         $('#notificationContainer').append(
