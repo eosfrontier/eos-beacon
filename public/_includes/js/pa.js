@@ -1,8 +1,7 @@
 const workerOptions = {
-    // These paths are verified to exist on jsDelivr
-    encoderWorkerPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/encoderWorker.umd.js',
-    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/OggOpusEncoder.wasm',
-    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/WebMOpusEncoder.wasm'
+    encoderWorkerPath: '/js/opus/encoderWorker.umd.js',
+    OggOpusEncoderWasmPath: '/js/opus/OggOpusEncoder.wasm',
+    WebMOpusEncoderWasmPath: '/js/opus/WebMOpusEncoder.wasm'
 };
 
 function getCookie(cname) {
