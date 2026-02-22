@@ -83,32 +83,37 @@ var mediaRecorder = null
 var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
 
 function saveTannoy(stream) {
-    // Only initialize once with the flag enabled
-    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions);
-    mediaRecorder.ondataavailable = function (e) {
-        if (e.data.size > 0) {
-            socket.emit('uploadPA', e.data);
-        }
-    }
-    mediaRecorder.onstop = function () {
-        // Stop the stream to release the microphone
-        if (stream.getTracks) {
-            stream.getTracks().forEach(function (track) { track.stop(); });
+    try {
+        // Initialize once with the modern API
+        mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions);
+        
+        mediaRecorder.ondataavailable = function (e) {
+            if (e.data.size > 0) {
+                socket.emit('uploadPA', e.data);
+            }
         }
 
-        // Broadcast unless explicitly told not to (e.g., by cancellation).
-        if (this.broadcastOnStop !== false) {
-            // Now that the final data chunk has been sent, tell the server to broadcast.
-            socket.emit('broadcastPA');
+        mediaRecorder.onstop = function () {
+            if (stream.getTracks) {
+                stream.getTracks().forEach(function (track) { track.stop(); });
+            }
+
+            if (this.broadcastOnStop !== false) {
+                socket.emit('broadcastPA');
+            }
+
+            mediaRecorder = null;
+            recorderState = 'idle';
         }
 
-        // Fully reset state now that we're done.
-        mediaRecorder = null;
-        recorderState = 'idle';
+        socket.emit('startPA');
+        mediaRecorder.start(1000);
+        recorderState = 'recording';
+
+    } catch (err) {
+        console.error("OpusMediaRecorder initialization failed:", err);
+        // Optional fallback logic if the Worklet fails
     }
-    socket.emit('startPA');
-    mediaRecorder.start(1000);
-    recorderState = 'recording';
 }
 
 function startRecording(event) {
