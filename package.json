@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "supervisor index.js"
+    "dev": "supervisor -w ./,public/_includes/js/,public/,public/adm/js/ -e js index.js"
   },
   "repository": {
     "type": "git",

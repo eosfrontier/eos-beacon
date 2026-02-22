@@ -18,6 +18,8 @@ var notifiContCache = "";
 var loopSoundCounter = 1;
 var loopSoundTimer;
 
+var originalDocTitle = document.title; // Storing the original page title
+
 // To store the state of an interrupted background music playlist
 let backgroundPlaylistState = null;
 
@@ -130,22 +132,57 @@ function getCurrentTime() {
   return currentTimeString;
 }
 
+// New function to generate activity broadcast HTML
+function generateActivityBroadcastHtml(options) {
+  const { mainTitleHtml, subtitleText, centralIconHtml, paragraphText } = options;
+
+  return `
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 text-center">
+          <div class="whitespace col-md-12"></div>
+          <div class="block col-xs-12 col-md-8 col-md-push-2 col-md-pull-2" style="border-top: 1px solid #39DBCC; border-bottom: 1px solid #39DBCC; padding-bottom:0.8rem;">
+            <div class="content">
+              ${mainTitleHtml}
+            </div>
+          </div>
+          <div class="whitespace col-md-12"></div>
+          <div class="col-xs-12 col-md-8 col-md-push-2 col-md-pull-2">
+            <div class="content">
+              <h2 class="text-white"><span style="color:#39DBCC;">${subtitleText}</span></h2>
+              <div class="whitespace"></div>
+              ${centralIconHtml}
+              <div class="whitespace"></div>
+              <p class="text-lg">${paragraphText}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 /* function: broadcast . CLIENT SIDE. This is triggered upon RECEIVING a broadcast from the server (index.js) */
 function broadCast(location) {
 
-  // Failsafe: If the server somehow sends an empty broadcast, don't crash the client.
-  if (!location) {
-    console.error("broadCast function called with an undefined or null location. Aborting.");
-    return;
+  /* fills in the blanks. */
+  if (location['title'] == null) location['title'] = "Untitled Broadcast";
+  // If it's an activity broadcast, 'file' might not be a real file, so don't default to 404
+  if (location['file'] == null && location.type !== 'activity') location['file'] = "404";
+  if (location['priority'] == null) location['priority'] = "1";
+  if (location['duration'] == null) location['duration'] = "0";
+  if (location['colorscheme'] == null) location['colorscheme'] = "tal";
+
+  // Set the document (browser tab) title based on the broadcast
+  if (location.priority === 99) { // A priority of 99 indicates a screen clear/reset
+    document.title = originalDocTitle;
+  } else if (location.title) {
+    document.title = location.title;
   }
 
-  /* fills in the blanks. */
-  location.title = location.title || "Untitled Broadcast";
-  location.file = location.file || "404";
-  location.priority = location.priority || "1";
-  location.duration = location.duration || "0";
-  location.colorscheme = location.colorscheme || "tal";
 
+  /* checks if anything is set in the broadcast call. */
+  /*if(location) {*/
 
   /* Cache the notification container div: This will save us a LOT of requests in the long run. */
   if (notifiContCache == "") { notifiContCache = $("#notificationContainer"); }
@@ -156,110 +193,145 @@ function broadCast(location) {
     so we don't end up calling it inside two to four times and then pushing them outside again */
   var FlashFunctie = FlashBlocks;
 
-  /* Hey, I just noticed you loaded a broadcast.HTML file there, let me just.. */
-  $.get('/broadcasts/' + location['file'] + '.html')
-    .done(function () {
+  // Check if this is a templated activity broadcast
+  if (location.type === 'activity' && location.activityData) {
 
-      if (location['priority'] > 0 && !isNaN(location['duration'])) {
+    if (location['priority'] < activeBroadcastPriority) {
+      return false;
+    }
 
-        if (location['priority'] < activeBroadcastPriority) {
+    // Generate HTML from template
+    const activityHtml = generateActivityBroadcastHtml(location.activityData);
 
-          return false;
+    // Apply color scheme logic
+    if (location.colorscheme == 'default') location.colorscheme = '0';
+    if (activeColorScheme == 'default') activeColorScheme = '0';
 
-        } else {
+    var outString = location.colorscheme.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
+    location.colorscheme = outString;
 
-          /* if video player exists; kill it, dispose of the body. */
-          if ($('#broadcastVideo').length > 0) {
-            var oldPlayer = document.getElementById('broadcastVideo');
-            videojs(oldPlayer).dispose();
-          }
-
-          /* foolproofing: if the color scheme is named DEFAULT instead of zero, make it zero regardless. */
-          if (location.colorscheme == 'default') location.colorscheme = '0';
-          if (activeColorScheme == 'default') activeColorScheme = '0';
-
-          /* while we're at it, let's check for scary symbols. Just incase. */
-          var outString = location.colorscheme.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
-          location.colorscheme = outString;
-
-          /* colorscheme. */
-          /* is the colorscheme already active, OR is default trying to override default? */
-          if ((activeColorScheme == '0' && location.colorscheme == '0') || (activeColorScheme == location.colorscheme)) {
-            /* no change..*/
-
-          } else if (activeColorScheme != '0' && location.colorscheme == '0') {
-            /* unload the previous colorscheme. Then, load.. */
-            $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
-            activeColorScheme = '0';
-
-            /* active = default > broadcast = not-default: */
-          } else if (activeColorScheme == '0' && location.colorscheme != '0') {
-
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
-            activeColorScheme = location.colorscheme;
-
-          } else if (location.colorscheme != '0' && activeColorScheme != location.colorscheme) {
-
-            /* unload ACTIVE, load LOCATION */
-            $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
-            activeColorScheme = location.colorscheme;
-          }
-
-          /* empty the container, then, load the new broadcast. */
-          notifiContCache.empty().load('/broadcasts/' + location.file + '.html');
-
-
-          /* resets priority 99 to 1, so that it can later be overruled. Because 99 equals RESET. */
-          if (location.priority == 99) location.priority = 1;
-
-          /* update 'Last broadcast' */
-          activeBroadcastPriority = location.priority;
-
-          if (location.title != "") {
-
-            var outString = location.title.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
-            location.title = outString;
-
-            $("#lastBroadcastTitle").html("<i class='fa fa-bell'></i>&nbsp;" + location.title);
-            $("#lastBroadcastTime").html(currentTimeString);
-          }
-
-          /* set the clearBroadcast to ZERO. This prevents a PREVIOUS broadcast reset from triggering on your new broadcast. */
-          if (location.duration && location.duration == 0) {
-            clearBroadcast(0);
-          }
-
-          /* request a 'CLEAR IN XXXX MILISECONDS' */
-          if (location.duration && location.duration > 0 && !isNaN(location.duration)) {
-            clearBroadcast(location.duration);
-          }
-
-          FlashFunctie('.block');
-          setTimeout(function () {
-            FlashFunctie('.block');
-          }, 1500);
-        }
+    if (!((activeColorScheme == '0' && location.colorscheme == '0') || (activeColorScheme == location.colorscheme))) {
+      if (activeColorScheme != '0' && location.colorscheme == '0') {
+        $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
+        activeColorScheme = '0';
+      } else if (activeColorScheme == '0' && location.colorscheme != '0') {
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
+        activeColorScheme = location.colorscheme;
+      } else if (location.colorscheme != '0' && activeColorScheme != location.colorscheme) {
+        $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
+        activeColorScheme = location.colorscheme;
       }
-    })
-    .fail(function () {
+    }
 
-      /* INCASE the broadcast IS NOT loaded (for example, an error or a file truly doesnt exist), CLEAR the changes and load 404. */
+    // Inject the generated HTML
+    notifiContCache.empty().html(activityHtml);
 
-      if (activeColorScheme != '0' && activeColorScheme != 'default') {
-        $('link[rel=stylesheet][href~="/_includes/css/colors-' + activeColorScheme + '.css"]').remove();
-      }
+    // Play audio playlist if provided
+    if (location.activityData.audioPlaylist && location.activityData.audioPlaylist.length > 0) {
+      playAudioPlaylist(location.activityData.audioPlaylist);
+    }
 
+    // Reset priority 99 to 1
+    if (location.priority == 99) location.priority = 1;
+    activeBroadcastPriority = location.priority;
+
+    if (location.title != "") {
+      var outStringTitle = location.title.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
+      $("#lastBroadcastTitle").html("<i class='fa fa-bell'></i>&nbsp;" + outStringTitle);
+      $("#lastBroadcastTime").html(currentTimeString);
+    }
+
+    // Handle duration for clearing broadcast
+    if (location.duration && location.duration == 0) {
+      clearBroadcast(0);
+    }
+    if (location.duration && location.duration > 0 && !isNaN(location.duration)) {
+      clearBroadcast(location.duration);
+    }
+
+    FlashFunctie('.block');
+    setTimeout(function () {
       FlashFunctie('.block');
-      setTimeout(function () {
+    }, 1500);
+
+  } else {
+    // Original logic for loading an HTML file
+    $.get('/broadcasts/' + location['file'] + '.html')
+      .done(function (data) {
+
+        if (location['priority'] > 0 && !isNaN(location['duration'])) {
+
+          if (location['priority'] < activeBroadcastPriority) {
+            return false;
+          } else {
+            if ($('#broadcastVideo').length > 0) {
+              var oldPlayer = document.getElementById('broadcastVideo');
+              videojs(oldPlayer).dispose();
+            }
+
+            if (location.colorscheme == 'default') location.colorscheme = '0';
+            if (activeColorScheme == 'default') activeColorScheme = '0';
+
+            var outString = location.colorscheme.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
+            location.colorscheme = outString;
+
+            if (!((activeColorScheme == '0' && location.colorscheme == '0') || (activeColorScheme == location.colorscheme))) {
+              if (activeColorScheme != '0' && location.colorscheme == '0') {
+                $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
+                activeColorScheme = '0';
+              } else if (activeColorScheme == '0' && location.colorscheme != '0') {
+                $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
+                activeColorScheme = location.colorscheme;
+              } else if (location.colorscheme != '0' && activeColorScheme != location.colorscheme) {
+                $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
+                $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', '/_includes/css/alert-' + location.colorscheme + '.css'));
+                activeColorScheme = location.colorscheme;
+              }
+            }
+
+            notifiContCache.empty().html(data);
+
+            if (location.priority == 99) location.priority = 1;
+            activeBroadcastPriority = location.priority;
+
+            if (location.title != "") {
+              var outStringTitle = location.title.replace(/[`~!@#$%^&*()_|+=?;:'",<>\{\}\[\]\\\/]/gi, '');
+              $("#lastBroadcastTitle").html("<i class='fa fa-bell'></i>&nbsp;" + outStringTitle);
+              $("#lastBroadcastTime").html(currentTimeString);
+            }
+
+            if (location.duration && location.duration == 0) {
+              clearBroadcast(0);
+            }
+
+            if (location.duration && location.duration > 0 && !isNaN(location.duration)) {
+              clearBroadcast(location.duration);
+            }
+
+            FlashFunctie('.block');
+            setTimeout(function () {
+              FlashFunctie('.block');
+            }, 1500);
+          }
+        }
+      })
+      .fail(function () {
+        if (activeColorScheme != '0' && activeColorScheme != 'default') {
+          $('link[rel=stylesheet][href~="/_includes/css/alert-' + activeColorScheme + '.css"]').remove();
+        }
+
         FlashFunctie('.block');
-      }, 1500);
+        setTimeout(function () {
+          FlashFunctie('.block');
+        }, 1500);
 
-      activeColorScheme = '0';
-      activeBroadcastPriority = 1;
+        activeColorScheme = '0';
+        activeBroadcastPriority = 1;
 
-      notifiContCache.empty().load('/broadcasts/404.html');
-    });
+        notifiContCache.empty().load('/broadcasts/404.html');
+      });
+  }
 
 }
 
