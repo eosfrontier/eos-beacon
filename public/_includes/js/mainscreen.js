@@ -79,14 +79,26 @@ $(document).ready(function () {
       }
 
       if (dynamicData.voiceEnabled) {
-        // Using $.getScript to ensure dependencies are loaded in order before our PA script runs.
-        // This prevents a race condition where recording could be attempted before the
-        // AudioWorklet processor is registered, which would cause a fallback to a deprecated API.
-        $.getScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js', function () {
-          $.getScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js', function () {
-            // Now that the libraries are loaded, load our PA script which depends on them.
-            $.getScript('./_includes/js/pa.js');
-          });
+        // The 425 (Too Early) error suggests an issue with how jQuery's getScript
+        // handles caching, possibly interacting with CDN anti-replay mechanisms.
+        // We'll use $.ajax with caching enabled to load the scripts more reliably.
+        const s1 = $.ajax({
+          url: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js',
+          dataType: 'script',
+          cache: true
+        });
+        const s2 = $.ajax({
+          url: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js',
+          dataType: 'script',
+          cache: true
+        });
+
+        // Once both recorder scripts are loaded, load our PA script.
+        $.when(s1, s2).done(function () {
+          // Using getScript here is fine as it's a local file and won't hit the CDN issue.
+          $.getScript('./_includes/js/pa.js');
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          console.error("Failed to load PA recorder scripts:", textStatus, errorThrown);
         });
       }
 
