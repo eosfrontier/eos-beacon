@@ -69,6 +69,7 @@ if (isAuthenticated && navigator.mediaDevices) {
                 // Stop the recording but prevent it from being broadcast.
                 mediaRecorder.broadcastOnStop = false;
                 mediaRecorder.stop();
+                socket.emit('cancelPA');
             }
             // Clean up any lingering UI and restore audio.
             $('.popupBroadcastPA').empty().remove();

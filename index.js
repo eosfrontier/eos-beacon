@@ -1053,11 +1053,39 @@ io.on('connection', (socket) => {
     socket.on('broadcastPA', () => {
       const pa_name = paFiles.get(socket.id);
       if (pa_name) {
-        console.log('[audio] => PA: ' + pa_name);
-        // Correct path for static assets
-        io.emit('playAudioFile', `/sounds/audio-pa/${pa_name}`);
+        const filePath = path.join(pa_folder, pa_name);
+        // Check if file exists and has content before broadcasting
+        fs.stat(filePath, (err, stats) => {
+          if (err || stats.size === 0) {
+            console.error(`[PA] Broadcast aborted for socket ${socket.id}. File not found or empty: ${pa_name}`);
+            paFiles.delete(socket.id); // Clean up map
+            return;
+          }
+
+          console.log('[audio] => PA: ' + pa_name);
+          // Correct path for static assets
+          io.emit('playAudioFile', `/sounds/audio-pa/${pa_name}`);
+          // Clean up the map entry after successful broadcast
+          paFiles.delete(socket.id);
+        });
       } else {
         console.error(`[PA] Received broadcast from socket ${socket.id} without a file.`);
+      }
+    });
+
+    socket.on('cancelPA', () => {
+      // This can be triggered if the user cancels a recording.
+      const pa_name = paFiles.get(socket.id);
+      if (pa_name) {
+        paFiles.delete(socket.id); // Remove from map immediately
+        const filePath = path.join(pa_folder, pa_name);
+        fs.unlink(filePath, (err) => {
+          if (err && err.code !== 'ENOENT') {
+            console.error(`[PA] Error deleting cancelled file ${pa_name}:`, err);
+          } else {
+            console.log(`[PA] Deleted cancelled file: ${pa_name}`);
+          }
+        });
       }
     });
 

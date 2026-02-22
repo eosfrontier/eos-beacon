@@ -79,12 +79,15 @@ $(document).ready(function () {
       }
 
       if (dynamicData.voiceEnabled) {
-        const _element = $('#_extra');
-        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js\">');
-        // Load the correct worker for AudioWorklet-based recording to avoid deprecation warnings.
-        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js\">');
-        _element.append('<script src="./_includes/js/pa.js">');
-
+        // Using $.getScript to ensure dependencies are loaded in order before our PA script runs.
+        // This prevents a race condition where recording could be attempted before the
+        // AudioWorklet processor is registered, which would cause a fallback to a deprecated API.
+        $.getScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js', function () {
+          $.getScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js', function () {
+            // Now that the libraries are loaded, load our PA script which depends on them.
+            $.getScript('./_includes/js/pa.js');
+          });
+        });
       }
 
       broadCast(window[dynamicData['lastBC']]);
