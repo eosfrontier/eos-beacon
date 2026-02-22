@@ -59,51 +59,56 @@ $(document).ready(function () {
     if (initialized == 0) {
       console.log('first boot initialization...');
 
-      // Check if the variable exists yet
-      const bcKey = dynamicData['lastBC'];
+      const loadPaFeature = function() {
+        if (!dynamicData.voiceEnabled) {
+          return;
+        }
 
-      if (window[bcKey]) {
-        // Variables are already there, proceed as normal
-        broadCast(window[bcKey]);
+        // Chain-load scripts by creating script elements manually. This is more robust
+        // than jQuery's ajax/getScript for cross-domain scripts and avoids potential
+        // issues with CDN security or caching policies.
+        function loadScript(url, callback) {
+          const script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = url;
+          if (callback) {
+            script.onload = callback;
+          }
+          script.onerror = function() {
+            console.error("Failed to load PA recorder script:", url);
+          };
+          document.head.appendChild(script);
+        }
+
+        loadScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js', function() {
+          loadScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js', function() {
+            // Now that dependencies are loaded, load our PA script.
+            loadScript('./_includes/js/pa.js');
+          });
+        });
+      };
+
+      const onFirstBootReady = function() {
+        const bcKey = dynamicData['lastBC'];
+        // The broadcast might not exist on first load, so check for it.
+        if (window[bcKey]) {
+          broadCast(window[bcKey]);
+        }
+        loadPaFeature(); // Load PA scripts after handling the initial broadcast.
         initialized = 1;
+      };
+
+      // Check if broadcast variables are loaded yet (they are fetched asynchronously)
+      const bcKey = dynamicData['lastBC'];
+      if (window[bcKey] || bcKey === 'bcdefault') { // bcdefault is always available
+        // Variables are already there, proceed as normal
+        onFirstBootReady();
       } else {
         // VARIABLES ARE MISSING (The Race Condition)
         console.warn(`Broadcast variable ${bcKey} not found yet. Queuing...`);
-
         // We wait for a custom event that we will fire when the fetch is done
-        window.addEventListener('broadcastsLoaded', function () {
-          console.log(`Resuming first boot for: ${bcKey}`);
-          broadCast(window[bcKey]);
-          initialized = 1;
-        }, { once: true }); // {once: true} ensures this only runs once
+        window.addEventListener('broadcastsLoaded', () => onFirstBootReady(), { once: true });
       }
-
-      if (dynamicData.voiceEnabled) {
-        // The 425 (Too Early) error suggests an issue with how jQuery's getScript
-        // handles caching, possibly interacting with CDN anti-replay mechanisms.
-        // We'll use $.ajax with caching enabled to load the scripts more reliably.
-        const s1 = $.ajax({
-          url: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js',
-          dataType: 'script',
-          cache: true
-        });
-        const s2 = $.ajax({
-          url: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js',
-          dataType: 'script',
-          cache: true
-        });
-
-        // Once both recorder scripts are loaded, load our PA script.
-        $.when(s1, s2).done(function () {
-          // Using getScript here is fine as it's a local file and won't hit the CDN issue.
-          $.getScript('./_includes/js/pa.js');
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-          console.error("Failed to load PA recorder scripts:", textStatus, errorThrown);
-        });
-      }
-
-      broadCast(window[dynamicData['lastBC']]);
-      initialized = 1;
     }
     // Update App Name from config
     if (dynamicData.appName && dynamicData.appDescription) {
