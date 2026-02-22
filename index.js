@@ -1023,7 +1023,7 @@ io.on('connection', (socket) => {
       // Run cleanup, but don't block the response
       cleanupOldPAFiles();
 
-      const pa_name = `PA-${socket.id}-${Date.now()}.opus`;
+      const pa_name = `PA-${socket.id}-${Date.now()}.wav`;
       paFiles.set(socket.id, pa_name); // Store filename against socket.id
 
       const filePath = path.join(pa_folder, pa_name);

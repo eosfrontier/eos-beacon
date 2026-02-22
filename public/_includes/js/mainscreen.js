@@ -59,42 +59,26 @@ $(document).ready(function () {
     if (initialized == 0) {
       console.log('first boot initialization...');
 
-      const loadPaFeature = function() {
+      const loadPaFeature = async function() {
         if (!dynamicData.voiceEnabled) {
           return;
         }
 
-        // Chain-load scripts by creating script elements manually. This is more robust
-        // than jQuery's ajax/getScript for cross-domain scripts and avoids potential
-        // issues with CDN security or caching policies.
-        function loadScript(url, callback) {
-          const script = document.createElement("script");
-          script.type = "text/javascript";
-          script.src = url;
-          if (callback) {
-            script.onload = callback;
-          }
-          script.onerror = function() {
-            console.error("Failed to load PA recorder script:", url);
-          };
-          document.head.appendChild(script);
+        try {
+          // Dynamically import the PA module. This will handle its own dependencies.
+          await import('./_includes/js/pa.js');
+        } catch (err) {
+          console.error("Failed to load PA feature:", err);
         }
-
-        loadScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js', function() {
-          loadScript('https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js', function() {
-            // Now that dependencies are loaded, load our PA script.
-            loadScript('./_includes/js/pa.js');
-          });
-        });
       };
 
-      const onFirstBootReady = function() {
+      const onFirstBootReady = async function() {
         const bcKey = dynamicData['lastBC'];
         // The broadcast might not exist on first load, so check for it.
         if (window[bcKey]) {
           broadCast(window[bcKey]);
         }
-        loadPaFeature(); // Load PA scripts after handling the initial broadcast.
+        await loadPaFeature(); // Load PA scripts after handling the initial broadcast.
         initialized = 1;
       };
 
