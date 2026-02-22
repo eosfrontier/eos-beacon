@@ -82,7 +82,10 @@ var mediaRecorder = null
 var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
 
 function saveTannoy(stream) {
-    mediaRecorder = new OpusMediaRecorder(stream, {}, workerOptions)
+    // By passing { useAudioWorklet: true }, we instruct the library to use the modern
+    // audio processing API, which runs off the main thread and resolves the
+    // "ScriptProcessorNode is deprecated" warning.
+    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions)
     mediaRecorder.ondataavailable = function (e) {
         if (e.data.size > 0) {
             socket.emit('uploadPA', e.data);
