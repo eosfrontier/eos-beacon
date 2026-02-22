@@ -81,7 +81,8 @@ $(document).ready(function () {
       if (dynamicData.voiceEnabled) {
         const _element = $('#_extra');
         _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.umd.js\">');
-        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js\">');
+        // Load the correct worker for AudioWorklet-based recording to avoid deprecation warnings.
+        _element.append('<script src=\"https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/audioWorkletEncoder.umd.js\">');
         _element.append('<script src="./_includes/js/pa.js">');
 
       }
