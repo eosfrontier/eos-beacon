@@ -1,7 +1,8 @@
 const workerOptions = {
-    encoderWorkerPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js',
-    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
-    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
+    // Note the '/dist/' in the path
+    encoderWorkerPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/encoderWorker.umd.js',
+    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/OggOpusEncoder.wasm',
+    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@0.8.0/dist/WebMOpusEncoder.wasm'
 };
 
 function getCookie(cname) {
@@ -82,10 +83,8 @@ var mediaRecorder = null
 var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
 
 function saveTannoy(stream) {
-    // By passing { useAudioWorklet: true }, we instruct the library to use the modern
-    // audio processing API, which runs off the main thread and resolves the
-    // "ScriptProcessorNode is deprecated" warning.
-    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions)
+    // Only initialize once with the flag enabled
+    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions);
     mediaRecorder.ondataavailable = function (e) {
         if (e.data.size > 0) {
             socket.emit('uploadPA', e.data);
@@ -164,7 +163,7 @@ function duckAudio(shouldDuck) {
     if (shouldDuck) {
         originalVolumes.clear();
         // Find all currently playing audio elements we care about
-        $('#custom-audio audio, #BCAUDIO audio').each(function() {
+        $('#custom-audio audio, #BCAUDIO audio').each(function () {
             if (!this.paused) {
                 originalVolumes.set(this, this.volume);
                 $(this).animate({ volume: 0.0 }, 200); // Duck to 0% volume
