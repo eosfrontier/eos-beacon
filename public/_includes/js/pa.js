@@ -1,4 +1,5 @@
 const workerOptions = {
+    encoderWorkerPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js',
     OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
     WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
 };
@@ -81,7 +82,7 @@ var mediaRecorder = null
 var recorderState = 'idle'; // 'idle', 'starting', 'recording', 'stopping'
 
 function saveTannoy(stream) {
-    mediaRecorder = new OpusMediaRecorder(stream, { useAudioWorklet: true }, workerOptions)
+    mediaRecorder = new OpusMediaRecorder(stream, {}, workerOptions)
     mediaRecorder.ondataavailable = function (e) {
         if (e.data.size > 0) {
             socket.emit('uploadPA', e.data);
