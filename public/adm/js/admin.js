@@ -4,10 +4,10 @@ $(document).ready(function () {
     // Define the navigation panel structure
     const adminPanels = [
         // { id: /*'BROADCAST', */icon: 'fa-wifi', text: /*'BROADCAST', */rank: 1 },
+        { id: 'ACTIVITIES', icon: 'fa-calendar-days', text: 'ACTIVITIES', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'REMINDERS', icon: 'fa-bell', text: 'REMINDERS', rank: 1, extraClass: 'btn-ui-holo-alt' },
         { id: 'SECURITY', icon: 'fa-exclamation-circle', text: 'ALERT LVL', rank: 1, extraClass: 'btn-ui-holo-red' },
         { id: 'KITCHEN', icon: 'fa-cutlery', text: 'KITCHEN', rank: 1, extraClass: 'btn-outline-success' },
-        { id: 'ACTIVITIES', icon: 'fa-calendar-days', text: 'ACTIVITIES', rank: 1, extraClass: 'btn-outline-success' },
         { id: 'SCHEDULE', icon: 'fa-clock', text: 'SCHEDULE', rank: 2, extraClass: 'btn-ui-holo-alt' },
         { id: 'MEDIA', icon: 'fa-photo-film', text: 'MEDIA', rank: 1, extraClass: 'btn-outline-blue' },
         { id: 'BGMUSIC', icon: 'fa-music', text: 'BG MUSIC', rank: 1, extraClass: 'btn-ui-holo-alt' },
