@@ -13,6 +13,7 @@ const axios = require('axios');
 const { pipeline } = require('stream/promises');
 const { ALL_STATIC_BROADCASTS } = require('./public/broadcasts.js');
 
+const { activityBroadcastsData } = require('./public/_includes/js/activity_broadcasts_data.js');
 /**
  * Generates TTS audio from text and saves it to a file.
  * @param {string} text The text to convert to speech.
@@ -283,23 +284,34 @@ function initializeRouting() {
       const videoBroadcasts = await getVideoBroadcasts();
       const allBroadcasts = { ...ALL_STATIC_BROADCASTS };
 
-      // Add video broadcasts to the main object, using their key
+      // 1. Add video broadcasts to the main object, using their key
       videoBroadcasts.forEach(vb => {
         allBroadcasts[vb.key] = vb;
       });
+
+      // 2. Add activity broadcasts, creating a broadcast object structure for them
+      for (const key in activityBroadcastsData) {
+        if (Object.hasOwnProperty.call(activityBroadcastsData, key)) {
+          const data = activityBroadcastsData[key];
+          // This structure mirrors what the client-side `broadcastObj` constructor expects.
+          // The `extraData` part on the client will receive all of this.
+          allBroadcasts[key] = {
+            title: data.subtitleText,
+            file: `activities/${key}`, // A virtual path for identification
+            priority: 1, // Default priority for activities
+            duration: 0, // Default duration
+            colorscheme: "tal", // Default colorscheme
+            type: "activity",
+            activityData: data
+          };
+        }
+      }
 
       res.json(allBroadcasts);
     } catch (err) {
       console.error("Error getting all broadcasts:", err);
       res.status(500).json({ error: "Failed to load broadcast data." });
     }
-  });
-
-  // This route is being added back for compatibility with client-side code
-  // that has not yet been updated to use '/get-all-broadcasts'.
-  app.get('/get-video-broadcasts', async (req, res) => {
-    const broadcasts = await getVideoBroadcasts();
-    res.json(broadcasts);
   });
 
   app.get('*', (req, res) => {
@@ -700,6 +712,58 @@ io.on('connection', (socket) => {
       if (fs.existsSync(iRepeatFile)) {
         fs.unlinkSync(iRepeatFile);
       };
+    }
+  });
+
+  socket.on('requestTTS', async ({ text, lang = 'en-uk' }) => {
+    if (!text || typeof text !== 'string') {
+      return;
+    }
+
+    const timestamp = Date.now();
+    const finalFilename = `tts-activity-${timestamp}.mp3`;
+    const finalFilePath = path.join(tmpDir, finalFilename);
+    let tempChunkFiles = [];
+
+    try {
+      const textChunks = splitText(text, 150);
+      if (textChunks.length === 0) {
+        throw new Error("No text to speak after processing.");
+      }
+
+      tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
+        const tempChunkFile = path.join(tmpDir, `tts-act-chunk-${i}-${timestamp}.mp3`);
+        await saveTtsAudio(chunk, lang, tempChunkFile);
+        return tempChunkFile;
+      }));
+
+      await new Promise((res, rej) => {
+        audioconcat(tempChunkFiles)
+          .concat(finalFilePath)
+          .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+          .on('end', (output) => res(output));
+      });
+
+      console.log(`[tts-activity] Generated speech file: ${finalFilename}`);
+
+      const publicPath = `tmp/${finalFilename}`;
+      io.emit('playAudioFile', publicPath);
+
+      const buffer = fs.readFileSync(finalFilePath);
+      const duration = getMP3Duration(buffer);
+
+      setTimeout(() => {
+        fs.unlink(finalFilePath, (unlinkErr) => {
+          if (unlinkErr) console.error(`[tts-activity] Error deleting temp file ${finalFilename}:`, unlinkErr);
+          else console.log(`[tts-activity] Deleted temp file: ${finalFilename}`);
+        });
+      }, duration + 5000);
+    } catch (err) {
+      console.error('[tts-activity] Error generating speech:', err);
+    } finally {
+      tempChunkFiles.forEach(file => {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      });
     }
   });
 

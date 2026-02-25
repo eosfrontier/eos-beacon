@@ -48,6 +48,20 @@ $(document).ready(function () {
       }
       if (window.bcreset) window.bcreset.colorscheme = defaultColorScheme;
     }
+
+    // This function is called from within an event handler that may fire before all
+    // script files are fully parsed. We need to ensure `syncDynamicBroadcasts`
+    // (defined in functions.js) is available before calling it.
+    const trySyncBroadcasts = () => {
+      if (typeof syncDynamicBroadcasts === 'function') {
+        // Fetch and register all dynamic broadcasts (video, activity, etc.) from the server.
+        syncDynamicBroadcasts(false);
+      } else {
+        console.warn('[init] syncDynamicBroadcasts not ready, retrying in 100ms...');
+        setTimeout(trySyncBroadcasts, 100);
+      }
+    };
+    trySyncBroadcasts();
   });
 
   /* ForceReset. F5'd the page.*/
