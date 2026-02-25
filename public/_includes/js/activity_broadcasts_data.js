@@ -25,7 +25,8 @@ const activityBroadcastsData = {
         subtitleText: "MORNING BREAKFAST",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-mug-saucer"></i></p>',
         paragraphText: "Good morning. Please join your current partner for a delicious breakfast to start your day together.",
-        audioPlaylist: ['audio/0_Jingle.mp3', 'audio/Schedule/7.%20Morning%20-%20Day%203/58%20Good%20Morning%20Breakfast.mp3']
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good morning. Please join your current partner for a delicious breakfast to start your day together."
     },
     "bcdinnerdate1": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -462,12 +463,12 @@ const activityBroadcastsData = {
         paragraphText: "The \"singles\" party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
         audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/4. Workshops - Day 2/46 Singles Party being soon.mp3')]
     },
-    "bcsoundtherapy": {
+    "bcmusicclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
-        subtitleText: "COUPLES SOUND THERAPY (OPTIONAL)",
+        subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
-        paragraphText: "Harmonize your connection through sound. An optional couples sound therapy session is now available for booking.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/2. Second Match - Day 2/45 Sound Therapy.mp3')]
+        paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
+        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/2. Second Match - Day 2/45 Sound Therapy.mp3')]
     },
     "bcsupportgroups": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',

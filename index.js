@@ -703,6 +703,58 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('requestTTS', async ({ text, lang = 'en-uk' }) => {
+    if (!text || typeof text !== 'string') {
+      return;
+    }
+
+    const timestamp = Date.now();
+    const finalFilename = `tts-activity-${timestamp}.mp3`;
+    const finalFilePath = path.join(tmpDir, finalFilename);
+    let tempChunkFiles = [];
+
+    try {
+      const textChunks = splitText(text, 150);
+      if (textChunks.length === 0) {
+        throw new Error("No text to speak after processing.");
+      }
+
+      tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
+        const tempChunkFile = path.join(tmpDir, `tts-act-chunk-${i}-${timestamp}.mp3`);
+        await saveTtsAudio(chunk, lang, tempChunkFile);
+        return tempChunkFile;
+      }));
+
+      await new Promise((res, rej) => {
+        audioconcat(tempChunkFiles)
+          .concat(finalFilePath)
+          .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+          .on('end', (output) => res(output));
+      });
+
+      console.log(`[tts-activity] Generated speech file: ${finalFilename}`);
+
+      const publicPath = `tmp/${finalFilename}`;
+      io.emit('playAudioFile', publicPath);
+
+      const buffer = fs.readFileSync(finalFilePath);
+      const duration = getMP3Duration(buffer);
+
+      setTimeout(() => {
+        fs.unlink(finalFilePath, (unlinkErr) => {
+          if (unlinkErr) console.error(`[tts-activity] Error deleting temp file ${finalFilename}:`, unlinkErr);
+          else console.log(`[tts-activity] Deleted temp file: ${finalFilename}`);
+        });
+      }, duration + 5000);
+    } catch (err) {
+      console.error('[tts-activity] Error generating speech:', err);
+    } finally {
+      tempChunkFiles.forEach(file => {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      });
+    }
+  });
+
   socket.on('tts-speak', async (text) => {
     if (!text || typeof text !== 'string') {
       return;

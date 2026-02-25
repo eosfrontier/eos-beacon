@@ -38,6 +38,7 @@ let playlistState = {
     duration: 0, // Total duration of the current track
     trackStartedAt: 0, // Server timestamp when the track began
     pausedAtTime: 0, // Elapsed time in ms when pause was triggered
+    onComplete: null, // Callback to execute when a non-looping playlist finishes
 };
 
 let mainScreenLoaded = false;
@@ -228,8 +229,18 @@ function broadCast(location) {
     notifiContCache.empty().html(activityHtml);
 
     // Play audio playlist if provided
-    if (location.activityData.audioPlaylist && location.activityData.audioPlaylist.length > 0) {
-      playAudioPlaylist(location.activityData.audioPlaylist);
+    const hasPlaylist = location.activityData.audioPlaylist && location.activityData.audioPlaylist.length > 0;
+    const hasTTS = location.activityData.tts && location.activityData.tts.trim() !== '';
+
+    if (hasPlaylist) {
+      // If there's TTS, set it as the callback for when the playlist finishes.
+      const onCompleteCallback = hasTTS ? () => requestTTSPlayback(location.activityData.tts) : null;
+      playAudioPlaylist(location.activityData.audioPlaylist, 1, 100, onCompleteCallback);
+    } else if (hasTTS) {
+      // If there's only TTS and no playlist, play it after a short delay.
+      setTimeout(() => {
+        requestTTSPlayback(location.activityData.tts);
+      }, 500);
     }
 
     // Reset priority 99 to 1
@@ -1088,6 +1099,12 @@ function seekBgMusic(timeInSeconds) {
     socket.emit('seekBgMusic', timeInSeconds); // Inform the server of the change.
 }
 
+socket.on('playAudioFile', (filePath) => {
+    console.log(`[tts] Received request to play generated audio: ${filePath}`);
+    // Use generateAudioPlayer for one-off sounds. It correctly handles interruptions.
+    generateAudioPlayer(filePath, 1, 100);
+});
+
 function onBgMusicSliderInput(timeInSeconds) {
     const currentTimeEl = document.getElementById('bgmusic-current-time');
     if (currentTimeEl) {
@@ -1263,7 +1280,7 @@ async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.ite
  * @param {number} [loopCount=1] - How many times to loop the playlist. -1 for infinite.
  * @param {number} [volume=100] - The volume for the playlist, from 0 to 100.
  */
-function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
+function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100, onComplete = null) {
     // If a background playlist is active and we're starting a temporary one...
     if (playlistState.isActive && playlistState.loopCount === -1 && loopCount !== -1) {
         console.log('[playlist] Interrupting background music for a temporary playlist.');
@@ -1294,6 +1311,7 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100) {
     playlistState.timeoutId = null;
     playlistState.resumeTime = 0;
     playlistState.isResuming = false;
+    playlistState.onComplete = onComplete; // Store the on-complete callback
 
     playNextTrack();
     // Update panel state after a short delay to ensure DOM is ready
@@ -1353,13 +1371,18 @@ function playNextTrack() {
         if (playlistState.loopCount !== -1 && playlistState.loops >= playlistState.loopCount) {
             playlistState.isActive = false; // Playlist finished
 
-            // Check if we need to resume a background playlist.
-            if (backgroundPlaylistState) {
+            // Execute the onComplete callback if it exists
+ const hasCallback = typeof playlistState.onComplete === 'function';
+            if (hasCallback) {
+                console.log('[playlist] Playlist finished, executing onComplete callback.');
+                playlistState.onComplete();
+            } else if (backgroundPlaylistState) {
+                // ONLY resume background music if there was no onComplete callback.
+                // This prevents background music from playing over the TTS audio.
                 console.log('[playlist] Temporary playlist finished. Resuming background music.');
                 // Restore the state. This state is already marked as paused and has resumeTime.
                 playlistState = backgroundPlaylistState;
                 backgroundPlaylistState = null; // Clear saved state
-
                 // resumePlaylist will set isPaused=false and call playNextTrack again.
                 resumePlaylist();
                 return;
@@ -1381,6 +1404,17 @@ function playNextTrack() {
 
     generateAudioPlayer(relativePath, 1, playlistState.volume, startTime, shouldFade);
     playlistState.resumeTime = 0; // Consume resume time
+}
+
+/**
+ * Sends text to the server to be converted to speech and broadcast back for playback.
+ * @param {string} text - The text to be spoken.
+ */
+function requestTTSPlayback(text) {
+    if (text && text.trim() !== '') {
+        console.log(`[tts] Requesting playback for text: "${text}"`);
+        socket.emit('requestTTS', { text: text });
+    }
 }
 
 /**
@@ -1494,8 +1528,8 @@ function updateBgMusicPanelState() {
     }
 }
 
-// 1. Function to split text into chunks at natural pauses
-function splitText(text, maxLength = 150) {
-    const regex = new RegExp(`.{1,${maxLength}}(?=\\s|$)`, 'g');
-    return text.match(regex);
-}
+// // 1. Function to split text into chunks at natural pauses
+// function splitText(text, maxLength = 150) {
+//     const regex = new RegExp(`.{1,${maxLength}}(?=\\s|$)`, 'g');
+//     return text.match(regex);
+// }
