@@ -31,7 +31,6 @@ $(document).ready(function () {
       + '</audio>');
   }
 
-  syncVideoBroadcasts(false);
   /* (server->client) updates our HTML web page to contain the global dynamicdata, instead of default OR outdated content.*/
   socket.on('updateDynamicData', (dynamicData) => {
 

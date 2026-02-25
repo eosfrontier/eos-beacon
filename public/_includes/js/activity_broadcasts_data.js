@@ -138,14 +138,16 @@ const activityBroadcastsData = {
         subtitleText: "KARAOKE NIGHT (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i><i class="fa fa-microphone-lines"></i><i class="fa fa-music"></i></p>',
         paragraphText: "Karaoke will begin in 10 minutes in the lounge. This is optional, but we wish to remind you that the Department of Marriage has carefully chosen the activities to maximise the partner bonding potential.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/6. Evening - Day 2/57 Karaoke 10 mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Karaoke will begin in 10 minutes in the lounge. This is optional, but we wish to remind you that the Department of Marriage has carefully chosen the activities to maximise the partner bonding potential."
     },
     "bckaraoke": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "KARAOKE NIGHT (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i><i class="fa fa-microphone-lines"></i><i class="fa fa-music"></i></p>',
         paragraphText: "It's time to sing your heart out! Our optional karaoke session is now open in the lounge. Come and share your voice! This is optional, but we wish to remind you that the Department of Marriage has carefully chosen the activities to maximise the partner bonding potential.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/3. Third Match - Day 3/55 Karaoke.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Karaoke will begin now in the lounge. This is optional, but we wish to remind you that the Department of Marriage has carefully chosen the activities to maximise the partner bonding potential."
     },
     "bcmeetfamily1": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -479,9 +481,25 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
-        paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
+        paragraphText: "Harmonize your connection through sound. An optional music workshop is will begin in 5 minutes.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Music Workshop will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcemotionalsupportworkshop": { // Run 8 after Meet The Family Luinch
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "EMOTIONAL SUPPORT WORKSHOP",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i></p>',
+        paragraphText: "An emotional support workshop is now beginning. This workshop is optional but highly recommended.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Emotional Support Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
+    },
+    "bcemotionalsupportworkshop_5m": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "EMOTIONAL SUPPORT WORKSHOP",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i></p>',
+        paragraphText: "An emotional support workshop will begin in 5 minutes. This workshop is optional but highly recommended.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Emotional Support Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
     },
     "bcsupportgroups": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -505,6 +523,54 @@ const activityBroadcastsData = {
         paragraphText: "Explore connection through movement. An optional tango class will begin in 5 minutes. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Tango Connection class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcsalsaclass": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "SALSA/FUSION DANCE CLASS (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional salsa/fusion dance class is now beginning. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Salsa/Fusion Dance class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcsalsaclass_5m": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "SALSA/FUSION DANCE CLASS (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional salsa/fusion dance class will begin in 5 minutes. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Salsa/Fusion Dance class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcsswingdanceclass": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "SWING DANCING WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional swing dancing workshop is now beginning. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Swing Dancing Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+    },
+    "bcsswingdanceclass_5m": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "SWING DANCING WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional swing dancing workshop will begin in 5 minutes. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Swing Dancing Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+    },
+    "bcbodypaintingworkshop": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "BODY PAINTING WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional body painting workshop is now beginning. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Body Painting Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+    },
+    "bcbodypaintingworkshop_5m": { // Run 8 after SexEd
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "BODY PAINTING WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
+        paragraphText: "Explore connection through movement. An optional body painting workshop will begin in 5 minutes. No prior experience necessary.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Body Painting Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
     },
     "bcchachaclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -576,3 +642,8 @@ const activityBroadcastsData = {
         tts: "The Partner Tarot Reading class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     }
 };
+
+// Make the data available to Node.js's `require` system if running on the server.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { activityBroadcastsData };
+}

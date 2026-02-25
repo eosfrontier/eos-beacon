@@ -422,17 +422,19 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shou
   if (audiofile) {
 
     let isInterrupting = false;
-    // Check if we need to interrupt a background music playlist.
+    // Check if this sound should interrupt background music (playing or paused).
     // We identify background music by loopCount === -1.
-    if (playlistState.isActive && playlistState.loopCount === -1 && !playlistState.isPaused) {
+    if (playlistState.isActive && playlistState.loopCount === -1) {
         const currentPlaylistFile = playlistState.files[playlistState.currentIndex];
+        // Don't interrupt if we're just re-playing the same track (e.g. on resume).
         if (audiofile !== currentPlaylistFile) {
-            // It's a one-off sound (or first in a loop), so interrupt.
-            if (repeatcount <= 1) {
+            if (repeatcount <= 1) { // It's a one-off sound, so it's an interruption.
                 isInterrupting = true;
-                pausePlaylist();
-            } else {
-                // It's a new looping sound, so it replaces the current playlist.
+                if (!playlistState.isPaused) {
+                    // If the background music is actively playing, pause it.
+                    pausePlaylist();
+                }
+            } else { // It's a new looping sound, so it replaces the current playlist.
                 console.log('[audio] New looping sound replacing background playlist.');
                 stopAllAudio(); // Simplest way to stop everything and let the new sound play.
             }
@@ -591,9 +593,11 @@ function generateBCaudio(audiofile) {
     const existingAudio = BCaudioCache.find('audio');
  
     const playNewAudio = () => {
-      // NEW: Pause background music if it's playing
-      let wasBgMusicPlaying = playlistState.isActive && playlistState.loopCount === -1 && !playlistState.isPaused;
-      if (wasBgMusicPlaying) {
+      // This is a one-off sound. Check if it's interrupting a background music playlist (playing or paused).
+      const isInterrupting = playlistState.isActive && playlistState.loopCount === -1;
+
+      // If it's an interruption and the background music is currently playing, pause it.
+      if (isInterrupting && !playlistState.isPaused) {
           pausePlaylist();
       }
 
@@ -611,9 +615,9 @@ function generateBCaudio(audiofile) {
         $(this).animate({ volume: 1 }, 30);
       });
 
-      // NEW: Resume background music when this one ends
+      // Resume background music when this one ends, if it was an interruption.
       $(newAudio).on('ended', function() {
-          if (wasBgMusicPlaying) {
+          if (isInterrupting) {
               resumePlaylist();
           }
       });
@@ -1238,39 +1242,54 @@ async function getEosICTime() {
       .then(response => response.json())
       .then(data => { eosIcDateCache = data });
 }
-// console.log("IC Date: ". eosIcDateCache);
-// Function to register video variables globally without necessarily building buttons
-async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.items') {
+
+/**
+ * Fetches all static, video, and activity broadcasts from a unified server endpoint,
+ * creates the global broadcast objects (e.g., window.bcname), and optionally builds
+ * UI buttons for them (used in the admin panel).
+ * @param {boolean} buildButtons - If true, builds UI buttons for certain broadcast types.
+ * @param {string} videoTargetContainer - The CSS selector for the container to which video buttons are appended.
+ */
+async function syncDynamicBroadcasts(buildButtons = false, videoTargetContainer = '.items') {
   try {
-    const response = await fetch('/get-video-broadcasts');
-    const broadcasts = await response.json();
+    // Fetch all broadcasts from the unified endpoint.
+    const response = await fetch('/get-all-broadcasts');
+    const allBroadcasts = await response.json();
 
-    broadcasts.forEach(data => {
-      // Register the variable globally
-      window[data.key] = new broadcastObj(
-        data.title,
-        data.file,
-        6,
-        data.duration,
-        data.colorscheme = "tal"
-      );
+    const videoButtonContainer = buildButtons ? document.querySelector(videoTargetContainer) : null;
+    const activityButtonContainer = buildButtons ? document.querySelector('#auto-activity-list') : null;
 
-      if (buildButtons) {
-        // Now uses the specific container we passed in
-        const container = document.querySelector(targetContainer);
-        if (container) {
-          const btn = document.createElement('button');
-          btn.className = 'btn btn-ui btn-ui-holo';
-          btn.innerHTML = `<i class="fa fa-file-video"></i>&nbsp;IC:&nbsp;${data.title}`;
-          btn.onclick = () => sendBroadCast(window[data.key]);
-          container.appendChild(btn);
+    for (const key in allBroadcasts) {
+      if (Object.hasOwnProperty.call(allBroadcasts, key)) {
+        const data = allBroadcasts[key];
+
+        // Create the broadcast object instance on the window.
+        window[key] = new broadcastObj(data.title, data.file, data.priority, data.duration, data.colorscheme, data);
+
+        // If building buttons (for admin panel), create them for different broadcast types.
+        if (buildButtons) {
+          if (data.type === 'activity' && activityButtonContainer) {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-ui btn-outline-success';
+            btn.innerHTML = `<i class="fa fa-calendar-days"></i>&nbsp;IC:&nbsp;${data.title}`;
+            btn.onclick = () => sendBroadCast(window[key]);
+            activityButtonContainer.appendChild(btn);
+          } else if (data.file && data.file.startsWith('videos/') && videoButtonContainer) {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-ui btn-ui-holo';
+            btn.innerHTML = `<i class="fa fa-file-video"></i>&nbsp;IC:&nbsp;${data.title}`;
+            btn.onclick = () => sendBroadCast(window[key]);
+            videoButtonContainer.appendChild(btn);
+          }
         }
       }
-    });
+    }
 
     window.dispatchEvent(new Event('broadcastsLoaded'));
+    console.log(`[broadcasts] Synced ${Object.keys(allBroadcasts).length} dynamic broadcasts.`);
   } catch (e) {
-    console.error("Failed to sync broadcasts", e);
+    console.error("Failed to sync dynamic broadcasts", e);
+    window.dispatchEvent(new Event('broadcastsLoaded')); // Fire event anyway to prevent page from getting stuck.
   }
 }
 
@@ -1371,19 +1390,22 @@ function playNextTrack() {
         if (playlistState.loopCount !== -1 && playlistState.loops >= playlistState.loopCount) {
             playlistState.isActive = false; // Playlist finished
 
-            // Execute the onComplete callback if it exists
- const hasCallback = typeof playlistState.onComplete === 'function';
+            const hasCallback = typeof playlistState.onComplete === 'function';
             if (hasCallback) {
                 console.log('[playlist] Playlist finished, executing onComplete callback.');
                 playlistState.onComplete();
+                // If a background playlist was interrupted, restore its state now.
+                // It will remain paused. The sound triggered by the callback (e.g., TTS)
+                // will be treated as an interruption and will resume it upon completion.
+                if (backgroundPlaylistState) {
+                    playlistState = backgroundPlaylistState;
+                    backgroundPlaylistState = null;
+                }
             } else if (backgroundPlaylistState) {
-                // ONLY resume background music if there was no onComplete callback.
-                // This prevents background music from playing over the TTS audio.
+                // No callback, so we can resume the background music immediately.
                 console.log('[playlist] Temporary playlist finished. Resuming background music.');
-                // Restore the state. This state is already marked as paused and has resumeTime.
                 playlistState = backgroundPlaylistState;
                 backgroundPlaylistState = null; // Clear saved state
-                // resumePlaylist will set isPaused=false and call playNextTrack again.
                 resumePlaylist();
                 return;
             }
