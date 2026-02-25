@@ -194,14 +194,16 @@ const activityBroadcastsData = {
         subtitleText: "BEADED BRACELET MAKING CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-ring"></i></p>',
         paragraphText: "Explore your artistic side in our optional beaded bracelet making class, starting now. A valuable session for connecting with your partner on a creative level.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/8. Workshops - Day3/62 Perfect Parents Now.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Beaded Bracelet Making Class  will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcbraceletclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "BEADED BRACELET MAKING CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-ring"></i></p>',
         paragraphText: "Explore your artistic side in our optional beaded bracelet making class, starting in 5 minutes. A valuable session for connecting with your partner on a creative level..",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/8. Workshops - Day3/61 Perfect Parents 5 Mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Beaded Bracelet Making Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcparentingclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -222,14 +224,16 @@ const activityBroadcastsData = {
         subtitleText: "PARTNER YOGA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin now. A valuable session for exploring movement with your partner.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/8. Workshops - Day3/61 Perfect Parents 5 Mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcyogaclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARTNER YOGA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin in 5 minutes. A valuable session for exploring movement with your partner.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/8. Workshops - Day3/61 Perfect Parents 5 Mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Partner Yoga Class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcrelationshipbegin1_10m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;FIRST RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -463,12 +467,21 @@ const activityBroadcastsData = {
         paragraphText: "The \"singles\" party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
         audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/4. Workshops - Day 2/46 Singles Party being soon.mp3')]
     },
-    "bcmusicclass": {
+    "bcmusicclass": { // Run 8 after Partner Yoga
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
         paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/2. Second Match - Day 2/45 Sound Therapy.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Music Workshop will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcmusicclass_5m": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
+        paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Music Workshop will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsupportgroups": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -482,28 +495,32 @@ const activityBroadcastsData = {
         subtitleText: "TANGO CONNECTION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional tango class is now beginning. No prior experience necessary.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/1. First Match - Day 1/14 Tango.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Tango Connection class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bctangoclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "TANGO CONNECTION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional tango class will begin in 5 minutes. No prior experience necessary.",
-        audioPlaylist: ['audio/0_Jingle.mp3']
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Tango Connection class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcchachaclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "CHA-CHA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional cha-cha class is now beginning. No prior experience necessary.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/1. First Match - Day 1/14 Tango.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Cha-Cha Dancing class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcchachaclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "CHA-CHA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional cha-cha class will begin in 5 minutes. No prior experience necessary.",
-        audioPlaylist: ['audio/0_Jingle.mp3']
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Cha-Cha Dancing class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcwedding": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -531,27 +548,31 @@ const activityBroadcastsData = {
         subtitleText: "CONTACT IMPROV CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional contact improv class will begin in 5 minutes. All skill levels are welcome.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/4. Workshops - Day 2/31 Duo Juggling 5 mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Contact Improv class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bccontactimprovclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "CONTACT IMPROV CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional contact improv class will begin now. All skill levels are welcome.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/4. Workshops - Day 2/32 Duo Juggling Now.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Contact Improv class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bctarotclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARTNER TAROT READING CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin in 5 minutes. All skill levels are welcome.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/4. Workshops - Day 2/31 Duo Juggling 5 mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Partner Tarot Reading class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bctarotclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARTNER TAROT READING CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin now. All skill levels are welcome.",
-        audioPlaylist: ['audio/0_Jingle.mp3']//, encodeURI('audio/Schedule/4. Workshops - Day 2/32 Duo Juggling Now.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Partner Tarot Reading class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     }
 };
