@@ -131,10 +131,15 @@
 
 
 <script>
-  generateAudioPlayer('portalinc.wav','3');
+  // This broadcast is intended to interrupt and *not* automatically resume background music.
+  // The music will be resumed manually by the "End Transmission" button.
+  playAudioPlaylist(['portalinc.wav','portalinc.wav','portalinc.wav'], 1, 100, function() {
+    // This empty callback prevents the default auto-resume behavior.
+    // The `playNextTrack` function will restore the state of the paused background music
+    // but will not play it, because a callback was present.
+  });
 
   setTimeout(function(){
     $('#notificationContainer .container-fluid').css('opacity','1');
   },333);
-
 </script>
