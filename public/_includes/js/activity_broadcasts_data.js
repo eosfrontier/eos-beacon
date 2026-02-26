@@ -117,7 +117,8 @@ const activityBroadcastsData = {
         subtitleText: 'Welcome to the Together At Last Programme!',
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-handshake-angle"></i></p>',
         paragraphText: '</br></br> Please gather in the lounge to watch the <span class="holoContrast">introductory video</span> instructions.</br>The Department requires your collective presence to optimize the absorption of this vital information. </br><span class="holoContrast">Thank you for your continued compliance. </span>',
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/0. Arrival/01 Welcome Video Lounge.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Welcome to the Together At Last Programme! Please gather in the lounge to watch the introductory video instructions."
     },
     "bcjugglingclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -242,7 +243,8 @@ const activityBroadcastsData = {
         subtitleText: "MATCHES BEING COMPUTED",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-handshake-angle"></i></p>',
         paragraphText: "We will now begin announcing matches as they get computed. Please make note of the name of your partner, but stay with your support group until all matches have been announced. Feel free to share your reaction to the new match with the other members of your support group. ",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/1. First Match - Day 1/04 Announcing First Matches.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],//, encodeURI('audio/Schedule/1. First Match - Day 1/04 Announcing First Matches.mp3')]
+        tts: "We will now begin announcing matches as they get computed. Please make note of the name of your partner, but stay with your support group until all matches have been announced. Feel free to share your reaction to the new match with the other members of your support group."
     },
     "bcrelationshipbegin1_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;FIRST RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -506,7 +508,8 @@ const activityBroadcastsData = {
         subtitleText: "SUPPORT GROUP ASSIGNMENT",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
         paragraphText: "You have now been assigned to a support group, where your fellow participants of the programme will help you in any emotional struggles that might arise during this challenging time. Please take note of the number of the group you have been assigned to, as you will remain in the same support group for the remainder of the programme.<p class=\"text-lg\">You now have 15 minutes to mingle with members of your support group while your first matches are assigned.</p>",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/0. Arrival/02 Dining Hall Support Groups.mp3'), encodeURI('audio/Schedule/0. Arrival/03 Support Groups Assigned.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Please make your way to the dining hall to meet your support groups. You have now been assigned to a support group, where your fellow participants of the programme will help you in any emotional struggles that might arise during this challenging time. Please take note of the number of the group you have been assigned to, as you will remain in the same support group for the remainder of the programme. You should introduce yourself to the other members. Research has shown that sharing a fun fact about yourself when meeting a new acquaintance improves group cohesion by 30%. You now have 15 minutes to mingle with members of your support group while your first matches are assigned."
     },
     "bctangoclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
