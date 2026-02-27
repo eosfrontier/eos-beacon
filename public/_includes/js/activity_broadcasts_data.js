@@ -404,7 +404,8 @@ const activityBroadcastsData = {
         subtitleText: "FINAL REFLECTION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
         paragraphText: "This is a reminder that your third relationship will end in 1 hour",
-        audioPlaylist: ['audio/0_Jingle.mp3']
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "This is a reminder that your third relationship will end in 1 hour"
     },
     "bcrelationshipend3_10m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
