@@ -814,19 +814,25 @@ io.on('connection', (socket) => {
       socket.emit('tts-complete'); // Re-enable button on client
 
       // Broadcast the command to play the temporary audio file
+      const jinglePath = 'audio/0_Jingle.mp3';
       const publicPath = `tmp/${finalFilename}`;
-      io.emit('playAudioPlaylist', [publicPath], 1);
+      io.emit('playAudioPlaylist', [jinglePath, publicPath], 1);
 
-      // Get duration and schedule deletion
-      const buffer = fs.readFileSync(finalFilePath);
-      const duration = getMP3Duration(buffer); // duration in milliseconds
+      // Get duration of both jingle and TTS to schedule deletion correctly
+      const ttsBuffer = fs.readFileSync(finalFilePath);
+      const ttsDuration = getMP3Duration(ttsBuffer); // duration in milliseconds
+
+      const jingleFilePath = path.join(__dirname, 'public', 'sounds', jinglePath);
+      const jingleBuffer = fs.readFileSync(jingleFilePath);
+      const jingleDuration = getMP3Duration(jingleBuffer);
+      const totalDuration = ttsDuration + jingleDuration;
 
       setTimeout(() => {
         fs.unlink(finalFilePath, (unlinkErr) => {
           if (unlinkErr) console.error(`[tts] Error deleting temp file ${finalFilename}:`, unlinkErr);
           else console.log(`[tts] Deleted temp file: ${finalFilename}`);
         });
-      }, duration + 5000); // Delete 5 seconds after it should have finished
+      }, totalDuration + 5000); // Delete 5 seconds after it should have finished
     } catch (err) {
       console.error('[tts] Error generating speech:', err);
       socket.emit('tts-complete'); // Re-enable button on error
