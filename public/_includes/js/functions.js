@@ -457,8 +457,14 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shou
 
       if ($(window).width() > 960) {
         // Create the audio element with jQuery
+        let audioSrc = audiofile;
+        // If the path doesn't start with a slash, it's a relative path inside /sounds/
+        // and we should prepend the base path.
+        if (!audioSrc.startsWith('/')) {
+            audioSrc = '/sounds/' + audioSrc;
+        }
         var audioPlayer = $('<audio id="generatedaudioplayer" controls="controls" class="hidden">'
-          + '<source src="/sounds/' + audiofile + '" type="audio/mpeg">'
+          + '<source src="' + audioSrc + '" type="audio/mpeg">'
           + '</audio>').get(0); // .get(0) to access the raw DOM element
 
         // Clamp volume between 0 and 100 and convert to 0.0-1.0 range
