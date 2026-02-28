@@ -725,6 +725,22 @@ const activityBroadcastsData = {
         paragraphText: "Irritability is a turn-off. Consume your allocated nutrients to maintain a Date-Ready™ disposition.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "Good afternoon, participants! Lunch is now served in the dining hall."
+    },
+        "bcgreenbot": {
+        mainTitleHtml: '<h2><i class="fa fa-solid fa-bell hidden-xs"></i>REMINDER<i class="fa fa-solid fa-bell hidden-xs"></i></h2>',
+        subtitleText: "PLEASE REMEMBER TO RECYCLE",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-recycle"></i></p>',
+        paragraphText: "<p>Please remember to recycle your glass, plastic, metal, drink cartons, paper and cardboard in the approproiately labeled bins.</p><p>If you are unsure, please ask a friendly HelpBot.</p><p><span class='holoContrast'>Remember: Today's garbage is tomorrow's GreenBot.</span>",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Please remember to recycle your glass, plastic, metal, drink cartons, paper and cardboard in the appropriately labeled bins. If you are unsure, please ask a friendly HelpBot."
+    },
+            "bcdishes": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "REQUEST FROM: <span class='holoContrast'>NUTRITION SERVICES</span>",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-recycle"></i></p>',
+        paragraphText: "<p class='text-lg'>Please return all plates, mugs, and service-ware to the collection point. </p><p class='text-lg'>Demonstrating domestic responsibility is a key indicator of pairing success.</p><p>&nbsp;</p> <p>&nbsp;</p><p>Remember: Seamless cohabitation begins with a clean environment. The Department is tracking your contribution to communal harmony.</p>",
+        audioPlaylist: ['announce.ogg'],
+        tts: "Dear Participants, please return all plates, mugs, and service-ware to the collection point. Demonstrating domestic responsibility is a key indicator of pairing success. Remember: Seamless cohabitation begins with a clean environment. The Department is tracking your contribution to communal harmony."
     }
 };
 
