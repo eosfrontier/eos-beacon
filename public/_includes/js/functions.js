@@ -1276,13 +1276,13 @@ async function syncDynamicBroadcasts(buildButtons = false, videoTargetContainer 
         if (buildButtons) {
           if (data.type === 'activity' && activityButtonContainer) {
             const btn = document.createElement('button');
-            btn.className = 'btn btn-ui btn-outline-success';
+            btn.className = 'build-buttons btn btn-ui btn-outline-success';
             btn.innerHTML = `<i class="fa fa-calendar-days"></i>&nbsp;IC:&nbsp;${data.title}`;
             btn.onclick = () => sendBroadCast(window[key]);
             activityButtonContainer.appendChild(btn);
           } else if (data.file && data.file.startsWith('videos/') && videoButtonContainer) {
             const btn = document.createElement('button');
-            btn.className = 'btn btn-ui btn-ui-holo';
+            btn.className = 'build-buttons btn btn-ui btn-ui-holo';
             btn.innerHTML = `<i class="fa fa-file-video"></i>&nbsp;IC:&nbsp;${data.title}`;
             btn.onclick = () => sendBroadCast(window[key]);
             videoButtonContainer.appendChild(btn);

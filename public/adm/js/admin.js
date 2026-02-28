@@ -105,7 +105,7 @@ function loadAdminPanel(panelId, callback = null) {
             switch (panelId) {
                 case 'ACTIVITIES':
                     // This will populate activity buttons. Assumes activities.html has <div id="auto-activity-list" class="items"></div>
-                    syncDynamicBroadcasts(true);
+                    syncDynamicBroadcasts(false);
                     break;
                 case 'MEDIA':
                     if (socket) socket.emit('getMedia'); // For the audio file browser
