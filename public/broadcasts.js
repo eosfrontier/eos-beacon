@@ -31,10 +31,6 @@ const ALL_STATIC_BROADCASTS = {
   bcreset: new broadcastObj("CLEAR SCREEN", "bcdefault", 99, "0", "tal"),
 
   /* kitchen crew */
-  bcbreakfast1: new broadcastObj("FIRST Breakfast announcement", "kitchen/bcbreakfast1", 1, "0", "tal"),
-  bcbreakfast2: new broadcastObj("SECOND Breakfast announcement", "kitchen/bcbreakfast2", 1, "0", "tal"),
-  bclunch: new broadcastObj("Lunch announcement", "kitchen/bclunch", 1, "0", "tal"),
-  bcdinner: new broadcastObj("Dinner announcement", "kitchen/bcdinner", 1, "0", "tal"),
   bcdishes: new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal"),
 
   /* Activities & Warnings are now dynamically generated from activity_broadcasts_data.js */

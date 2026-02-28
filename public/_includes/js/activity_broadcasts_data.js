@@ -455,34 +455,45 @@ const activityBroadcastsData = {
         audioPlaylist: [],
         tts: "Your implants have now been calibrated, thank you for your cooperation. Please note your implants have now entered TURBO mode. That means that your romantic feelings will evolve at 40 times the speed they would do in regular life. By the time it is over, your second relationship will feel as if it lasted 9 months."
     },
-// TODO: Pickup from here
     "bcthirdimplantcalibration1": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "IMPLANT CALIBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-microscope"></i></p>',
         paragraphText: "Your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship.<p class=\"text-lg\">Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration.</p>",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/5. Third Match/50 Accel Implant Calibration Start.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "In the next 3 minutes 45 seconds, your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship. Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration."
     },
     "bcthirdimplantcalibration2": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "IMPLANT CALIBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-microscope"></i></p>',
         paragraphText: "Your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship.<p class=\"text-lg\">Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration.</p>",
-        audioPlaylist: [encodeURI('audio/Schedule/5. Third Match/51 Implant Calibration 1.mp3')]
+        audioPlaylist: [],
+        tts: "Mirror each others movements... One of you can start guiding the others movements, but try to find a natural back and forth of who is following whom without speaking..... You do not have to make big movements, explore the small and discreet as well. Explore using different parts of your bodies, instead of getting stuck on the hands and arms."
     },
     "bcthirdimplantcalibration3": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "IMPLANT CALIBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-microscope"></i></p>',
         paragraphText: "Your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship.<p class=\"text-lg\">Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration.</p>",
-        audioPlaylist: [encodeURI('audio/Schedule/5. Third Match/52 Implant Calibration 2.mp3')]
+        audioPlaylist: [],
+        tts: "Synchronise your breathing... Change it a bit. Faster, slower. Try to express different feelings through it. See if you can find a place where you are unsure where the feeling began, in you or in your partner."
     },
     "bcthirdimplantcalibration4": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "IMPLANT CALIBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-microscope"></i></p>',
         paragraphText: "Your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship.<p class=\"text-lg\">Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration.</p>",
-        audioPlaylist: [encodeURI('audio/Schedule/5. Third Match/55 Implant Calibrated TURBO.mp3')]
+        audioPlaylist: [],
+        tts: "Look at each other... You dont have to have eye contact. Do it if it feels comfortable, but dont force yourselves to stare into each others eyes. The eye contact can come and go. It is okay if you get embarrassed. Look at each other and notice all the beautiful details, the expressions and thoughts passing through their mind. Find things that you find charming, or beautiful, or unique. Notice what your partner is doing with their hands, how they sit. Notice the shape of their neck, and what kind of ear lobes they have. Notice the smiles that may touch their lips from time to time. Notice their eyes as they explore you, and you explore them. Can you tell what they are thinking?"
+    },
+    "bcthirdimplantcalibration5": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "IMPLANT CALIBRATION",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-microscope"></i></p>',
+        paragraphText: "Your implants will undergo a semiautomatic mutual attunement process, which will allow them to recognise your feelings for each other for the duration of your relationship.<p class=\"text-lg\">Please follow the instructions in order to facilitate the process. Please remain silent, as talking can interfere with the process and risk miscalibration.</p>",
+        audioPlaylist: [],
+        tts: "Your implants have now been calibrated, thank you for your cooperation. Please note your implants are still in TURBO mode. That means that your romantic feelings will evolve at 40 times the speed they would do in regular life. By the time it is over, your third relationship will feel as if it lasted 9 months.You can now begin your relationship. Please continue partying together."
     },
     "bcsensualworkshop": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -496,21 +507,24 @@ const activityBroadcastsData = {
         subtitleText: "SEXUAL EDUCATION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i> <i class="fa fa-book-open"></i></p>',
         paragraphText: "An optional sexual education class is now available. This is a safe space to learn and ask questions about intimacy and connection.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/1. First Match - Day 1/13 Sex Ed.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The sexual education class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsexed_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SEXUAL EDUCATION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i> <i class="fa fa-book-open"></i></p>',
         paragraphText: "The optional sexual education class will begin in 5 minutes. Please make your way to the designated area.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/1. First Match - Day 1/14 Sex Ed Class 5 mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The sexual education class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to  maximise the partner bonding potential. Enjoy the class."
     },
     "bcsinglesparty": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY SOON&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SUPPORT & CELEBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "The \"singles\" party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/4. Workshops - Day 2/46 Singles Party being soon.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The singles party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned. Your third matches will get announced at 9, 30."
     },
     "bcmusicclass": { // Run 8 after Partner Yoga
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -637,21 +651,24 @@ const activityBroadcastsData = {
         subtitleText: "THE WEDDING IS ABOUT TO BEGIN",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-ring"></i><i class="fa fa-ring"></i></p><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "<p class='text-lg'>The wedding is about to begin. Everyone should gather in the dining hall.</p>",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/Pre-Wedding/74 Group Wedding Now.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The wedding is about to begin. Everyone should gather in the dining hall."
     },
     "bcwedding_1h": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "WEDDING IN 1 HOUR",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-ring"></i><i class="fa fa-ring"></i></p><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "<p class='text-lg'>All participants are now allowed to change into any attire they wish. The couples getting married are encouraged to change into something appropriate for the occasion. We will provide veils and bow ties for all participants who would like to wear them. Unsuccessful participants should wear their travel attire, since they will be leaving the together at last centre shortly after the wedding, while the married couples will be undergoing their CIP procedures.</p>",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/Pre-Wedding/72 Change for Wedding.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The wedding will begin in 1 hour. All participants are now allowed to change into any attire they wish. The couples getting married are encouraged to change into something appropriate for the occasion. We will provide veils and bow ties for all participants who would like to wear them. Unsuccessful participants should wear their travel attire, since they will be leaving the together at last centre shortly after the wedding, while the married couples will be undergoing their CIP procedures."
     },
     "bcwedding_15m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "WEDDING IN 15 MINUTES",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-ring"></i><i class="fa fa-ring"></i></p><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "<p class='text-lg'>The group wedding will take place in 15 minutes. The couples getting married should now head to the dining hall for the final preparations. The unsuccessful participants should put on their hazmat suits, which are available at the reception desk.</p>",
-        audioPlaylist: ['audio/0_Jingle.mp3', encodeURI('audio/Schedule/Pre-Wedding/73 Group Wedding 15 mins.mp3')]
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The group wedding will take place in 15 minutes. The couples getting married should now head to the dining hall for the final preparations. The unsuccessful participants should put on their hazmat suits, which are available at the reception desk."
     },
     "bccontactimprovclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -684,10 +701,34 @@ const activityBroadcastsData = {
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin now. All skill levels are welcome.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Partner Tarot Reading class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcbreakfast1": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "BREAKFAST</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Good morning, participants! We hope you enjoyed your first relationship. </br>Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good morning, participants! We hope you enjoyed your first relationship. Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match."
+    },
+    "bcbreakfast3": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "BREAKFAST</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Good morning, participants! We hope you enjoyed your first relationship. </br>Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good morning, participants! Breakfast is now served in the dining hall. During breakfast, we will distribute the couples compatibility forms; please fill them out with your current match."
+    },
+        "bclunch": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "LUNCH</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Irritability is a turn-off. Consume your allocated nutrients to maintain a Date-Ready™ disposition.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good afternoon, participants! Lunch is now served in the dining hall."
     }
 };
 
 // Make the data available to Node.js's `require` system if running on the server.
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { activityBroadcastsData };
+    module.exports = { activityBroadcastsData };
 }
