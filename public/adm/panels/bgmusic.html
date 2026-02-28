@@ -63,7 +63,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-ui btn-ui-holo';
                 btn.innerHTML = `<i class="fa fa-play-circle"></i>&nbsp;${playlistName}`;
-                btn.onclick = () => startBgMusicPlaylist(playlistName);
+                btn.onclick = () => startBgMusicPlaylist(playlistName, 15);
                 playlistContainer.appendChild(btn);
             });
         }

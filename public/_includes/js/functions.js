@@ -835,7 +835,7 @@ function playPortalAudio() {
  * @param {string} playlistName - The name of the folder in public/sounds/bgmusic.
  * @param {number} [volume] - Optional volume level (0-100). Uses last set volume if not provided.
  */
-function startBgMusicPlaylist(playlistName, volume) {
+function startBgMusicPlaylist(playlistName, volume=15) {
     // Pass data as an object to accommodate optional volume
     socket.emit('startBgMusicPlaylist', { playlistName, volume });
 }
