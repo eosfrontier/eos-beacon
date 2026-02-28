@@ -26,4 +26,9 @@
   </div>
 </div>
 </div>
-<script>generateAudioPlayer('announce.ogg', '1');</script>
+<script>
+  playAudioPlaylist(['announce.ogg']);
+  setTimeout(
+    requestTTSPlayback('Dear Participants, please return all plates, mugs, and service-ware to the collection point. Demonstrating domestic responsibility is a key indicator of pairing success. Remember: Seamless cohabitation begins with a clean environment. The Department is tracking your contribution to communal harmony.')
+    ,5000);
+</script>

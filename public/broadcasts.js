@@ -31,7 +31,7 @@ const ALL_STATIC_BROADCASTS = {
   bcreset: new broadcastObj("CLEAR SCREEN", "bcdefault", 99, "0", "tal"),
 
   /* kitchen crew */
-  bcdishes: new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal"),
+  // bcdishes: new broadcastObj("Dishes reminder", "kitchen/bcdishes", 1, "0", "tal"),
 
   /* Activities & Warnings are now dynamically generated from activity_broadcasts_data.js */
   /* Only non-templated activities remain here. */
