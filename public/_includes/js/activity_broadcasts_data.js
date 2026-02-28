@@ -652,7 +652,8 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 48px;"><i class="fa fa-ring"></i><i class="fa fa-ring"></i></p><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "<p class='text-lg'>The wedding is about to begin. Everyone should gather in the dining hall.</p>",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts:  "The wedding is about to begin. Everyone should gather in the dining hall."},
+        tts: "The wedding is about to begin. Everyone should gather in the dining hall."
+    },
     "bcwedding_1h": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "WEDDING IN 1 HOUR",
@@ -700,6 +701,30 @@ const activityBroadcastsData = {
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin now. All skill levels are welcome.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Partner Tarot Reading class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcbreakfast1": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "BREAKFAST</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Good morning, participants! We hope you enjoyed your first relationship. </br>Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good morning, participants! We hope you enjoyed your first relationship. Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match."
+    },
+    "bcbreakfast3": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "BREAKFAST</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Good morning, participants! We hope you enjoyed your first relationship. </br>Breakfast is now served in the dining hall. It is your last chance to say goodbye to your first match.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good morning, participants! Breakfast is now served in the dining hall. During breakfast, we will distribute the couples compatibility forms; please fill them out with your current match."
+    },
+        "bclunch": {
+        mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
+        subtitleText: "LUNCH</span> IS NOW AVAILABLE.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-utensils"></i></p>',
+        paragraphText: "Irritability is a turn-off. Consume your allocated nutrients to maintain a Date-Ready™ disposition.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "Good afternoon, participants! Lunch is now served in the dining hall."
     }
 };
 
