@@ -36,7 +36,8 @@
     "extendable-media-recorder": "^9.2.36",
     "get-mp3-duration": "^1.0.0",
     "google-tts-api": "^2.0.2",
-    "socket.io": "^4.6.2"
+    "socket.io": "^4.6.2",
+    "supervisor": "^0.12.0"
   },
   "overrides": {
     "minimatch": "^10.2.1",

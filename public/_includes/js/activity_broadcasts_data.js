@@ -365,7 +365,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
         paragraphText: "Your first relationship will end in 15m.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "Your first relationship will end in 15m."
+        tts: "Your first relationship will end in 15 minutes."
     },
     "bcrelationshipend1_20m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -389,7 +389,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
         paragraphText: "Your second relationship will end in 15m.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "Your second relationship will end in 15m."
+        tts: "Your second relationship will end in 15 minutes."
     },
     "bcrelationshipend3": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP HAS ENDED&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
