@@ -245,7 +245,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin now. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Yoga Class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcyogaclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -253,7 +253,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin in 5 minutes. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Yoga Class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcrelationshipbegin1_10m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;FIRST RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
