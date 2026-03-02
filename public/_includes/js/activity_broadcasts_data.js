@@ -271,6 +271,22 @@ const activityBroadcastsData = {
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
+        "bcfivesensesclass": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "FIVE SENSES WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
+        paragraphText: "Our optional five senses class will begin now. A valuable session for exploring the connection between partners.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Five Senses Workshop will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+    },
+    "bcfivesensesclass_5m": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "FIVE SENSES WORKSHOP (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
+        paragraphText: "Our optional five senses workshop will begin in 5 minutes. A valuable session for exploring the connection between partners.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Five Senses Workshop will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+    },
     "bcrelationshipbegin1_10m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;FIRST RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MATCHES BEING COMPUTED",
@@ -409,24 +425,24 @@ const activityBroadcastsData = {
     },
     "bcrelationshipend3": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP HAS ENDED&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
-        subtitleText: "FINAL REFLECTION",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
+        subtitleText: "THIRD RELATIONSHIP HAS ENDED",
+        centralIconHtml: 'FINAL REFLECTION</br><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
         paragraphText: "Your third relationships have now concluded.</br>Please proceed to your final support group meetings for reflection and guidance.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Together Forever programme is now computing Forever Matches for all participants. You will be informed of your final assignment during the final session of your support group. Please gather in your support groups."
     },
     "bcrelationshipend3_1hour": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 1 HOUR&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
-        subtitleText: "FINAL REFLECTION",
+        subtitleText: "THIRD RELATIONSHIP ENDS IN 1 HOUR",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
-        paragraphText: "This is a reminder that your third relationship will end in 1 hour",
+        paragraphText: "FINAL REFLECTION </br>This is a reminder that your third relationship will end in 1 hour",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "This is a reminder that your third relationship will end in 1 hour"
     },
     "bcrelationshipend3_10m": {
-        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
-        subtitleText: "FINAL REFLECTION",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 10 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "THIRD RELATIONSHIP ENDS IN 10 MINUTES",
+        centralIconHtml: 'FINAL REFLECTION </br><p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-group"></i></p>',
         paragraphText: "The final support group meetings will take place in 10 minutes.</br>This is also when your third relationship will end, so this is your last chance to say goodbye.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The final support group meetings will take place in 10 minutes. This is also when your third relationship will end, so this is your last chance to say goodbye."
@@ -633,18 +649,18 @@ const activityBroadcastsData = {
     "bcbodypaintingworkshop": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "BODY PAINTING WORKSHOP (OPTIONAL)",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional body painting workshop is now beginning. No prior experience necessary.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-paint-brush"></i></p>',
+        paragraphText: "Explore connection through movement. An optional body painting workshop is now beginning in the activity room. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Body Painting Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+        tts: "The Body Painting Workshop will begin now in the activity room. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
     },
     "bcbodypaintingworkshop_5m": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "BODY PAINTING WORKSHOP (OPTIONAL)",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional body painting workshop will begin in 5 minutes. No prior experience necessary.",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-paint-brush"></i></p>',
+        paragraphText: "Explore connection through movement. An optional body painting workshop will begin in 5 minutes in the activity room. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Body Painting Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+        tts: "The Body Painting Workshop will begin in 5 minutes in the activity room. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
     },
     "bcchachaclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
