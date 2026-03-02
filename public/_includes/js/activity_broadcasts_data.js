@@ -223,6 +223,22 @@ const activityBroadcastsData = {
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Beaded Bracelet Making Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
+    "bcrelationshipskills": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "RELATIONSHIP SKILLS CLASS (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
+        paragraphText: "Learn essential relationship skills in our optional relationship skills class. A valuable session for strengthening your bond.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Relationship Skills Class will begin now in the activity room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
+    "bcrelationshipskills_5m": {
+        mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
+        subtitleText: "RELATIONSHIP SKILLS CLASS (OPTIONAL)",
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hand-holding-heart"></i></p>',
+        paragraphText: "Learn essential relationship skills in our optional relationship skills class, starting in 5 minutes. A valuable session for strengthening your bond.",
+        audioPlaylist: ['audio/0_Jingle.mp3'],
+        tts: "The Relationship Skills Class will begin in 5 minutes in the activity room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+    },
     "bcparentingclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARENTING CLASS (OPTIONAL)",
@@ -529,7 +545,7 @@ const activityBroadcastsData = {
     "bcmusicclass": { // Run 8 after Partner Yoga
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i></p>',
         paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Music Workshop will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
@@ -537,7 +553,7 @@ const activityBroadcastsData = {
     "bcmusicclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
-        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-wave-square"></i></p>',
+        centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i></p>',
         paragraphText: "Harmonize your connection through sound. An optional music workshop is will begin in 5 minutes.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Music Workshop will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
@@ -588,7 +604,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional salsa/fusion dance class is now beginning. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Salsa/Fusion Dance class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Salsa/Fusion Dance class will begin now in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsalsaclass_5m": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -596,7 +612,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
         paragraphText: "Explore connection through movement. An optional salsa/fusion dance class will begin in 5 minutes. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Salsa/Fusion Dance class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Salsa/Fusion Dance class will begin in 5 minutes in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsswingdanceclass": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
