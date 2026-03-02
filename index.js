@@ -115,6 +115,58 @@ function splitText(text, maxLength = 150) {
   return chunks.filter(chunk => chunk.length > 0);
 }
 
+async function generateTTSFile(text, lang = 'en-uk') {
+  if (!text || typeof text !== 'string') {
+    throw new Error("Invalid text for TTS");
+  }
+
+  const timestamp = Date.now();
+  const finalFilename = `tts-activity-${timestamp}.mp3`;
+  const finalFilePath = path.join(tmpDir, finalFilename);
+  let tempChunkFiles = [];
+
+  try {
+    const textChunks = splitText(text, 150);
+    if (textChunks.length === 0) {
+      throw new Error("No text to speak after processing.");
+    }
+
+    tempChunkFiles = await Promise.all(textChunks.map(async (chunk, i) => {
+      const tempChunkFile = path.join(tmpDir, `tts-act-chunk-${i}-${timestamp}.mp3`);
+      await saveTtsAudio(chunk, lang, tempChunkFile);
+      return tempChunkFile;
+    }));
+
+    await new Promise((res, rej) => {
+      audioconcat(tempChunkFiles)
+        .concat(finalFilePath)
+        .on('error', (err, stdout, stderr) => rej(new Error(`[audioconcat] ${err.message} - ${stderr}`)))
+        .on('end', (output) => res(output));
+    });
+
+    console.log(`[tts-activity] Generated speech file: ${finalFilename}`);
+
+    const buffer = fs.readFileSync(finalFilePath);
+    const duration = getMP3Duration(buffer);
+
+    setTimeout(() => {
+      fs.unlink(finalFilePath, (unlinkErr) => {
+        if (unlinkErr) console.error(`[tts-activity] Error deleting temp file ${finalFilename}:`, unlinkErr);
+        else console.log(`[tts-activity] Deleted temp file: ${finalFilename}`);
+      });
+    }, duration + 60000);
+
+    return `tmp/${finalFilename}`;
+  } catch (err) {
+    console.error('[tts-activity] Error generating speech:', err);
+    throw err;
+  } finally {
+    tempChunkFiles.forEach(file => {
+      if (fs.existsSync(file)) fs.unlinkSync(file);
+    });
+  }
+}
+
 app.engine('html', require('ejs').renderFile);
 
 
@@ -440,7 +492,7 @@ io.on('connection', (socket) => {
 
   socket.on('requestDynamicData', () => syncConnectionCounter());
 
-  socket.on('broadcastSend', (value) => {
+  socket.on('broadcastSend', async (value) => {
     // Prevent client-side crashes from empty broadcasts
     if (!value) {
       console.error('[broadcast] Received an empty broadcastSend event. Aborting.');
@@ -453,6 +505,15 @@ io.on('connection', (socket) => {
       : value.file;
 
     applicationState['lastBC'] = cleanBCName;
+
+    if (value.type === 'activity' && value.activityData && value.activityData.tts) {
+      try {
+        const ttsPath = await generateTTSFile(value.activityData.tts);
+        value.activityData.ttsFile = ttsPath;
+      } catch (e) {
+        console.error("Failed to generate TTS for broadcast:", e);
+      }
+    }
 
     syncAppState();
     io.emit('broadcastReceive', value);
@@ -748,6 +809,7 @@ io.on('connection', (socket) => {
 
       const publicPath = `tmp/${finalFilename}`;
       io.emit('playAudioFile', publicPath);
+      socket.emit('playAudioFile', publicPath);
 
       const buffer = fs.readFileSync(finalFilePath);
       const duration = getMP3Duration(buffer);

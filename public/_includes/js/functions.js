@@ -231,16 +231,28 @@ function broadCast(location) {
     // Play audio playlist if provided
     const hasPlaylist = location.activityData.audioPlaylist && location.activityData.audioPlaylist.length > 0;
     const hasTTS = location.activityData.tts && location.activityData.tts.trim() !== '';
+    const ttsFile = location.activityData.ttsFile;
 
     if (hasPlaylist) {
       // If there's TTS, set it as the callback for when the playlist finishes.
-      const onCompleteCallback = hasTTS ? () => requestTTSPlayback(location.activityData.tts) : null;
+      let onCompleteCallback = null;
+      if (ttsFile) {
+        onCompleteCallback = () => generateAudioPlayer(ttsFile, 1, 100);
+      } else if (hasTTS) {
+        onCompleteCallback = () => requestTTSPlayback(location.activityData.tts);
+      }
       playAudioPlaylist(location.activityData.audioPlaylist, 1, 100, onCompleteCallback);
-    } else if (hasTTS) {
-      // If there's only TTS and no playlist, play it after a short delay.
-      setTimeout(() => {
-        requestTTSPlayback(location.activityData.tts);
-      }, 500);
+    } else {
+      if (ttsFile) {
+        setTimeout(() => {
+          generateAudioPlayer(ttsFile, 1, 100);
+        }, 500);
+      } else if (hasTTS) {
+        // If there's only TTS and no playlist, play it after a short delay.
+        setTimeout(() => {
+          requestTTSPlayback(location.activityData.tts);
+        }, 500);
+      }
     }
 
     // Reset priority 99 to 1
