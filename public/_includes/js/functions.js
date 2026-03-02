@@ -30,6 +30,7 @@ let playlistState = {
     volume: 50,
     isActive: false,
     isPaused: false,
+    isInterrupted: false,
     currentIndex: 0,
     loops: 0,
     timeoutId: null,
@@ -229,30 +230,27 @@ function broadCast(location) {
     notifiContCache.empty().html(activityHtml);
 
     // Play audio playlist if provided
-    const hasPlaylist = location.activityData.audioPlaylist && location.activityData.audioPlaylist.length > 0;
-    const hasTTS = location.activityData.tts && location.activityData.tts.trim() !== '';
+    const audioPlaylist = location.activityData.audioPlaylist ? [...location.activityData.audioPlaylist] : [];
     const ttsFile = location.activityData.ttsFile;
+    const hasTTS = location.activityData.tts && location.activityData.tts.trim() !== '';
 
-    if (hasPlaylist) {
-      // If there's TTS, set it as the callback for when the playlist finishes.
-      let onCompleteCallback = null;
-      if (ttsFile) {
-        onCompleteCallback = () => generateAudioPlayer(ttsFile, 1, 100);
-      } else if (hasTTS) {
-        onCompleteCallback = () => requestTTSPlayback(location.activityData.tts);
-      }
-      playAudioPlaylist(location.activityData.audioPlaylist, 1, 100, onCompleteCallback);
-    } else {
-      if (ttsFile) {
-        setTimeout(() => {
-          generateAudioPlayer(ttsFile, 1, 100);
-        }, 500);
-      } else if (hasTTS) {
-        // If there's only TTS and no playlist, play it after a short delay.
+    if (ttsFile) {
+        audioPlaylist.push(ttsFile);
+    }
+
+    if (audioPlaylist.length > 0) {
+        // If we have files to play (playlist or TTS file), use the playlist manager.
+        // If we have TTS text but no file (generation failed?), we use callback as fallback.
+        let onCompleteCallback = null;
+        if (!ttsFile && hasTTS) {
+             onCompleteCallback = () => requestTTSPlayback(location.activityData.tts);
+        }
+        playAudioPlaylist(audioPlaylist, 1, 100, onCompleteCallback);
+    } else if (hasTTS) {
+        // Only TTS text, no files. Fallback to old behavior.
         setTimeout(() => {
           requestTTSPlayback(location.activityData.tts);
         }, 500);
-      }
     }
 
     // Reset priority 99 to 1
@@ -442,6 +440,7 @@ function generateAudioPlayer(audiofile, repeatcount, volume, startTime = 0, shou
         if (audiofile !== currentPlaylistFile) {
             if (repeatcount <= 1) { // It's a one-off sound, so it's an interruption.
                 isInterrupting = true;
+                playlistState.isInterrupted = true;
                 if (!playlistState.isPaused) {
                     // If the background music is actively playing, pause it.
                     pausePlaylist();
@@ -685,6 +684,7 @@ socket.on('bgMusicStopped', function() {
         // Reset the state
         playlistState.isActive = false;
         playlistState.isPaused = false;
+        playlistState.isInterrupted = false;
         playlistState.files = [];
         playlistState.currentIndex = 0;
         playlistState.loops = 0;
@@ -934,6 +934,7 @@ socket.on('syncBgMusic', (serverState) => {
         playlistState.volume = serverState.volume;
         playlistState.currentIndex = serverState.currentIndex;
         playlistState.isActive = true;
+        playlistState.isInterrupted = false;
         playlistState.isPaused = serverState.isPaused;
         playlistState.loops = 0;
         playlistState.timeoutId = null;
@@ -982,6 +983,11 @@ socket.on('setBgMusicPaused', (isPaused) => {
     // Only act on background music playlists
     if (!playlistState.isActive || playlistState.loopCount !== -1) {
         console.log('[bgmusic] "pause/resume" command ignored: not a background music playlist.');
+        return;
+    }
+
+    if (playlistState.isInterrupted) {
+        console.log('[bgmusic] Ignoring pause/resume command during interruption.');
         return;
     }
 
@@ -1343,6 +1349,7 @@ function playAudioPlaylist(audioFiles, loopCount = 1, volume = 100, onComplete =
     playlistState.volume = volume;
     playlistState.isActive = true;
     playlistState.isPaused = false;
+    playlistState.isInterrupted = false;
     playlistState.currentIndex = 0;
     playlistState.loops = 0;
     playlistState.timeoutId = null;
@@ -1386,6 +1393,7 @@ function pausePlaylist() {
  * Resumes a paused playlist from the next track.
  */
 function resumePlaylist() {
+    playlistState.isInterrupted = false;
     if (playlistState.isActive && playlistState.isPaused) {
         console.log('[playlist] Resuming playlist.');
         playlistState.isPaused = false;
