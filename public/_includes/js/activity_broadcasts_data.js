@@ -692,7 +692,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin in 5 minutes. All skill levels are welcome.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Tarot Reading class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Tarot Reading class will begin in 5 minutes in the lounge. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bctarotclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -700,7 +700,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-hands-holding-circle"></i></p>',
         paragraphText: "Learn to find balance and rhythm together. An optional partner tarot reading class will begin now. All skill levels are welcome.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Tarot Reading class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Tarot Reading class will begin now in the lounge. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcbreakfast1": {
         mainTitleHtml: '<h2><i class="fa fa-cutlery hidden-xs"></i>&nbsp;KITCHEN&nbsp;NOTICE&nbsp;<i class="fa fa-cutlery hidden-xs"></i></h2>',
