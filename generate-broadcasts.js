@@ -13,7 +13,7 @@ const htmlTemplate = (title, embedCode, params) => `<title>${title}</title>
     <iframe
         style="width: 99%; min-height: 64vh; height: 100%; border-bottom: 1px solid #0B5E66; border-top: 1px solid #0B5E66"
 	src="https://www.youtube.com/embed/${embedCode}${params}"
-        title="${title} (YT)" frameborder="0" referrerpolicy="strict-origin-when-cross-origin"
+        title="${title} (YT)" frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen>
     </iframe>
