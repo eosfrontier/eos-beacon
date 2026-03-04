@@ -259,7 +259,7 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARTNER YOGA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
-        paragraphText: "Our optional yoga class will begin now. A valuable session for exploring movement with your partner.",
+        paragraphText: "Our optional yoga class will begin now in the activity room. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Partner Yoga Class will begin now in the activity room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
@@ -578,17 +578,17 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "EMOTIONAL SUPPORT WORKSHOP",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i></p>',
-        paragraphText: "An emotional support workshop is now beginning. This workshop is optional but highly recommended.",
+        paragraphText: "An emotional support workshop is now beginning in the activity room. This workshop is optional but highly recommended.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Emotional Support Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
+        tts: "The Emotional Support Workshop will begin now in the activity room. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
     },
     "bcemotionalsupportworkshop_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "EMOTIONAL SUPPORT WORKSHOP",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i></p>',
-        paragraphText: "An emotional support workshop will begin in 5 minutes. This workshop is optional but highly recommended.",
+        paragraphText: "An emotional support workshop will begin in 5 minutes in the activity room. This workshop is optional but highly recommended.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Emotional Support Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
+        tts: "The Emotional Support Workshop will begin in 5 minutes in the activity room. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the emotional bonding potential. Enjoy the workshop."
     },
     "bcsupportgroups": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
