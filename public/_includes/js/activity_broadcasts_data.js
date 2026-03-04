@@ -269,7 +269,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin in 5 minutes in the activity room. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Yoga Class will begin in 5 minutes in the activity room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
         "bcfivesensesclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
