@@ -1,0 +1,317 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Activities</h2>
+
+<hr />
+<div class="items">
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="stopAllAudio();sendBroadCast(bcreset);"><i
+      class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS</button>
+
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#Welcome">&gt;
+      Welcome video
+  </div>
+  <div id="Welcome" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcgatherforwelcome);">
+      <i class="fa fa-users"></i>&nbsp;GATHER FOR WELCOME VIDEO
+    </button>
+    <div class="btn btn-block btn-ui btn-outline-blue" onclick="loadAdminSubPanel('MEDIA','#OC-VID');">
+      <i class="fa fa-file-audio"></i>Open Video
+    </div>
+  </div>
+
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#1stMatch">&gt;
+      Relationship Cycle 1
+  </div>
+  <div id="1stMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsupportgroups);">
+      <i class="fa fa-people-group"></i>&nbsp;Support Group Assignment
+    </button>
+    <div class="row" style="margin-top: 15px;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin1_10m);">Matches Being Computed</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin1_5m);">1st Match Computed </button>
+      </div>
+    </div>
+    <div class="btn btn-block btn-ui btn-outline-blue"
+      onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Matches');">
+      <i class="fa fa-file-audio"></i>Open Matches
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipbegin1_0m);">
+      <i class="fa fa-handshake-angle"></i>&nbsp;First Matches All Announced
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcfirstimplantcalibrationIntro);">
+      <i class="fa fa-microscope"></i>&nbsp;FIRST Implant Calibration
+    </button>
+    <div class="row" style="margin: 0 -5px 10px;">
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcfirstimplantcalibration1);">Part 1</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcfirstimplantcalibration2);">Part 2</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcfirstimplantcalibration3);">Part 3</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcfirstimplantcalibration4);">Final</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcdinnerdate1);">
+      <i class="fa fa-utensils"></i>&nbsp;Dinner Date &amp; Free Time
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcsexed_5m);">SexEd - 5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsexed);">
+      <i class="fa fa-book-open"></i>&nbsp;Sexual Education Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bctangoclass_5m);">Tango - 5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bctangoclass);">
+      <i class="fa fa-people-arrows"></i>&nbsp;Tango Connection Class (Opt)
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast1);">
+      <i class="fa fa-mug-saucer"></i>&nbsp;FIRST DAY Breakfast
+    </button>
+    <div class="row" style="margin-top: 15px;">
+      <div class="col-xs-6" style=><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipend1_20m);">Imp. Calib Forms</button></div>
+      <div class="col-xs-6" style=><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipend1_15m);">15m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipend1);">
+      <i class="fa fa-hand-holding-heart"></i>&nbsp;First Relationships End
+    </button>
+  </div>
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#2ndMatch">>
+      Relationship Cycle 2
+  </div>
+  <div id="2ndMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <div class="row" style="margin-top: 15px;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin2_10m);">2nd Relationship</br>Being Computed</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin2_5m);">First Match</br>Computed </button></div>
+    </div>
+    <div class="btn btn-block btn-ui btn-outline-blue"
+      onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Matches');">
+      <i class="fa fa-file-audio"></i>Open Matches
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipbegin2_0m);">
+      <i class="fa fa-handshake-angle"></i>&nbsp;Second Matches all announced
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsecondimplantcalibration1);">
+      <i class="fa fa-microscope"></i>&nbsp;SECOND Implant Calibration
+    </button>
+    <div class="row" style="margin: 0 -5px 10px;">
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcsecondimplantcalibration2);">Part 2</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcsecondimplantcalibration3);">Part 3</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcsecondimplantcalibration4);">Part 4</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcsecondimplantcalibrationFinal);">Final</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcrelationshipbegin2);">
+      <i class="fa fa-handshake-angle"></i>&nbsp;Second Relationships Begin
+    </button>
+
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcyogaclass_5m);">Partner Yoga - 5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcyogaclass);">
+      <i class="fa fa-child-reaching"></i>&nbsp;Partner Yoga Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcparentingclass_5m);">Parenting - 5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcparentingclass);">
+      <i class="fa fa-baby-carriage"></i>&nbsp;Parenting Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcmeetfamily1_10m);">10m Warning</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcmeetfamily1_5m);">5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcmeetfamily1);">
+      <i class="fa fa-users"></i>&nbsp;Meet the Family Lunch 1
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcbraceletclass_5m);">Beaded Bracelet Class - 5m</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbraceletclass);">
+      <i class="fa fa-ring"></i>&nbsp;Beaded Bracelet Class (Opt)
+    </button>
+
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcchachaclass_5m);">ChaCha - 5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcchachaclass);">
+      <i class="fa fa-people-arrows"></i>&nbsp;Cha-Cha Class (Opt)
+    </button>
+    <!-- <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcsoundtherapy);">
+      <i class="fa fa-wave-square"></i>&nbsp;Couples Sound Therapy (Opt)
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcballroomclass);">
+      <i class="fa fa-music"></i>&nbsp;Ballroom Dancing Class (Opt)
+    </button> -->
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcdinnerdate2_30m);">30m Warning</button></div>
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcdinnerdate2_15m);">15m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcdinnerdate2);">
+      <i class="fa fa-utensils"></i>&nbsp;Final Dinner Date (2nd)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipend2_15m);">2nd Match Ends in 15m</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipend2);">
+      <i class="fa fa-hand-holding-heart"></i>&nbsp;Second Relationships End&amp;Support Group
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcsinglesparty);">
+      <i class="fa fa-champagne-glasses"></i>&nbsp;Singles Party
+    </button>
+
+  </div>
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#3rdMatch">>
+      Relationship Cycle 3
+  </div>
+  <div id="3rdMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin3_5m);">Matches Being Computed</button></div>
+      <div class="col-xs-6" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipbegin3_0m);">Matches Computed</button></div>
+    </div>
+    <div class="btn btn-block btn-ui btn-outline-blue"
+      onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Matches');">
+      <i class="fa fa-file-audio"></i>Open Matches
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipbegin3);">
+      <i class="fa fa-handshake-angle"></i>&nbsp;Third Matches all announced
+    </button>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcthirdimplantcalibration1);">
+      <i class="fa fa-microscope"></i>&nbsp;Third Implant Calibration
+    </button>
+    <div class="row" style="margin: 0 -5px 10px;">
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcthirdimplantcalibration2);">Part 2</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcthirdimplantcalibration3);">Part 3</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcthirdimplantcalibration4);">Part 4</button></div>
+      <div class="col-xs-3" style="padding: 0 5px;"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcthirdimplantcalibration5);">Final</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcrelationshipbegin3_begin);">
+      <i class="fa fa-handshake-angle"></i>&nbsp;Third Relationships Begin
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bckaraoke_10m);">10m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bckaraoke);">
+      <i class="fa fa-microphone-lines"></i>&nbsp;Karaoke! (Opt)
+    </button>
+    <h4 class="holoContrast"><i class="fa fa-sun"></i>&nbsp;Final Morning</h4>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcbreakfast3);">
+      <i class="fa fa-mug-saucer"></i>&nbsp;Breakfast (3rd)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bccontactimprovclass_5m);">Improv - 5m </button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bccontactimprovclass);">
+      <i class="fa fa-hands-holding-circle"></i>&nbsp;Contact Improv Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12">
+        <button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bctarotclass_5m);">Tarot - 5m
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bctarotclass);">
+      <i class="fa fa-feather-pointed"></i>&nbsp;Tarot Reading Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-12">
+        <button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipskills_5m);">Relationship Skills - 5m </button>
+      </div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcrelationshipskills);">
+      <i class="fa fa-hand-holding-heart"></i>&nbsp;Relationship Skills Class (Opt)
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcmeetfamily2_10m);">10m Warning</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcmeetfamily2_5m);">5m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcmeetfamily2);">
+      <i class="fa fa-users"></i>&nbsp;Meet the Family Lunch 2
+    </button>
+    <div class="row" style="margin-top: 15px  ;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipend3_1hour);">1hour Warning</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcrelationshipend3_10m);">10m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcrelationshipend3);">
+      <i class="fa fa-people-group"></i>&nbsp;Third Relationship Ends
+    </button>
+
+  </div>
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#FinalMatch">> Final
+      Match
+  </div>
+  <div id="FinalMatch" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcfinalsupportgroup);">
+      <i class="fa fa-people-group"></i>&nbsp;Final Support Group
+    </button>
+    <div class="row" style="margin-top: 15px ;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcforevermatch_10m);">First Forever Match Computed</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-outline-blue"
+          onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Matches');">
+          <i class="fa fa-file-audio"></i>Open Matches</button>
+      </div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo" onclick="sendBroadCast(bcforevermatch);">
+      <i class="fa fa-infinity"></i>&nbsp;Forever Matches Announced
+    </button>
+
+  </div>
+
+  <div class="activity-section">
+    <button class="btn btn-block btn-ui btn-ui-holo btn-outline-amber activity-header" data-target="#Wedding">> The
+      Wedding/Finale
+  </div>
+  <div id="Wedding" class="activity-content hidden-block col-xs-12" style="display:none;">
+    <div class="row" style="margin-top: 15px ;">
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcwedding_1h);">1h - Get Dressed</button></div>
+      <div class="col-xs-6"><button class="btn btn-block btn-xs btn-ui btn-ui-holo-alt"
+          onclick="sendBroadCast(bcwedding_15m);">15m Warning</button></div>
+    </div>
+    <button class="btn btn-block btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcwedding);">
+      <i class="fa fa-infinity"></i>&nbsp;Wedding Now
+    </button>
+    <div class="btn btn-block btn-ui btn-outline-blue"
+      onclick="loadAdminSubPanelFolder('MEDIA','#OC-AUDIO','audio-folder-header-Wedding');">
+      <i class="fa fa-file-audio"></i>Open Wedding Audio
+    </div>
+  </div>
+  </div>
