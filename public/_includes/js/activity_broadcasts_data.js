@@ -355,17 +355,17 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MATCHES COMPUTED",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-handshake-angle"></i></p>',
-        paragraphText: "Attention please! Third matches have now been computed.",
+        paragraphText: "Attention please! Third matches have now been computed. Please continue partying while the matches are announced.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "Attention please! Third matches have now been computed."
+        tts: "Attention please! Third matches have now been computed. Please continue partying while the matches are announced."
     },
     "bcrelationshipbegin3_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MATCHES BEING COMPUTED",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-handshake-angle"></i></p>',
-        paragraphText: "Third matches are currently being computed. They will be announced in 5 minutes.",
+        paragraphText: "Third matches are currently being computed. They will be announced in 5 minutes. Please continue partying while the matches are computed.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "Third matches are currently being computed. They will be announced in 5 minutes."
+        tts: "Third matches are currently being computed. They will be announced in 5 minutes. Please continue partying while the matches are computed."
     },
     "bcrelationshipbegin3_begin": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;THIRD RELATIONSHIP&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -556,7 +556,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
         paragraphText: "The \"singles\" party is about to begin in the Lounge. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The singles party is about to begin in the Lounge. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned. Your third matches will get announced at 9, 30."
+        tts: "The singles party is about to begin in the Lounge. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned. Your third matches will get announced at 9:30."
     },
     "bcmusicclass": { // Run 8 after Partner Yoga
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
