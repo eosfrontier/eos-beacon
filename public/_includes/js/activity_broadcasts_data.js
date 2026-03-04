@@ -245,15 +245,15 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-baby-carriage"></i></p>',
         paragraphText: "Explore the fundamentals of nurturing and care in our optional parenting class. A valuable session for future planning.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Perfect Parents preparatory class will begin now. The Department of Family Planning highly encourages every couple who is planning to have children to participate in this class, since it will impart crucial parenting knowledge and will enable you to see if you are truly ready to become parents."
+        tts: "The Perfect Parents preparatory class will begin now in the Dining Hall. The Department of Family Planning highly encourages every couple who is planning to have children to participate in this class, since it will impart crucial parenting knowledge and will enable you to see if you are truly ready to become parents."
     },
     "bcparentingclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARENTING CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-baby-carriage"></i></p>',
-        paragraphText: "Our optional parenting class will begin in 5 minutes. A valuable session for future planning.",
+        paragraphText: "Our optional parenting class will begin in 5 minutes in the Dining Hall. A valuable session for future planning.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Perfect Parents preparatory class will begin in 5 minutes. The Department of Family Planning highly encourages every couple who is planning to have children to participate in this class, since it will impart crucial parenting knowledge and will enable you to see if you are truly ready to become parents."
+        tts: "The Perfect Parents preparatory class will begin in 5 minutes in the Dining Hall. The Department of Family Planning highly encourages every couple who is planning to have children to participate in this class, since it will impart crucial parenting knowledge and will enable you to see if you are truly ready to become parents."
     },
     "bcyogaclass": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
@@ -261,13 +261,13 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
         paragraphText: "Our optional yoga class will begin now. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Partner Yoga Class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Partner Yoga Class will begin now in the activity room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcyogaclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "PARTNER YOGA CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-child-reaching"></i></p>',
-        paragraphText: "Our optional yoga class will begin in 5 minutes. A valuable session for exploring movement with your partner.",
+        paragraphText: "Our optional yoga class will begin in 5 minutes in the activity room. A valuable session for exploring movement with your partner.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
         tts: "The Partner Yoga Class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
