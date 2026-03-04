@@ -117,7 +117,7 @@ const activityBroadcastsData = {
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-infinity"></i></p>',
         paragraphText: "The first Forever Match has now been computed.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The first Forever Match has now been computed."
+        tts: "The first Forever Match has now been computed. Participants are kindly reminded to stay with their support groups until all forever matches have been announced."
     },
     "bcgatherforwelcome": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;GATHER FOR WELCOME VIDEO&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>GREETINGS, PARTICIPANTS. </br>',
