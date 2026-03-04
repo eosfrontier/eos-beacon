@@ -634,17 +634,17 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SWING DANCING WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional swing dancing workshop is now beginning. No prior experience necessary.",
+        paragraphText: "Explore connection through movement. An optional swing dancing workshop is now beginning in the Dining Hall. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Swing Dancing Workshop will begin now. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+        tts: "The Swing Dancing Workshop will begin now in the Dining Hall. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
     },
     "bcsswingdanceclass_5m": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SWING DANCING WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional swing dancing workshop will begin in 5 minutes. No prior experience necessary.",
+        paragraphText: "Explore connection through movement. An optional swing dancing workshop will begin in 5 minutes in the Dining Hall. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Swing Dancing Workshop will begin in 5 minutes. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
+        tts: "The Swing Dancing Workshop will begin in 5 minutes in the Dining Hall. The workshop is optional, but we wish to remind you that the Department of Marriage has carefully chosen the workshops to maximise the partner bonding potential. Enjoy the workshop."
     },
     "bcbodypaintingworkshop": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
