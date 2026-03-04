@@ -119,9 +119,7 @@ $(document).ready(function () {
 
   /* receive the request to play audio here: (server->client)
     generateBCaudio will determine what happens next. (play or not to play, etc) */
-  socket.on('playAudioFile', function (audiofile) {
-    generateBCaudio(audiofile);
-  });
+  // The 'playAudioFile' event is now handled by a single listener in functions.js to prevent duplicate playback.
 
 
   /* reconnect/disconnect events: what to do when losing/gaining connection. */

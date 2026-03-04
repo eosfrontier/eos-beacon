@@ -538,41 +538,41 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SEXUAL EDUCATION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i> <i class="fa fa-book-open"></i></p>',
-        paragraphText: "An optional sexual education class is now available. This is a safe space to learn and ask questions about intimacy and connection.",
+        paragraphText: "An optional sexual education class is now available in the Dining Hall. This is a safe space to learn and ask questions about intimacy and connection.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The sexual education class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The sexual education class will begin now in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsexed_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SEXUAL EDUCATION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-heart"></i> <i class="fa fa-book-open"></i></p>',
-        paragraphText: "The optional sexual education class will begin in 5 minutes. Please make your way to the designated area.",
+        paragraphText: "The optional sexual education class will begin in 5 minutes in the Dining Hall. Please make your way to the designated area.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The sexual education class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to  maximise the partner bonding potential. Enjoy the class."
+        tts: "The sexual education class will begin in 5 minutes in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to  maximise the partner bonding potential. Enjoy the class."
     },
     "bcsinglesparty": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY SOON&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "SUPPORT & CELEBRATION",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-champagne-glasses"></i></p>',
-        paragraphText: "The \"singles\" party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
+        paragraphText: "The \"singles\" party is about to begin in the Lounge. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The singles party is about to begin. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned. Your third matches will get announced at 9, 30."
+        tts: "The singles party is about to begin in the Lounge. For the next hour, you will not be matched with anyone, and party music will be playing. Please enjoy mingling freely with anyone who is not one of your previous matches. You may want to attempt flirting with other participants, since it will provide useful data for your cortical implant. Please be reminded that you are still not allowed to interact with your previous two matches unchaperoned. Your third matches will get announced at 9, 30."
     },
     "bcmusicclass": { // Run 8 after Partner Yoga
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i></p>',
-        paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning",
+        paragraphText: "Harmonize your connection through sound. An optional music workshop is now beginning in the Activity Room.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Music Workshop will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Music Workshop will begin now in the Activity Room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcmusicclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "MUSIC WORKSHOP (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-music"></i></p>',
-        paragraphText: "Harmonize your connection through sound. An optional music workshop is will begin in 5 minutes.",
+        paragraphText: "Harmonize your connection through sound. An optional music workshop is will begin in 5 minutes in the Activity Room.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Music Workshop will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Music Workshop will begin in 5 minutes in the Activity Room. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcemotionalsupportworkshop": { // Run 8 after Meet The Family Luinch
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',

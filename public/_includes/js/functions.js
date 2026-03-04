@@ -1128,6 +1128,12 @@ function seekBgMusic(timeInSeconds) {
 }
 
 socket.on('playAudioFile', (filePath) => {
+    // Admin panel should not play one-off audio broadcasts.
+    if (window.location.pathname.startsWith('/adm/')) {
+        console.log('[audio] Admin panel ignoring playAudioFile event.');
+        return;
+    }
+
     console.log(`[tts] Received request to play generated audio: ${filePath}`);
     // Use generateAudioPlayer for one-off sounds. It correctly handles interruptions.
     generateAudioPlayer(filePath, 1, 100);
