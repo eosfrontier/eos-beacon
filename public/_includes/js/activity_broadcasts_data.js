@@ -602,17 +602,17 @@ const activityBroadcastsData = {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "TANGO CONNECTION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional tango class is now beginning. No prior experience necessary.",
+        paragraphText: "Explore connection through movement. An optional tango class is now beginning in the Dining Hall. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Tango Connection class will begin now. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Tango Connection class will begin now in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bctangoclass_5m": {
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY IN 5 MINUTES&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
         subtitleText: "TANGO CONNECTION CLASS (OPTIONAL)",
         centralIconHtml: '<p class="text-white blinkContent" style="font-size: 64px;"><i class="fa fa-people-arrows"></i></p>',
-        paragraphText: "Explore connection through movement. An optional tango class will begin in 5 minutes. No prior experience necessary.",
+        paragraphText: "Explore connection through movement. An optional tango class will begin in 5 minutes in the Dining Hall. No prior experience necessary.",
         audioPlaylist: ['audio/0_Jingle.mp3'],
-        tts: "The Tango Connection class will begin in 5 minutes. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
+        tts: "The Tango Connection class will begin in 5 minutes in the Dining Hall. The class is optional, but we wish to remind you that the Department of Marriage has carefully chosen the classes to maximise the partner bonding potential. Enjoy the class."
     },
     "bcsalsaclass": { // Run 8 after SexEd
         mainTitleHtml: '<h2><i class="fa fa-clock hidden-xs"></i>&nbsp;ACTIVITY&nbsp;NOTICE&nbsp;<i class="fa fa-calendar-days hidden-xs"></i></h2>',
