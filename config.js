@@ -1,7 +1,7 @@
 /* configuration. */
 SYSTEM_DETAILS = {
   appname: 'AMORE',
-  appdescription: 'Affection Management & Organic Relationship Engine. Powered by The Department of Marriage.',
+  appdescription: 'Affection Management & Organic Relationship Engine. Powered by The Department of Marriage and BreezyCode.',
   tagline: 'Matches made, destinies delivered.',
 }
 
