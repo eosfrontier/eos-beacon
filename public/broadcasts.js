@@ -25,7 +25,7 @@ var bcreset = new broadcastObj("Standby", "bcdefault", 99, "0", "0");
 /* kitchen crew */
 var bclunch = new broadcastObj("Lunch announcement", "kitchen/bclunch", 2, "0", "0");
 var bcdinner = new broadcastObj("Dinner announcement", "kitchen/bcdinner", 2, "0", "0");
-var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bctbcdishes", 2, "0", "0");
+var bcdishes = new broadcastObj("Dishes reminder", "kitchen/bcdishes", 2, "0", "0");
 
 /* other PSA's */
 var bctempleservice = new broadcastObj("Tachar Service", "other/bctempleservice", 2, "600000", "0");
