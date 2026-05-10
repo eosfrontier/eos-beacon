@@ -1,0 +1,61 @@
+<div class="col-xs-12">
+  <h2><i class="fa fa-terminal"></i>&nbsp;Colony security level</h2>
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <p>Select a pre-defined security levels.</p>
+
+  <!--
+      default security levels.
+      Add, edit or remove these to your own preferences. You can set the DEFAULT security level in config.js on the server side.
+    -->
+  <div class="col-xs-12">
+    <select id="secLevelPrefab" class="form-control" name="predefinedSecurityLevel">
+      <option value="Code Green - All clear">Code Green - All clear</option>
+      <option value="Code Blue - Confirmed Threat. Weapons may be visible.">Code Blue - Confirmed Threat. Weapons may
+        be visible.</option>
+      <option value="Code Red - Immediate Threat. Weapons ready.">Code Red - Immediate Threat. Weapons ready.</option>
+      <option value="Code Silver - VIP on colony. Security elevated.">Code Silver - VIP on colony. Security elevated.
+      </option>
+      <option value="Class 4 Psychic Hazard">Class 4 Psychic Hazard</option>
+      <option value="Class 5 Hazard Outbreak">Class 5 Hazard Outbreak</option>
+      <option value="Class 6 Emergency - Extreme Imminent Threat to Bastion Eos">Class 6 Emergency - Extreme Imminent
+        Threat to Bastion Eos</option>
+    </select>
+  </div>
+
+  <div class="col-xs-12">
+    <!-- submits the security level -->
+    <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="updateSecurity('secLevelPrefab');">
+      <i class="fa fa-warning"></i>&nbsp;SET SECURITY LEVEL
+    </button>
+  </div>
+
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <!-- Or, write your own security status on the spot. -->
+  <p>...Or, set a custom security level.</p>
+  <div class="col-xs-12">
+    <input id="secLevelCustom" type="text" class="form-control" placeholder="Custom Alert" maxlength="160"></input>
+  </div>
+  <div class="col-xs-12">
+
+    <!-- submit the custom status -->
+    <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="updateSecurity('secLevelCustom');">
+      <i class="fa fa-warning"></i>&nbsp;SET CUSTOM LEVEL
+    </button>
+  </div>
+</div>
+
+<div class="col-xs-12">
+  <hr />
+</div>
+
+<div class="col-xs-12">
+  <input id="secLevelReset" type="hidden" class="hidden" value="Code Green - All clear" />
+
+  <button class="btn btn-lg btn-outline-success" onclick="updateSecurity('secLevelReset');">
+    <i class="fa fa-refresh"></i>&nbsp;RESET SEC. LEVEL
+  </button>
+</div>

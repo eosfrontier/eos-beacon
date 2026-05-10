@@ -9,67 +9,54 @@
 ==== =================================================================
 -->
 
-
-<!-- 2024 Thijs here; these fake button divs are not <buttons> because adminPanel.html triggers a disable/.disable on all buttons.. it seems. -->
-<!-- +1 reason for the rework. -->
-<div class="admMENU">
-  <div id="btn-admBROADCAST" class="btn active adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admBROADCAST');"><i style="font-size:133%" class="fa fa-wifi"></i><br/>BROADCAST</div>
-  <div id="btn-admSECURITY" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admSECURITY');"><i style="font-size:133%" class="fa fa-exclamation-circle"></i><br/>SECURITY LVL</div>
-
-  <span class="medical">
-    <div id="btn-admMEDICAL" class="btn adm-nav btn-ui btn-ui-holo-red" onclick="navigateADM('admMEDICAL');"><i style="font-size:133%" class="fa fa-medkit"></i><br/>MEDICAL</div>
-  </span>
-
-  <span class="portal">
-    <div id="btn-admPORTAL" class="btn adm-nav btn-outline-success" onclick="navigateADM('admPORTAL');"><i style="font-size:133%" class="fa fa-opera"></i><br/>PORTAL</div>
-  </span>
-
-  <span class="orb">
-    <div id="btn-admORB" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admORB')"><i style="font-size:133%" class="fa fa-opera"></i><br/>CANOPY</div>
-  </span>
-
-  <span class="overlord">
-    <div id="btn-admOVERLORD" class="btn adm-nav btn-ui btn-ui-holo-alt" onclick="navigateADM('admOVERLORD');"><i style="font-size:133%" class="fa fa-microchip"></i><br/>OVERLORD</div>
-  </span>
-
-   <!--<span class="officer">
-     <div id="btn-admMISSION" class="btn adm-nav btn-ui btn-ui-holo-alt" onclick="navigateADM('admATTACKVECTOR');"><i style="font-size:133%" class="fa fa-code-fork"></i><br/>HACKING</div>
-   </span>-->
-   <div id="btn-admCMD" class="btn adm-nav btn-ui btn-ui-holo" onclick="navigateADM('admCMD');"><i style="font-size:133%" class="fa fa-terminal"></i><br/>OTHER</div>
+<div id="admMENU" class="admMENU">
+  <!-- Admin menu buttons will be generated here -->
 </div>
 
+<script src="/adm/tabs.js"></script>
 <script>
-$(document).ready(function(){
-    const admRANK = getCookie('rank');
+  function navigateADM(tabId) {
+    const tabData = adminTabs.find(t => t.id === tabId);
+    if (!tabData) return;
 
-    /* if a person is under or above the accepted values, destroy their login. */
-    if((admRANK < 1) || (admRANK > 4)) {
+    const panelContainer = $('#adm-panel-container');
+    const url = `/adm/panels/${tabData.file}.html`;
 
-      logout();
-
-    } else {
-      /* decide what the user gets to see */
-      switch(admRANK) {
-        case '1': default:
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.medical').empty(); /* empty&hide the medical tab. */
-          $('.portal').empty(); /* empty&hide the portal tab. */
-          $('.orb').empty(); /* empty&hide the orb tab. */
-          $('.officer').empty(); /* empty&hide the portal tab. */
-          break;
-        case '2':
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.portal').empty(); /* empty&hide the portal tab. */
-          $('.officer').empty(); /* empty&hide the attackvector tab. */
-          break;
-        case '3':
-          $('.overlord').empty(); /* hide the overlord screen and empty all content, just incase. */
-          $('.medical').empty(); /* empty&hide the medical tab. */
-          $('.officer').empty(); /* empty&hide the attackvector tab. */
-          break;
-        case '4':
-          break;
+    panelContainer.load(url, function(response, status, xhr) {
+      if (status == "error") {
+        panelContainer.html("Error loading panel: " + xhr.status + " " + xhr.statusText);
       }
+      // Highlight active button
+      $('.adm-nav').removeClass('active');
+      $(`#btn-${tabId}`).addClass('active');
+    });
+  }
+
+  $(document).ready(function(){
+    const admRANK = parseInt(getCookie('rank'), 10);
+    const menuContainer = $('#admMENU');
+
+    if (isNaN(admRANK) || admRANK < 1 || admRANK > 4) {
+      logout();
+      return;
     }
-});
+
+    const defaultTab = adminTabs.find(tab => tab.ranks.includes(admRANK));
+
+    adminTabs.forEach(tab => {
+      if (tab.ranks.includes(admRANK)) {
+        const isActive = (defaultTab && tab.id === defaultTab.id) ? 'active' : '';
+        const button = `
+          <div id="btn-${tab.id}" class="btn adm-nav ${tab.className} ${isActive}" onclick="navigateADM('${tab.id}');">
+            <i style="font-size:133%" class="fa ${tab.icon}"></i><br/>${tab.name}
+          </div>`;
+        menuContainer.append(button);
+      }
+    });
+
+    // Load the default tab
+    if (defaultTab) {
+      navigateADM(defaultTab.id);
+    }
+  });
 </script>

@@ -1,0 +1,62 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Portal Terminal</h2>
+
+<hr />
+
+<div class="col-xs-12">
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
+    <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
+  </button>
+  <br /><br />
+</div>
+
+<div class="col-xs-12 col-md-6">
+  <p>Broadcast:</p>
+
+  <button class="btn btn-lg btn-ui btn-ui-holo" onclick="sendBroadCast(bcportalinc);">
+    <i class="fa fa-cloud-download"></i>&nbsp;SCHEDULED PORTAL ACTIVATION
+  </button>
+  <button class="btn btn-lg btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcportalincdanger);">
+    <i class="fa fa-cloud-download"></i>&nbsp;UNSCHEDULED PORTAL ACTIVATION
+  </button>
+  <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcportalout);">
+    <i class="fa fa-cloud-upload"></i>&nbsp;PORTAL OUTGOING
+  </button>
+  <!--
+    <p>Broadcasts with Voice:</p>
+
+    <button class="btn btn-lg btn-ui btn-ui-holo" onclick="sendBroadCast(bcportalinc_voice);">
+      <i class="fa fa-comment"></i> <i class="fa fa-cloud-download"></i>&nbsp;SCHEDULED PORTAL ACTIVATION
+    </button>
+    <button class="btn btn-lg btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcportalincdanger_voice);">
+      <i class="fa fa-comment"></i> <i class="fa fa-cloud-download"></i>&nbsp;UNSCHEDULED PORTAL ACTIVATION
+    </button>
+    <button class="btn btn-lg btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcportalout_voice);">
+      <i class="fa fa-comment"></i> <i class="fa fa-cloud-upload"></i>&nbsp;PORTAL OUTGOING
+    </button>
+-->
+  <p>&nbsp;</p>
+
+</div>
+<div class="col-xs-12 col-md-6">
+  <p>&nbsp;Portal Status:</p>
+  <p>&nbsp;(note: portal inc/outgoing temporarily sets the status to ACTIVE.)</p>
+
+  <div class="col-xs-12" style="margin-left: 11px;">
+    <select id="portalStatusForm" class="form-control" name="portalStatusForm">
+      <option value="ok">Normal / Standard / Ok</option>
+      <option value="active">Active/Inc/Out</option>
+      <option value="shutdown">Portal offline</option>
+      <option value="unstable">Unstable connection</option>
+      <option value="multirequest">Multiple external requests</option>
+      <option value="maintenance">Maintenance Required</option>
+    </select>
+  </div>
+
+  <div class="col-xs-12">
+    <button class="btn btn-lg btn-ui btn-primary" onclick="updatePortalStatus('portalStatusForm');">
+      <i class="fa fa-cog"></i>&nbsp;SET PORTAL STATUS
+    </button>
+  </div>
+
+
+</div>
