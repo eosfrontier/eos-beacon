@@ -130,6 +130,21 @@ p {
   background-image: none;
   background-color: transparent;
 }
+
+.btn-ui.btn-ui-holo-prpl {
+  color: #ad29a4;
+  border-color: #db39d0;
+  background-image: none;
+  background-color: transparent;
+}
+
+.btn-ui.btn-ui-holo-blue {
+  color: yellow;
+  border-color: yellow;
+  background-image: none;
+  background-color: transparent;
+}
+
 .btn-ui.btn-ui-holo .glyphicon, .btn-ui.btn-ui-holo .fa {
   color: #39DBCC;
   border-color: #39DBCC;

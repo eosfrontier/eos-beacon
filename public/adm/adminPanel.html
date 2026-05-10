@@ -16,7 +16,8 @@
 <script>
   $(document).ready(function () {
     // Use event delegation for dynamically loaded content
-    $('#adm-panel-container').on('click', 'button', function (e) {
+    // Exclude form submit buttons, as they may have their own logic.
+    $('#adm-panel-container').on('click', 'button:not([type="submit"])', function (e) {
       /* extra scripts: add a modifier to prevent disabled buttons from being used regardless. */
       if ($(this).attr('disabled')) {
         e.stopImmediatePropagation();

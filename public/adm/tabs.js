@@ -36,7 +36,7 @@ const adminTabs = [
         name: 'CANOPY',
         file: 'orb',
         icon: 'fa-opera',
-        className: 'btn-ui btn-ui-holo',
+        className: 'btn-ui btn-ui-holo-prpl',
         ranks: [3, 4]
     },
     {
@@ -45,6 +45,14 @@ const adminTabs = [
         file: 'overlord',
         icon: 'fa-microchip',
         className: 'btn-ui btn-ui-holo-alt',
+        ranks: [4]
+    },
+    {
+        id: 'admICDATE',
+        name: 'ICDATE',
+        file: 'icdate',
+        icon: 'fa-calendar',
+        className: 'btn-ui btn-ui-holo-blue',
         ranks: [4]
     },
     {

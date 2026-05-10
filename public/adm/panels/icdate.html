@@ -1,0 +1,69 @@
+<div class="container">
+  <h1>Event Date Settings</h1>
+  <form id="dateForm">
+    <div class="form-group">
+      <label for="ocEventStartDate">OC Event Start Date (DD/MMM/YYYY):</label>
+      <div class="date-inputs">
+        <input type="number" id="ocDay" name="ocDay" placeholder="DD" min="1" max="31" required>
+        <span>/</span>
+        <select id="ocMonth" name="ocMonth" required>
+          <option value="Jan">Jan</option>
+          <option value="Feb">Feb</option>
+          <option value="Mar">Mar</option>
+          <option value="Apr">Apr</option>
+          <option value="May">May</option>
+          <option value="Jun">Jun</option>
+          <option value="Jul">Jul</option>
+          <option value="Aug">Aug</option>
+          <option value="Sep">Sep</option>
+          <option value="Oct">Oct</option>
+          <option value="Nov">Nov</option>
+          <option value="Dec">Dec</option>
+        </select>
+        <span>/</span>
+        <input type="number" id="ocYear" name="ocYear" placeholder="YYYY" min="2020" max="2030" required>
+      </div>
+      <span id="ocCurrentDisplay" class="current-date-display"></span>
+    </div>
+    <div class="form-group">
+      <label for="icEventStartDate">IC Event Start Date (DD/MMM):</label>
+      <div class="date-inputs">
+        <input type="number" id="icDay" name="icDay" placeholder="DD" min="1" max="31" required>
+        <span>/</span>
+        <select id="icMonth" name="icMonth" required>
+          <option value="Jan">Jan</option>
+          <option value="Feb">Feb</option>
+          <option value="Mar">Mar</option>
+          <option value="Apr">Apr</option>
+          <option value="May">May</option>
+          <option value="Jun">Jun</option>
+          <option value="Jul">Jul</option>
+          <option value="Aug">Aug</option>
+          <option value="Sep">Sep</option>
+          <option value="Oct">Oct</option>
+          <option value="Nov">Nov</option>
+          <option value="Dec">Dec</option>
+        </select>
+        <span style="color: #999; font-size: 14px;"></span>
+        <input type="number" id="icYear" name="icYear" placeholder="YYYY" min="2020" max="2030" style="display: none;">
+      </div>
+      <span id="icCurrentDisplay" class="current-date-display"></span>
+    </div>
+     <div class="form-group">
+                <label for="icStartYear">IC Start Year:</label>
+                <div class="date-inputs">
+                <input type="number" id="icStartYear" name="icStartYear" placeholder="e.g., 240" required>NT
+                </div>
+                <span id="icStartYearDisplay" class="current-date-display"></span> NT
+            </div>
+    <button type="submit" class="btn btn-lg btn-ui btn-outline-success">Update Settings</button>
+    <button type="button" class="btn btn-lg btn-ui btn-ui-holo" id="refreshBtn">Refresh Current Values</button>
+  </form>
+  <div id="loadingStatus" class="message"></div>
+  <div id="message" class="message"></div>
+  <div class="info">
+    <div id="loadingStatus" style="margin-top: 10px; font-style: italic; color: #666;"></div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/adm/panels/icdate.js"></script>
