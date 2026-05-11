@@ -34,7 +34,7 @@ async function loadCurrentSettings() {
             document.getElementById('ocCurrentDisplay').textContent = `Current: ${ocDate.day}/${numberToMonthName(ocDate.month)}/${ocDate.year}`;
             // The IC year display should also match the OC year
             document.getElementById('icCurrentDisplay').textContent = `Current: ${icDate.day}/${numberToMonthName(icDate.month)}`;
-            document.getElementById('icStartYearDisplay').textContent = `Current: ${data.icStartYear}`;
+            document.getElementById('icStartYearDisplay').textContent = `/${data.icStartYear}`;
 
             loadingStatus.textContent = 'Current settings loaded successfully.';
             loadingStatus.style.color = '#28a745';
