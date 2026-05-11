@@ -1,0 +1,85 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Broadcast panel</h2>
+<p><span class="holoContrast">Note:</span> Low priority cannot overrule high priority broadcasts.</p>
+<p><span class="holoContrast">'CLEAR BROADCASTS'</span> resets the broadcasting screen.</p>
+
+<hr />
+
+<div class="col-xs-12">
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
+    <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
+  </button>
+  <br /><br />
+</div>
+
+<div class="col-xs-12">
+  <p>Class: Reminders, lowest priority</p>
+
+  <!-- <div class="col-xs-12">
+      <p>Class: Announcements</p> -->
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bchydrate);">
+    <i class="fa fa-coffee"></i>&nbsp;HYDRATION REMINDER
+  </button>
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcsunscreen);">
+    <i class="fa fa-fire-extinguisher"></i>&nbsp;SUNSCREEN REMINDER
+  </button>
+</div>
+<div class="col-xs-12">
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcthankyou);">
+    <i class="fa fa-thumbs-up"></i>&nbsp;KINDNESS REMINDER
+  </button>
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bctalon);">
+    <i class="fa fa-twitter"></i>&nbsp;TALON REMINDER
+  </button>
+</div>
+<div class="col-xs-12">
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcmorning);">
+    <i class="fa fa-sun-o"></i>&nbsp;MORNING REMINDER (10am)
+  </button>
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bcgotobed);">
+    <i class="fa fa-bed"></i>&nbsp;SLEEP REMINDER (2am)
+  </button>
+</div>
+<div class="whitespace">&nbsp;</div>
+<div class="col-xs-12">
+  <p>Class: Announcements, low priority</p>
+  <button class="btn btn-ui btn-ui-holo" onclick="sendBroadCast(bctempleservice);">
+    <i class="fa fa-bell"></i>&nbsp;TACHAR SERVICE
+  </button>
+</div>
+<div class="whitespace">&nbsp;</div>
+<div class="col-xs-12">
+  <p>Class: Medium priority.</p>
+  <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bcmedbay);">
+    <i class="fa fa-medkit"></i>&nbsp;MEDICAL PERSONEL AT MEDBAY
+  </button>
+</div>
+
+<div class="whitespace">&nbsp;</div>
+<div class="col-xs-12">
+  <p>Class: Direct threat, high priority</p>
+
+  <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcbomb); ">
+    <i class="fa fa-bomb"></i>&nbsp;BOMB THREAT
+  </button>
+  <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcbiohazard); ">
+    <i class="fa fa-warning"></i>&nbsp;BIOHAZARD
+  </button>
+  <button class="btn btn-ui btn-ui-holo-alt" onclick="sendBroadCast(bcpsyhazard); ">
+    <i class="fa fa-warning"></i>&nbsp;PSYHAZARD
+  </button>
+
+</div>
+
+<div class="whitespace">&nbsp;</div>
+<div class="col-xs-12">
+  <p>Class: Hostile Contact, high priority</p>
+
+  <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bchostileoutside); ">
+    <i class="fa fa-warning"></i>&nbsp;HOSTILES OUTSIDE
+  </button>
+  <button class="btn btn-ui btn-ui-holo-red" onclick="sendBroadCast(bchostileinside); ">
+    <i class="fa fa-warning"></i>&nbsp;HOSTILES INSIDE
+  </button>
+
+</div>
+<div class="whitespace">&nbsp;</div>

@@ -19,12 +19,17 @@ var loopSoundCounter = 1
 var loopSoundTimer
 
 /* navigate loads (TARGET).HTML into the MAIN SCREEN div. pretending to go to another page but instead putting it into our existing box.*/
-function navigate(target) {
+function navigate(target, icDateEnabled, yearOffset) {
   if (target != "") {
     $('#main').empty().load(target + '.html');
   }
-  /* At the loading of the MAIN SCREEN we get the perfect oppertunity to do an async time. We can't do this in the time function itself, as that keeps refreshing every 1s*/
-  getEosICTime()
+  /* At the loading of the MAIN SCREEN we get the perfect opportunity to do an async time. We can't do this in the time function itself, as that keeps refreshing every 1s*/
+  if (icDateEnabled) {
+    getEosICTime();
+  }
+  if (!icDateEnabled){
+    getOCDate(yearOffset);
+  }
 }
 
 /* flashblocks causes a "flash" effect inside the boxes spread over beacon, when for example, a broadcast is received.
@@ -400,14 +405,14 @@ function updateOrbStatus(orbStatus) {
     switch (orbStatus) {
       case 'inactive':
         _selector.addClass('blinkContent');
-        _selector.find('.top').html('<span class="status-icon"><i class="fa fa-warning"></i></span>');
-        _selector.find('.bottom').html('OFFLINE');
+        _selector.find('.left').html('<span class="status-icon"><i class="fa fa-warning"></i></span>');
+        _selector.find('.right').html('<h4>OFFLINE</h4>');
         break;
 
       case 'active':
       default:
-        _selector.find('.top').html('<span class="status-icon"><i class="fa fa-check-circle-o"></i></span>');
-        _selector.find('.bottom').html('Operational');
+        _selector.find('.left').html('<span class="status-icon"><i class="fa fa-check-circle-o"></i></span>');
+        _selector.find('.right').html('<h4>Operational</h4>');
         break;
     }
 
@@ -501,8 +506,72 @@ function updateClock() {
   icdateCache.html(icdate);
 }
 
+async function getOCDate(yearOffset = 0) {
+// We create a "Fake" fetch by resolving a Promise immediately
+    return Promise.resolve().then(() => {
+        const now = new Date();
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const months = ['january', 'february', 'march', 'april', 'may', 'june', 
+                        'july', 'august', 'september', 'october', 'november', 'december'];
+
+        const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+        // This is the data object that emulates your API response
+        return {
+            "iYear": now.getFullYear() + yearOffset,
+            "iYearBefore": "",
+            "iYearAfter": "",
+            "iDay": now.getDate(),
+            "iMonth": now.getMonth() + 1,
+            "iDayOfWeek": dayOfWeek,
+            "iDayName": days[now.getDay()],
+            "iMonthName": months[now.getMonth()]
+        };
+    })
+    .then(data => { 
+        // Performs the assignment inside the function exactly like the original
+        eosIcDateCache = data; 
+    });
+}
+
+
 async function getEosICTime() {
-  fetch(eosTimeAPI)
-    .then(response => response.json())
-    .then(data => { eosIcDateCache = data });
+    fetch(eosTimeAPI)
+      .then(response => response.json())
+      .then(data => { eosIcDateCache = data });
+}
+// console.log("IC Date: ". eosIcDateCache);
+// Function to register video variables globally without necessarily building buttons
+async function syncVideoBroadcasts(buildButtons = false, targetContainer = '.items') {
+  try {
+    const response = await fetch('/get-video-broadcasts');
+    const broadcasts = await response.json();
+
+    broadcasts.forEach(data => {
+      // Register the variable globally
+      window[data.key] = new broadcastObj(
+        data.title,
+        data.file,
+        data.priority,
+        data.duration,
+        data.colorscheme
+      );
+
+      if (buildButtons) {
+        // Now uses the specific container we passed in
+        const container = document.querySelector(targetContainer);
+        if (container) {
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-ui btn-ui-holo';
+          btn.innerHTML = `<i class="fa fa-film"></i>&nbsp;IC:&nbsp;${data.title}`;
+          btn.onclick = () => sendBroadCast(window[data.key]);
+          container.appendChild(btn);
+        }
+      }
+    });
+
+    window.dispatchEvent(new Event('broadcastsLoaded'));
+  } catch (e) {
+    console.error("Failed to sync broadcasts", e);
+  }
 }

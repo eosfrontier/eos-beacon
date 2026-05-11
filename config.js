@@ -1,22 +1,25 @@
 /* configuration. */
 SYSTEM_DETAILS = {
-  appname : 'BEACON',
-  appdescription : '/ EOS BASTION INFORMATION SERVICE',
+  appname: 'BEACON',
+  appdescription: 'broadcasting & information services. Powered by EOS IT.',
+  tagline: 'Have a productive day.',
 }
 
 /* system settings: This can generally be left alone. */
 SYSTEM_SETTINGS = {
-  port : 5001, /* declares which port BEACON will run on. By default: 5000. */
+  port: 5001, /* declares which port BEACON will run on. By default: 5000. */
   voiceEnabled: true,
+  ICDateEnabled: true,
+  yearOffset: 0, //Used when ICDateEnabled is False, if you want to +/- the year
 }
 
 /* Settings for defaults that appear on screen. For example, the default security level */
 APPLICATION_DEFAULTS = {
-  defaultSecurityLevel : "Code green - All clear",
+  defaultSecurityLevel: "Code green - All clear",
 }
 
 /* creating the account object, to re use later */
-function accountObj(logincode,loginRank) {
+function accountObj(logincode, loginRank) {
   this.logincode = logincode;
   this.loginRank = loginRank;
 }
@@ -38,7 +41,7 @@ const VALID_ACCOUNTS = [
 ];
 
 /* Send config/settings to main server (( index.js )) */
-exports.cfg    = SYSTEM_DETAILS;
-exports.sys    = SYSTEM_SETTINGS;
-exports.data   = APPLICATION_DEFAULTS;
+exports.cfg = SYSTEM_DETAILS;
+exports.sys = SYSTEM_SETTINGS;
+exports.data = APPLICATION_DEFAULTS;
 exports.accounts = VALID_ACCOUNTS;

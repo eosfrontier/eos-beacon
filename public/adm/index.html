@@ -9,7 +9,6 @@
 ==== =================================================================
 -->
 
-<!DOCTYPE HTML>
 <html>
 <head>
 
@@ -44,7 +43,7 @@
 <div class="container adm-container">
   <div class="block">
     <div class="headerblock">
-      <h1>BEACON - EOS BROADCASTING &amp; INFORMATION SERVICES</h1>
+      <h1 id="appHeader"></h1>
     </div>
 
       <!-- hier laden we wanneer ""ingelogd"" de navigeer buttons in. -->
@@ -68,7 +67,7 @@
           </div>
 
           <div class="row">
-            <h1 class="error holoContrast text-center">Login.</h1>
+            <h1 class="holoContrast text-center">Login.</h1>
           </div>
 
           <div class="row keypad-row">
@@ -190,6 +189,16 @@
   $(document).ready(function() {
     const admAUTH = getCookie('auth');
     const admUSER = getCookie('usercode');
+
+    /* update all titles and descriptions on load.*/
+    socket.on('startConfig', function (port, appName, appDescription) {
+      if (appName && appDescription) {
+        const titleText = appName + ' - ' + appDescription;
+        document.title = titleText;
+        $('#appHeader').text(titleText);
+      }
+    });
+
 
     setTimeout(function(){
       /* after half a second, request the global dynamicdata. This adds too little and will potentially be removed to save bandwidth.*/

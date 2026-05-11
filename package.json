@@ -4,7 +4,8 @@
   "description": "Beacon broadcasting Application",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "supervisor index.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
-    "socket.io": "^4.6.2"
+    "socket.io": "^4.6.2",
+    "supervisor": "^0.12.0"
   }
 }

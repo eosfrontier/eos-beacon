@@ -1,0 +1,38 @@
+<h2><i class="fa fa-terminal"></i>&nbsp;Orb Terminal</h2>
+
+<hr />
+
+<div class="col-xs-12">
+  <button class="btn btn-outline-success btn-lg btn-block" onclick="sendBroadCast(bcreset);">
+    <i class="fa fa-check"></i>&nbsp;CLEAR BROADCASTS
+  </button>
+  <br /><br />
+</div>
+
+<div class="col-xs-12 col-md-6" style="display: flex; justify-content: center; flex-direction: column; gap: 1rem;">
+  <h3>Broadcast/Alerts:</h3>
+
+  <button class="btn btn-lg btn-ui btn-ui-holo" onclick="sendBroadCast(bcorbactivate); updateOrbStatus('active');">
+    <i class="fa fa-cloud-download"></i>&nbsp;(re)-activate Orb
+  </button>
+
+  <button class="btn btn-lg btn-ui btn-ui-holo-red"
+    onclick="sendBroadCast(bcorbcooldown); updateOrbStatus('inactive');">
+    <i class="fa fa-cloud-download"></i>&nbsp;de-activate Orb
+  </button>
+
+</div>
+<div class="col-xs-12 col-md-6" style="display: flex; justify-content: center; flex-direction: column; gap: 1rem;">
+  <h3>Orb Status (manual control)</h3>
+  <p>(using the Alerts automatically changes Orb Status as well)</p>
+
+  <select id="orbStatusForm" class="form-control" name="orbStatusForm">
+    <option value="active" default>Active</option>
+    <option value="inactive">Inactive / Cooldown</option>
+  </select>
+
+  <button class="btn btn-lg btn-ui btn-primary" onclick="updateOrbStatusManually('orbStatusForm');">
+    <i class="fa fa-cog"></i>&nbsp;SET ORB STATUS
+  </button>
+
+</div>
