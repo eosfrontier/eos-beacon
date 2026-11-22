@@ -149,6 +149,11 @@ html {
   /* A bit wider for dropdown */
 }
 
+.date-inputs select[name$="DayOfWeek"] {
+  width: auto;
+  min-width: 125px;
+}
+
 .date-inputs input[name$="Year"] {
   width: 80px;
 }
