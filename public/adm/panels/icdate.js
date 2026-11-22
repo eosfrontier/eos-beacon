@@ -24,6 +24,10 @@ async function loadCurrentSettings() {
             document.getElementById('ocMonth').value = numberToMonthName(ocDate.month);
             document.getElementById('ocYear').value = ocDate.year;
 
+            const icStartDayName = numberToDayName(data.icStartDayOfWeek);
+            if (icStartDayName) {
+                document.getElementById('icStartDayOfWeek').value = String(Number(data.icStartDayOfWeek));
+            }
             document.getElementById('icDay').value = icDate.day;
             document.getElementById('icMonth').value = numberToMonthName(icDate.month);
             // The IC year should always match the OC year
@@ -33,7 +37,8 @@ async function loadCurrentSettings() {
             // Display current dates in DD/MMM/YYYY format
             document.getElementById('ocCurrentDisplay').textContent = `Current: ${ocDate.day}/${numberToMonthName(ocDate.month)}/${ocDate.year}`;
             // The IC year display should also match the OC year
-            document.getElementById('icCurrentDisplay').textContent = `Current: ${icDate.day}/${numberToMonthName(icDate.month)}`;
+            const icDayPrefix = icStartDayName ? `${icStartDayName} ` : '';
+            document.getElementById('icCurrentDisplay').textContent = `Current: ${icDayPrefix}${icDate.day}/${numberToMonthName(icDate.month)}`;
             document.getElementById('icStartYearDisplay').textContent = `/${data.icStartYear}`;
 
             loadingStatus.textContent = 'Current settings loaded successfully.';
@@ -67,6 +72,14 @@ function formatDateForDisplay(dateString) {
     return `${day}/${month}/${year}`;
 }
 
+const dayOfWeekNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+function numberToDayName(dayNum) {
+    if (typeof dayNum === 'boolean') return undefined;
+    const num = Number(dayNum);
+    return Number.isInteger(num) ? dayOfWeekNames[num - 1] : undefined;
+}
+
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const monthMap = {
     'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
@@ -93,6 +106,8 @@ document.getElementById('dateForm').addEventListener('submit', async (e) => {
     const ocMonth = monthNameToNumber(ocMonthName);
     const ocYear = document.getElementById('ocYear').value;
 
+    const icStartDayOfWeek = Number(document.getElementById('icStartDayOfWeek').value);
+    const icStartDayName = numberToDayName(icStartDayOfWeek);
     const icDay = document.getElementById('icDay').value;
     const icMonthName = document.getElementById('icMonth').value;
     const icMonth = monthNameToNumber(icMonthName);
@@ -103,6 +118,15 @@ document.getElementById('dateForm').addEventListener('submit', async (e) => {
     if (!ocMonth || !icMonth) {
         const messageDiv = document.getElementById('message');
         messageDiv.textContent = 'Error: Invalid month name. Please use: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, or Dec';
+        messageDiv.className = 'message error';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Validate day of week
+    if (!icStartDayName) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = 'Error: Invalid day of week. Please select Monday through Sunday.';
         messageDiv.className = 'message error';
         messageDiv.style.display = 'block';
         return;
@@ -126,6 +150,7 @@ document.getElementById('dateForm').addEventListener('submit', async (e) => {
                 ocEventStartDate: new Date(ocDateString + 'T12:00:00').toISOString(),
                 icEventStartDate: new Date(icDateString + 'T12:00:00').toISOString(),
                 icStartYear: new Number(icStartYear),
+                icStartDayOfWeek: icStartDayOfWeek,
             })
         });
 
@@ -137,7 +162,7 @@ document.getElementById('dateForm').addEventListener('submit', async (e) => {
             messageDiv.textContent = data.message;
             messageDiv.className = 'message success';
             messageDiv.style.display = 'block';
-            loadingStatus.textContent = `Settings updated. OC: ${ocDay}/${ocMonthName}/${ocYear}, IC: ${icDay}/${icMonthName}/${icYear}, IC Start Year: ${icStartYear}`;
+            loadingStatus.textContent = `Settings updated. OC: ${ocDay}/${ocMonthName}/${ocYear}, IC: ${icStartDayName} ${icDay}/${icMonthName}/${icYear}, IC Start Year: ${icStartYear}`;
             loadingStatus.style.color = '#28a745';
         } else {
             const error = await response.json();
